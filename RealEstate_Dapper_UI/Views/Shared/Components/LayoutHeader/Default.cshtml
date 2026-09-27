@@ -1,0 +1,91 @@
+﻿<!--header-->
+<header id="site-header" class="fixed-top">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg stroke px-0">
+            <h1>
+                <a class="navbar-brand" href="index.html">
+                    <span class="fa fa-home"></span> Emlak Satış
+                </a>
+            </h1>
+            <!-- logo resim olacaksa bunu aç
+            <a class="navbar-brand" href="#index.html">
+                <img src="image-path" alt="Logo" title="Logo" style="height:35px;" />
+            </a> -->
+            <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+                    data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+                    aria-label="Menüyü aç/kapat">
+                <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+                <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul class="navbar-nav ml-lg-5 mr-auto">
+                    <li class="nav-item @@home__active">
+                        <a class="nav-link" href="index.html">Ana Sayfa <span class="sr-only">(mevcut)</span></a>
+                    </li>
+                    <li class="nav-item @@listing__active">
+                        <a class="nav-link" href="listing.html">İlanlar</a>
+                    </li>
+                    <li class="nav-item dropdown @@property__active">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Emlaklar <span class="fa fa-angle-down"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item @@ps__active" href="property-single.html">Emlak Detayı</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sayfalar <span class="fa fa-angle-down"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item @@about__active" href="about.html">Hakkımızda</a>
+                            <a class="dropdown-item active" href="contact.html">İletişim</a>
+                        </div>
+                    </li>
+                </ul>
+                <div class="top-quote mt-lg-0">
+                    <a href="#buytheme" class="btn btn-style btn-primary">
+                        <span class="fa fa-home"></span> İlan Ekle
+                    </a>
+                </div>
+                <!--/arama-->
+                <div class="search mx-3">
+                    <input class="search_box" type="checkbox" id="search_box">
+                    <label class="fa fa-search" for="search_box"></label>
+                    <div class="search_form">
+                        <form action="error.html" method="GET">
+                            <input type="text" placeholder="Ara..."><input type="submit" value="Ara">
+                        </form>
+                    </div>
+                </div>
+                <!--//arama-->
+            </div>
+
+            <!-- açık/koyu tema düğmesi -->
+            <div class="mobile-position">
+                <nav class="navigation">
+                    <div class="theme-switch-wrapper">
+                        <label class="theme-switch" for="checkbox">
+                            <input type="checkbox" id="checkbox">
+                            <div class="mode-container">
+                                <i class="gg-sun"></i>
+                                <i class="gg-moon"></i>
+                            </div>
+                        </label>
+                    </div>
+                </nav>
+            </div>
+            <!-- //açık/koyu tema düğmesi -->
+        </nav>
+    </div>
+</header>
+<!--/header-->
+<section class="w3l-about-breadcrumb">
+    <div class="breadcrumb-bg breadcrumb-bg-about pt-5">
+        <div class="container pt-lg-5 py-3">
+        </div>
+    </div>
+</section>

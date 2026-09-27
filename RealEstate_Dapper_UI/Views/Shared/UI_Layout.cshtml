@@ -1,0 +1,18 @@
+﻿
+<!doctype html>
+<html lang="en">
+    @await Component.InvokeAsync("LayoutHead")
+<body>
+
+    @await Component.InvokeAsync("LayoutHeader")
+
+
+
+
+    @RenderBody()
+    @await Component.InvokeAsync("LayoutFooter")
+
+    @await Component.InvokeAsync("LayoutScripts")
+</body>
+
+</html>

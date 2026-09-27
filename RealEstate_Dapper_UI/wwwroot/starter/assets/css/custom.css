@@ -1,0 +1,337 @@
+﻿/* =========================================================
+   custom.css — style-starter.css'in ÜSTÜNE yazan modern katman
+   Şablonun sınıflarına dokunmaz, sadece görünümü iyileştirir.
+   Yeri: wwwroot/starter/assets/css/custom.css
+   ========================================================= */
+
+:root {
+    --x-accent: #1f6feb;
+    --x-accent-2: #0ea5e9;
+    --x-accent-soft: rgba(31, 111, 235, .10);
+    --x-radius: 20px;
+    --x-radius-sm: 12px;
+    --x-surface: #ffffff;
+    --x-text: #0f172a;
+    --x-muted: #64748b;
+    --x-border: rgba(15, 23, 42, .08);
+    --x-shadow: 0 10px 30px -12px rgba(15, 23, 42, .22);
+    --x-shadow-hover: 0 26px 50px -18px rgba(15, 23, 42, .35);
+}
+
+[data-theme="dark"] {
+    --x-accent-soft: rgba(56, 139, 253, .16);
+    --x-surface: #1a1d21;
+    --x-text: #f1f5f9;
+    --x-muted: #94a3b8;
+    --x-border: rgba(255, 255, 255, .08);
+    --x-shadow: 0 10px 30px -12px rgba(0, 0, 0, .6);
+    --x-shadow-hover: 0 26px 50px -18px rgba(0, 0, 0, .75);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* ---------- Header: kaydırınca cam efekti ---------- */
+#site-header {
+    transition: background .3s ease, box-shadow .3s ease, padding .3s ease;
+}
+
+    #site-header.nav-fixed {
+        background: rgba(15, 23, 42, .72) !important;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 8px 30px -10px rgba(0, 0, 0, .4);
+    }
+
+    #site-header .nav-link {
+        position: relative;
+    }
+
+    #site-header .dropdown-menu {
+        border: 1px solid var(--x-border);
+        border-radius: var(--x-radius-sm);
+        box-shadow: var(--x-shadow);
+        padding: 8px;
+    }
+
+    #site-header .dropdown-item {
+        border-radius: 8px;
+    }
+
+/* ---------- Butonlar ---------- */
+.btn-style.btn-primary,
+.w3l-cover-3-gd button.btn-primary {
+    background: linear-gradient(135deg, var(--x-accent), var(--x-accent-2)) !important;
+    border: none !important;
+    border-radius: 999px !important;
+    box-shadow: 0 10px 22px -10px rgba(31, 111, 235, .65);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .btn-style.btn-primary:hover,
+    .w3l-cover-3-gd button.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px -12px rgba(31, 111, 235, .75);
+    }
+
+/* ---------- Başlıklar ---------- */
+.title-big {
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+}
+
+.title-small {
+    display: inline-block;
+    font-size: 13px !important;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--x-accent) !important;
+    background: var(--x-accent-soft);
+    padding: 6px 14px;
+    border-radius: 999px;
+}
+
+/* ---------- Hero ---------- */
+.w3l-cover-3 .cover {
+    position: relative;
+}
+
+    .w3l-cover-3 .cover::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(2, 6, 23, .55) 0%, rgba(2, 6, 23, .30) 50%, rgba(2, 6, 23, .70) 100%);
+        pointer-events: none;
+    }
+
+    .w3l-cover-3 .cover > .container {
+        position: relative;
+        z-index: 1;
+    }
+
+.w3l-cover-3 .section-width > p {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 14px;
+    letter-spacing: .04em;
+}
+
+.w3l-cover-3 .section-width h2 {
+    font-size: clamp(2.3rem, 5vw, 4.2rem);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+}
+
+.most-searches ul li a {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .22);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background .2s ease;
+}
+
+    .most-searches ul li a:hover {
+        background: rgba(255, 255, 255, .28);
+    }
+
+.w3l-cover-3-gd {
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .22);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--x-radius);
+    padding: 10px;
+    box-shadow: 0 30px 60px -25px rgba(0, 0, 0, .5);
+}
+
+    .w3l-cover-3-gd input,
+    .w3l-cover-3-gd select {
+        border-radius: var(--x-radius-sm) !important;
+    }
+
+/* ---------- Emlak & lokasyon kartları ---------- */
+.locations-1 .box16 {
+    border-radius: var(--x-radius);
+    overflow: hidden;
+    box-shadow: var(--x-shadow);
+    transition: transform .35s ease, box-shadow .35s ease;
+}
+
+    .locations-1 .box16:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--x-shadow-hover);
+    }
+
+    .locations-1 .box16 img {
+        transition: transform .6s ease;
+    }
+
+    .locations-1 .box16:hover img {
+        transform: scale(1.06);
+    }
+
+    .locations-1 .box16 .box-content {
+        background: linear-gradient(0deg, rgba(2, 6, 23, .85) 0%, rgba(2, 6, 23, 0) 100%);
+    }
+
+        .locations-1 .box16 .box-content .title {
+            font-weight: 700;
+            letter-spacing: -.01em;
+        }
+
+.rentext-listing-category span {
+    border-radius: 999px !important;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* ---------- Hakkımızda / Müşteriler blokları ---------- */
+.w3l-index3 .w3l-left-img,
+.w3l-index3 .w3l-left-img1,
+.w3l-index3 .w3l-right-info {
+    border-radius: var(--x-radius);
+    overflow: hidden;
+}
+
+@media (min-width: 992px) {
+    .w3l-index3 .w3l-left-img,
+    .w3l-index3 .w3l-left-img1 {
+        border-radius: var(--x-radius) 0 0 var(--x-radius);
+    }
+
+    .w3l-index3 .w3l-right-info {
+        border-radius: 0 var(--x-radius) var(--x-radius) 0;
+    }
+}
+
+.w3l-right-book li span.fa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--x-accent-soft);
+    color: var(--x-accent);
+    font-size: 11px;
+}
+
+.w3l-clients .testimonial {
+    border-radius: var(--x-radius);
+    border: 1px solid var(--x-border);
+}
+
+/* ---------- Özellik kutuları ---------- */
+.w3l-bottom-grids .area-box {
+    height: 100%;
+    background: var(--x-surface);
+    border: 1px solid var(--x-border);
+    border-radius: var(--x-radius);
+    padding: 36px 30px;
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+    .w3l-bottom-grids .area-box:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--x-shadow-hover) !important;
+        border-color: transparent;
+    }
+
+    .w3l-bottom-grids .area-box > span.fa {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(31, 111, 235, .14), rgba(14, 165, 233, .14));
+        color: var(--x-accent);
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .w3l-bottom-grids .area-box .more .fa {
+        transition: transform .2s ease;
+    }
+
+    .w3l-bottom-grids .area-box .more:hover .fa {
+        transform: translateX(4px);
+    }
+
+/* ---------- Blog / İpuçları ---------- */
+.w3l-news .grids5-info {
+    border-radius: var(--x-radius);
+    overflow: hidden;
+    background: var(--x-surface);
+    box-shadow: var(--x-shadow);
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+    .w3l-news .grids5-info:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--x-shadow-hover);
+    }
+
+.w3l-news .zoom img {
+    transition: transform .6s ease;
+}
+
+.w3l-news .grids5-info:hover .zoom img {
+    transform: scale(1.05);
+}
+
+.w3l-news .posted-date a {
+    border-radius: var(--x-radius-sm);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.w3l-news .category {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--x-accent-soft);
+    color: var(--x-accent) !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ---------- Referans logoları ---------- */
+.w3l-companies-hny-6 .company-gd img {
+    filter: grayscale(1);
+    opacity: .6;
+    transition: filter .3s ease, opacity .3s ease;
+}
+
+.w3l-companies-hny-6 .company-gd:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+/* ---------- Hareket istemeyen kullanıcılar ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}

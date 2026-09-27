@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="/starter/assets/css/custom.css">
+
+@await Component.InvokeAsync("DefaultFeature")
+
+@await Component.InvokeAsync("DefaultPopularProductList")
+
+@await Component.InvokeAsync("DefaultWhoWeAre")
+
+@await Component.InvokeAsync("DefaultServices")
+ 
+@await Component.InvokeAsync("DefaultPopularLocations")
+
+@await Component.InvokeAsync("DefaultOurClients")
+
+@await Component.InvokeAsync("DefaultSubFeature")
+
+@await Component.InvokeAsync("DefaultDealOfTheDay")
+
+@await Component.InvokeAsync("DefaultBrand")
