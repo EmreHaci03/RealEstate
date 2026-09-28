@@ -8,24 +8,11 @@
                 </div>
                 <div class="col-lg-7 pl-lg-0">
                     <div class="w3l-right-info">
-                        <h6 class="title-small">Biz Kimiz</h6>
-                        <h3 class="title-big mt-3">Yerel ve uluslararası emlakta uzman ekip</h3>
-                        <p class="mt-4">
-                            15 yılı aşkın tecrübemizle, alıcı ve satıcıları doğru mülkle buluşturuyoruz.
-                            Her adımda şeffaf, hızlı ve güvenilir bir süreç sunuyoruz.
-                        </p>
-                        <p class="mt-3">
-                            Uzman danışmanlarımız bölge analizinden tapu işlemlerine kadar
-                            tüm süreci sizin için yönetir.
-                        </p>
-                        <ul class="w3l-right-book w3l-right-book-grid mt-md-5 mt-4">
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Seçkin portföy</li>
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Sosyal sorumluluk</li>
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Uzman danışmanlık</li>
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Güçlü ekip yapısı</li>
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Özel hizmetler</li>
-                            <li><span class="fa fa-check" aria-hidden="true"></span>Vizyon ve strateji</li>
-                        </ul>
+                        <h6 class="title-small">@ViewBag.Title</h6>
+                        <h3 class="title-big mt-3">@ViewBag.SubTitle</h3>
+                    <p class="mt-4">@ViewBag.Description1</p>
+                    <p class="mt-3">@ViewBag.Description2</p>
+                        @await Component.InvokeAsync("DefaultWhoWeAreService")
                         <a href="#services" class="btn btn-style btn-primary mt-4">Hizmetlerimizi keşfedin</a>
                     </div>
                 </div>

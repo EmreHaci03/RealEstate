@@ -2,7 +2,7 @@
 
 namespace RealEstate_Dapper_UI.ViewComponents.Default
 {
-    public class DefaultServicesViewComponent:ViewComponent
+    public class DefaultBottomGridViewComponent:ViewComponent
     {
         public async Task<IViewComponentResult> InvokeAsync()
         {
