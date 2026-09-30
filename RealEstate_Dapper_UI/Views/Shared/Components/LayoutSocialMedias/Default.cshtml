@@ -1,0 +1,13 @@
+﻿@model List<ResultSocialMediaDto>
+
+<ul class="footers-17_social">
+    <h4 class="d-inline">Bizi takip edin</h4>
+    @foreach (var item in Model)
+    {
+        <li>
+            <a href="@item.SocialMediaUrl" target="_blank" rel="noopener" aria-label="@item.Name">
+                <span class="@item.Icon"></span>
+            </a>
+        </li>
+    }
+</ul>

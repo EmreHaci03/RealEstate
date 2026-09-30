@@ -1,7 +1,7 @@
-﻿@model List<ResultClientDto>
+﻿@model List<ResultTestimonialDto>
 
 @{
-    int clientCount = Model?.Count ?? 0;
+    int TestimonialCount = Model?.Count ?? 0;
 }
 
 <style>
@@ -101,7 +101,7 @@
                                 <h3 class="title-big">Müşteri ilişkilerine değer veriyoruz</h3>
                             </div>
                             <div class="clients-info">
-                                <h3 class="title-big">@clientCount+</h3>
+                                <h3 class="title-big">@TestimonialCount+</h3>
                                 <p>Mutlu müşteri</p>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                             <div id="owl-demo1" class="owl-carousel owl-theme mt-4 pt-2 mb-4">
                                 @foreach (var item in Model)
                                 {
-                                    var parts = (item.Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                    var parts = (item.NameSurname ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
                                     var initials = string.Concat(parts.Take(2).Select(p => p[0])).ToUpper();
 
                                     <div class="item">
@@ -120,7 +120,7 @@
                                                 <div class="testi-des">
                                                     <div class="client-avatar">@initials</div>
                                                     <div class="peopl align-self">
-                                                        <h4>@item.Name</h4>
+                                                        <h4>@item.NameSurname</h4>
                                                         <p class="indentity">@item.Title</p>
                                                     </div>
                                                 </div>

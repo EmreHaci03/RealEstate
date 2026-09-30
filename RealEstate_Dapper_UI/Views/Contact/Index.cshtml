@@ -1,0 +1,101 @@
+﻿@model ResultAdressDto
+@{
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+}
+
+<section class="w3l-contact-7 pt-5" id="contact">
+    <div class="contacts-9 pt-lg-5 pt-md-4">
+        <div class="container">
+            <div class="top-map">
+                <div class="row map-content-9">
+                    <div class="col-lg-8">
+                        <div class="contact-form">
+                            <h5 class="mb-2">Bize ulaşın</h5>
+                            <p class="mb-4">E-posta adresiniz yayınlanmayacaktır. Zorunlu alanlar * ile işaretlenmiştir.</p>
+
+                            @if (TempData["ContactSuccess"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span class="fa fa-check-circle mr-2"></span>
+                                    @TempData["ContactSuccess"]
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Kapat">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+
+                            @if (TempData["ContactError"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <span class="fa fa-exclamation-circle mr-2"></span>
+                                    @TempData["ContactError"]
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Kapat">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            }
+
+                            <form asp-controller="Contact" asp-action="CreateContact" method="post" class="">
+                                <div class="form-grid">
+                                    <div class="input-field">
+                                        <input type="text" name="Name" id="Name" placeholder="Adınız Soyadınız *"
+                                               required>
+                                    </div>
+                                    <div class="input-field">
+                                        <input type="email" name="Mail" id="Mail" placeholder="E-posta *"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="input-field mt-4">
+                                    <input type="text" name="Subject" id="Subject" placeholder="Konu *"
+                                           required>
+                                </div>
+                                <div class="input-field mt-4">
+                                    <textarea name="Message" id="Message" placeholder="Mesajınız *" required></textarea>
+                                </div>
+                                <input type="checkbox" id="saveInfo"> <label for="saveInfo">
+                                    Bir sonraki sefer için adımı ve e-posta adresimi bu tarayıcıda kaydet
+                                </label>
+                                <button type="submit" class="btn btn-primary btn-style mt-3">Gönder</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 cont-details">
+                        @if (Model != null)
+                        {
+                            <address>
+                                <h5 class="">@Model.AdressTitle1</h5>
+                                <p>
+                                    <span class="fa fa-map-marker"></span> @Model.Description
+                                </p>
+
+                                <h5 class="mt-4 pt-lg-3">@Model.AdressTitle2</h5>
+                                <p>
+                                    <span class="fa fa-mobile"></span> <strong>Cep :</strong>
+                                    <a href="tel:@Model.Phone1?.Replace(" ", "")"> @Model.Phone1</a>
+                                </p>
+
+                                <p>
+                                    <span class="fa fa-phone"></span> <strong>Tel :</strong>
+                                    <a href="tel:@Model.Phone2?.Replace(" ", "")"> @Model.Phone2</a>
+                                </p>
+
+                                <p>
+                                    <span class="fa fa-envelope"></span> <strong>E-posta :</strong>
+                                    <a href="mailto:@Model.Email"> @Model.Email</a>
+                                </p>
+                            </address>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (Model != null && !string.IsNullOrEmpty(Model.Location))
+        {
+            <div class="map mt-5">
+                <iframe src="@Model.Location"
+                        frameborder="0" style="border:0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        }
+    </div>
+</section>

@@ -21,6 +21,12 @@ namespace RealEstate_Dapper_Api.Controllers
             var values = await _clientRepository.GetAllAsync();
             return Ok(values);  
         }
+        [HttpGet("GetActiveClients")]
+        public async Task<IActionResult> GetActiveClient()
+        {
+            var values=await _clientRepository.GetActiveClientsAsync();
+            return Ok(values);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetClientById(int id)
         {

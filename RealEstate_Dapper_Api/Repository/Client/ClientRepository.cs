@@ -15,13 +15,13 @@ namespace RealEstate_Dapper_Api.Repository.Client
 
         public async Task CreateAsync(CreateClientDto dto)
         {
-            string query = "insert into Client(Name,Title,Comment) values(@Name,@Title,@Comment)";
+            string query = "insert into Client(Name,Title,Comment,Status) values(@Name,@Title,@Comment,@Status)";
             var parameters = new DynamicParameters();
             parameters.Add("@Name",dto.Name);
             parameters.Add("@Title", dto.Title);
             parameters.Add("@Comment", dto.Comment);
-            
-            using(var connection = _context.CreateConnection())
+            parameters.Add("@Status", dto.Status);
+            using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
             }
@@ -37,6 +37,17 @@ namespace RealEstate_Dapper_Api.Repository.Client
             {
                 await connection.ExecuteAsync(query, parameters);
 
+            }
+        }
+
+        public async Task<List<ResultClientDto>> GetActiveClientsAsync()
+        {
+            string query = "Select * From Client Where Status = 1";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var values = await connection.QueryAsync<ResultClientDto>(query);
+                return values.ToList();
             }
         }
 
@@ -65,13 +76,13 @@ namespace RealEstate_Dapper_Api.Repository.Client
 
         public async Task UpdateAsync(UpdateClientDto dto)
         {
-            string query = "Update Client Set Name=@Name,Title=@Title,Comment=@Comment Where ClientId=@id";
+            string query = "Update Client Set Name=@Name,Title=@Title,Comment=@Comment , Status=@Status Where ClientId=@id";
             var parameters = new DynamicParameters();
             parameters.Add("@Name", dto.Name);
             parameters.Add("@id", dto.ClientId);
             parameters.Add("@Title", dto.Title);
             parameters.Add("@Comment", dto.Comment);
-
+            parameters.Add("@Status", dto.Status);
             using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
