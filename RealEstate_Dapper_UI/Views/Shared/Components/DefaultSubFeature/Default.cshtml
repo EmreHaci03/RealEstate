@@ -1,34 +1,20 @@
-﻿
+﻿@model List<ResultFeatureCardDto>
+
 <section class="w3l-bottom-grids py-5" id="steps-2">
     <div class="container py-lg-5 py-md-4 py-2">
         <div class="grids-area-hny main-cont-wthree-fea row">
-            <div class="col-lg-4 col-md-6 grids-feature">
-                <div class="area-box no-box-shadow text-left">
-                    <span class="fa fa-search-plus"></span>
-                    <h5>Hepsi tek yerde</h5>
-                    <h4><a href="#feature" class="title-head">Hayalinizdeki evi bulmanın en kolay yolu</a></h4>
-                    <p>Binlerce ilanı filtreleyin, karşılaştırın ve favorilerinize ekleyin.</p>
-                    <a href="#more" class="more">Ev ara <span class="fa fa-long-arrow-right"></span> </a>
+            @foreach (var item in Model.OrderByDescending(x=>x.FeatureCardId).Take(3))
+            {
+                <div class="col-lg-4 col-md-6 grids-feature mb-4">
+                    <div class="area-box no-box-shadow text-left">
+                        <span class="@item.Icon"></span>
+                        <h5>@item.SubTitle</h5>
+                        <h4><a href="@item.ButtonUrl" class="title-head">@item.Title</a></h4>
+                        <p>@item.Description</p>
+                        <a href="@item.ButtonUrl" class="more">@item.ButtonText <span class="fa fa-long-arrow-right"></span></a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-6 grids-feature mt-md-0 mt-4">
-                <div class="area-box no-box-shadow text-left">
-                    <span class="fa fa-user-o"></span>
-                    <h5>Danışmana bağlanın</h5>
-                    <h4><a href="#feature" class="title-head">Ücretsiz ve bağlayıcı olmayan randevu alın</a></h4>
-                    <p>Uzman danışmanlarımız sorularınızı yanıtlamak için hazır.</p>
-                    <a href="#more" class="more">Danışman bul <span class="fa fa-long-arrow-right"></span> </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 grids-feature mt-lg-0 mt-4">
-                <div class="area-box no-box-shadow text-left">
-                    <span class="fa fa-line-chart"></span>
-                    <h5>Ev değerleme</h5>
-                    <h4><a href="#feature" class="title-head">Mülkünüzün gerçek değerini öğrenin</a></h4>
-                    <p>Bölge verileriyle mülkünüz için hızlı bir değer tahmini alın.</p>
-                    <a href="#more" class="more">Bilgi gönder <span class="fa fa-long-arrow-right"></span> </a>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </section>

@@ -23,6 +23,13 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetProductWithCount")]
+        public async Task<IActionResult> GetProductWithCount()
+        {
+            var values = await productRepository.ResultProductWithCityCount();
+            return Ok(values);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {

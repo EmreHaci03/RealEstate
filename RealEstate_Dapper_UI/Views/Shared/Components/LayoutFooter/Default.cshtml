@@ -1,76 +1,253 @@
-﻿<section class="w3l-footers-20">
+﻿<style>
+    .w3l-footers-20 .footers20 {
+        position: relative;
+        padding: 80px 0 30px;
+    }
+
+        .w3l-footers-20 .footers20::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(90%, 1100px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(31, 111, 235, .5), transparent);
+        }
+
+    .w3l-footers-20 .grids-content {
+        gap: 24px;
+    }
+
+        .w3l-footers-20 .grids-content .column {
+            border: 1px solid rgba(127, 127, 127, .15);
+            border-radius: 20px;
+            padding: 30px 26px;
+            box-shadow: 0 10px 30px -18px rgba(15, 23, 42, .25);
+            transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+        }
+
+            .w3l-footers-20 .grids-content .column:hover {
+                transform: translateY(-4px);
+                border-color: rgba(31, 111, 235, .35);
+                box-shadow: 0 20px 40px -18px rgba(31, 111, 235, .35);
+            }
+
+    .w3l-footers-20 .column .link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #1f6feb, #0ea5e9);
+        color: #fff !important;
+        font-size: 21px;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 22px -10px rgba(31, 111, 235, .7);
+    }
+
+    .w3l-footers-20 .column .title-small {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: #1f6feb !important;
+        margin-bottom: 6px;
+    }
+
+    .w3l-footers-20 .column h4 {
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .w3l-footers-20 .btn-style.btn-primary {
+        background: linear-gradient(135deg, #1f6feb, #0ea5e9) !important;
+        border: none !important;
+        border-radius: 999px !important;
+        box-shadow: 0 10px 22px -10px rgba(31, 111, 235, .7);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .w3l-footers-20 .btn-style.btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 28px -12px rgba(31, 111, 235, .8);
+        }
+
+    .w3l-footers-20 .contact-phone {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 19px;
+        font-weight: 700;
+        transition: color .2s ease;
+    }
+
+    .w3l-footers-20 a:hover .contact-phone {
+        color: #1f6feb !important;
+    }
+
+    .w3l-footers-20 .subscribe-form .form-group {
+        display: flex;
+        gap: 6px;
+        padding: 5px;
+        border: 1px solid rgba(127, 127, 127, .2);
+        border-radius: 999px;
+    }
+
+    .w3l-footers-20 .subscribe-form input {
+        flex: 1;
+        min-width: 0;
+        border: none !important;
+        background: transparent !important;
+        padding: 10px 14px !important;
+        box-shadow: none !important;
+        outline: none;
+    }
+
+    .w3l-footers-20 .subscribe-form button {
+        flex-shrink: 0;
+        padding: 10px 20px !important;
+    }
+
+    .w3l-footers-20 .footers-17_social {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+        padding: 0;
+    }
+
+        .w3l-footers-20 .footers-17_social h4 {
+            margin: 0 6px 0 0 !important;
+            font-size: 15px;
+        }
+
+        .w3l-footers-20 .footers-17_social li {
+            list-style: none;
+            margin: 0 !important;
+        }
+
+            .w3l-footers-20 .footers-17_social li a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 1px solid rgba(127, 127, 127, .2);
+                transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease;
+            }
+
+                .w3l-footers-20 .footers-17_social li a:hover {
+                    background: linear-gradient(135deg, #1f6feb, #0ea5e9);
+                    border-color: transparent;
+                    color: #fff !important;
+                    transform: translateY(-3px);
+                }
+
+    .w3l-footers-20 .bottom-border {
+        margin-top: 50px;
+        padding-top: 24px;
+    }
+
+    .w3l-footers-20 .copy-footer-29 {
+        font-size: 14px;
+        opacity: .8;
+    }
+
+    #movetop {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #1f6feb, #0ea5e9);
+        color: #fff;
+        box-shadow: 0 12px 26px -10px rgba(31, 111, 235, .8);
+        transition: transform .2s ease;
+    }
+
+        #movetop:hover {
+            transform: translateY(-3px);
+        }
+</style>
+<section class="w3l-footers-20">
     <div class="footers20">
         <div class="container">
             <div class="footers20-content">
                 <div class="d-grid grid-col-4 grids-content">
                     <div class="column">
                         <a href="#url" class="link"><span class="fa fa-comments"></span></a>
-                        <a href="#url" class="title-small">Free consultation</a>
-                        <h4>Schedule a free consultation with our specialist.</h4>
-                        <a href="#buytheme" class="btn btn-style btn-primary">
-                            Schedule now
+                        <a href="#url" class="title-small">Ücretsiz danışmanlık</a>
+                        <h4>Uzmanlarımızla ücretsiz bir görüşme planlayın.</h4>
+                        <a href="#buytheme" class="btn btn-style btn-primary mt-3">
+                            Randevu al
                             <span class="fa fa-long-arrow-right ml-2"></span>
                         </a>
                     </div>
                     <div class="column">
                         <a href="#url" class="link"><span class="fa fa-phone"></span></a>
-                        <a href="#url" class="title-small">help desk</a>
-                        <h4>Do you have questions or want more infomation? Call Now</h4>
-                        <a href="tel:+1-2345-678-11">
+                        <a href="#url" class="title-small">Destek hattı</a>
+                        <h4>Sorunuz mu var ya da daha fazla bilgi mi istiyorsunuz? Hemen arayın.</h4>
+                        <a href="tel:+902120000000">
                             <p class="contact-phone mt-2">
-                                <span class="lnr lnr-phone-handset"></span> +1-2345-678-11
+                                <span class="fa fa-phone"></span> +90 (212) 000 00 00
                             </p>
                         </a>
                     </div>
                     <div class="column mt-lg-0 mt-md-5">
-                        <h4 class="mb-1">Signup for newsletter</h4>
-                        <p>and get latest news and updates</p>
-                        <form action="#" class="subscribe-form mt-4" method="post">
+                        <a href="#url" class="link"><span class="fa fa-envelope-o"></span></a>
+                        <h4 class="mb-1">Bültenimize abone olun</h4>
+                        <p>En yeni ilanlardan ve haberlerden ilk siz haberdar olun</p>
+                        <form asp-controller="Subscriber" asp-action="CreateSubscriber" class="subscribe-form mt-4" method="post">
                             <div class="form-group">
-                                <input type="email" name="subscribe" placeholder="Enter your email" required="">
-                                <button class="btn btn-style btn-primary">Subscribe</button>
+                                <input type="email" name="Email" placeholder="E-posta adresinizi girin" required>
+                                <button type="submit" class="btn btn-style btn-primary">Abone ol</button>
                             </div>
                         </form>
                         <ul class="footers-17_social">
-                            <h4 class="d-inline mr-4">Follow us</h4>
-                            <li><a href="#url" class="twitter"><span class="fa fa-twitter"></span></a></li>
-                            <li><a href="#url" class="facebook"><span class="fa fa-facebook"></span></a></li>
-                            <li><a href="#url" class="linkedin"><span class="fa fa-linkedin"></span></a></li>
-                            <li><a href="#url" class="instagram"><span class="fa fa-instagram"></span></a></li>
+                            <h4 class="d-inline">Bizi takip edin</h4>
+                            <li><a href="#url" class="twitter" aria-label="Twitter"><span class="fa fa-twitter"></span></a></li>
+                            <li><a href="#url" class="facebook" aria-label="Facebook"><span class="fa fa-facebook"></span></a></li>
+                            <li><a href="#url" class="linkedin" aria-label="LinkedIn"><span class="fa fa-linkedin"></span></a></li>
+                            <li><a href="#url" class="instagram" aria-label="Instagram"><span class="fa fa-instagram"></span></a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="d-grid grid-col-3 grids-content1 bottom-border">
                     <div class="columns copyright-grid align-self">
                         <p class="copy-footer-29">
-                            © 2020 Estate sale. All rights reserved | Designed by <a href="https://w3layouts.com">W3layouts</a>
+                            © @DateTime.Now.Year Emlak Satış. Tüm hakları saklıdır | Tasarım: <a href="https://w3layouts.com">W3layouts</a>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- move top -->
-    <button onclick="topFunction()" id="movetop" title="Go to top">
+    <!-- yukarı çık butonu -->
+    <button onclick="topFunction()" id="movetop" title="Yukarı çık">
         &#10548;
     </button>
-    <script>// When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function () {
-      scrollFunction()
-    };
+    <script>
+        // Sayfa 20px aşağı kaydırılınca butonu göster
+        window.onscroll = function () {
+            scrollFunction()
+        };
 
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("movetop").style.display = "block";
-      } else {
-        document.getElementById("movetop").style.display = "none";
-      }
-    }
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("movetop").style.display = "block";
+            } else {
+                document.getElementById("movetop").style.display = "none";
+            }
+        }
 
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }</script>
-    <!-- /move top -->
+        // Butona tıklanınca sayfanın en üstüne yumuşak şekilde çık
+        function topFunction() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    </script>
+    <!-- /yukarı çık butonu -->
 </section>

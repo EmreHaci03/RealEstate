@@ -88,6 +88,17 @@ namespace RealEstate_Dapper_Api.Repository.Product
             }
         }
 
+        public async Task<List<ResultProductCountByCityDto>> ResultProductWithCityCount()
+        {
+            string query = "select city,MAX(CoverImage) AS CoverImage, Count(*) AS ProductCount From Product \r\ngroup by City\r\norder by  Count(*) desc";
+            
+            using(var connection = _context.CreateConnection())
+            {
+                var values = await connection.QueryAsync<ResultProductCountByCityDto>(query);
+                return values.ToList();
+            }
+        }
+
         public async Task UpdateAsync(UpdateProductDto dto)
         {
             string query = "update Product Set Title=@Title, Price=@Price, CoverImage=@CoverImage, City=@City, District=@District, Adress=@Adress" +

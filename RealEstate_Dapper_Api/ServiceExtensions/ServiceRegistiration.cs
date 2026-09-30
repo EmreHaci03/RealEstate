@@ -1,10 +1,13 @@
 ﻿using RealEstate_Dapper_Api.Repository.BottomGrid;
 using RealEstate_Dapper_Api.Repository.Category;
+using RealEstate_Dapper_Api.Repository.Client;
 using RealEstate_Dapper_Api.Repository.Employee;
+using RealEstate_Dapper_Api.Repository.FeatureCardDto;
 using RealEstate_Dapper_Api.Repository.Product;
 using RealEstate_Dapper_Api.Repository.ProductDetail;
 using RealEstate_Dapper_Api.Repository.ProductDetailDto;
 using RealEstate_Dapper_Api.Repository.Service;
+using RealEstate_Dapper_Api.Repository.Subscriber;
 using RealEstate_Dapper_Api.Repository.WhoWeAre;
 
 namespace RealEstate_Dapper_Api.ServiceExtensions
@@ -20,6 +23,9 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IWhoWeAreRepository, WhoWeAreRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IBottomGridRepository, BottomGridRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IFeatureCardRepository, FeatureCardRepository>();
+            services.AddScoped<ISubscriberRepository, SubscriberRepository>();
             return services;
         }
     }

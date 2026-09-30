@@ -4,20 +4,42 @@
 
 <link rel="stylesheet" href="/starter/assets/css/custom.css">
 
-@await Component.InvokeAsync("DefaultFeature")
+@if (TempData["SubscribeSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <span class="fa fa-check-circle mr-2"></span>
+        @TempData["SubscribeSuccess"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Kapat">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@if (TempData["SubscribeError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <span class="fa fa-exclamation-circle mr-2"></span>
+        @TempData["SubscribeError"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Kapat">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@await Component.InvokeAsync("DefaultFeature") @*//*@
 
 @await Component.InvokeAsync("DefaultPopularProductList")
 
 @await Component.InvokeAsync("DefaultWhoWeAre")
 
 @await Component.InvokeAsync("DefaultBottomGrid")
- 
+
 @await Component.InvokeAsync("DefaultPopularLocations")
 
 @await Component.InvokeAsync("DefaultOurClients")
 
 @await Component.InvokeAsync("DefaultSubFeature")
 
-@await Component.InvokeAsync("DefaultDealOfTheDay")
+@await Component.InvokeAsync("DefaultDealOfTheDay")   @*//*@
 
-@await Component.InvokeAsync("DefaultBrand")
+@await Component.InvokeAsync("DefaultBrand")  
