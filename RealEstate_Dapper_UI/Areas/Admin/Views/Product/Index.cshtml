@@ -1,0 +1,475 @@
+﻿@using System.Globalization
+@model List<RealEstate_Dapper_UI.DTOS.ProductDtos.ResultProductWithDetailDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "İlanlar";
+
+    var tr = new CultureInfo("tr-TR");
+    var totalCount = Model.Count;
+    var cityCount = Model.Select(x => x.City).Distinct().Count();
+    var employeeCount = Model.Where(x => !string.IsNullOrEmpty(x.EmployeeName)).Select(x => x.EmployeeName).Distinct().Count();
+}
+
+<style>
+    .prod-page .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .prod-page .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+        .prod-page .stat-icon.total {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .prod-page .stat-icon.city {
+            background: rgba(14, 165, 233, .12);
+            color: #0284c7;
+        }
+
+        .prod-page .stat-icon.employee {
+            background: rgba(245, 158, 11, .12);
+            color: #d97706;
+        }
+
+    .prod-page .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+    }
+
+    .prod-page .stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .prod-page .search-box {
+        position: relative;
+        max-width: 320px;
+        width: 100%;
+    }
+
+        .prod-page .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .prod-page .search-box input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .prod-page .prod-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .prod-page .prod-thumb {
+        width: 64px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--primary-soft);
+    }
+
+    .prod-page .prod-title {
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1.3;
+    }
+
+    .prod-page .prod-location {
+        font-size: .8rem;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .prod-page .category-pill {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 600;
+        background: var(--primary-soft);
+        color: var(--primary);
+        white-space: nowrap;
+    }
+
+    .prod-page .employee {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .prod-page .employee-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(245, 158, 11, .14);
+        color: #d97706;
+        display: grid;
+        place-items: center;
+        font-size: .78rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .prod-page .employee-empty {
+        color: var(--muted);
+        font-size: .85rem;
+        font-style: italic;
+    }
+
+    .prod-page .price {
+        font-weight: 700;
+        color: var(--text);
+        white-space: nowrap;
+    }
+
+    .prod-page .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all .15s ease;
+    }
+
+        .prod-page .action-btn.edit:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .prod-page .action-btn.delete:hover {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+            border-color: transparent;
+        }
+
+    .prod-page .row-id {
+        color: var(--muted);
+        font-size: .85rem;
+        font-weight: 500;
+    }
+
+    .prod-page .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .prod-page .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    /* Silme modalı */
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .delete-name {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+
+        .delete-modal .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4 prod-page">
+
+    <!-- Başlık -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İlanlar</h4>
+            <p class="mb-0" style="color: var(--muted);">Emlak ilanlarını buradan yönetebilirsiniz.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="CreateProduct" class="btn btn-primary px-4">
+            <i class="fa fa-plus me-2"></i>Yeni İlan
+        </a>
+    </div>
+
+    <!-- Özet kartları -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon total"><i class="fa fa-home"></i></div>
+                <div>
+                    <div class="stat-value">@totalCount</div>
+                    <div class="stat-label">Toplam ilan</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon city"><i class="fa fa-map-marker-alt"></i></div>
+                <div>
+                    <div class="stat-value">@cityCount</div>
+                    <div class="stat-label">Farklı şehir</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon employee"><i class="fa fa-user-tie"></i></div>
+                <div>
+                    <div class="stat-value">@employeeCount</div>
+                    <div class="stat-label">Danışman</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirimler -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <!-- Liste -->
+    <div class="bg-light rounded p-4">
+        @if (Model.Any())
+        {
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h6 class="mb-0">İlan Listesi</h6>
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="productSearch" class="form-control" placeholder="Başlık, şehir, kategori veya danışman ara..." />
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col" style="width: 70px;">#</th>
+                            <th scope="col">İlan</th>
+                            <th scope="col">Kategori</th>
+                            <th scope="col">Danışman</th>
+                            <th scope="col">Fiyat</th>
+                            <th scope="col" class="text-end" style="width: 120px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTable">
+                        @foreach (var item in Model)
+                        {
+                            var searchText = $"{item.Title} {item.City} {item.District} {item.CategoryName} {item.EmployeeName}".ToLower();
+
+                            var employeeParts = (item.EmployeeName ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var employeeInitials = string.Concat(employeeParts.Take(2).Select(p => p[0])).ToUpper();
+
+                            <tr data-search="@searchText">
+                                <td class="row-id">#@item.ProductId</td>
+                                <td>
+                                    <div class="prod-info">
+                                        <img class="prod-thumb" src="@item.CoverImage" alt="@item.Title" loading="lazy" />
+                                        <div>
+                                            <div class="prod-title">@item.Title</div>
+                                            <div class="prod-location">
+                                                <i class="fa fa-map-marker-alt me-1"></i>@item.District, @item.City
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-pill">@item.CategoryName</span></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.EmployeeName))
+                                    {
+                                        <div class="employee">
+                                            <div class="employee-avatar">@employeeInitials</div>
+                                            <span>@item.EmployeeName</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="employee-empty">Atanmadı</span>
+                                    }
+                                </td>
+                                <td class="price">₺@item.Price.ToString("N0", tr)</td>
+                                <td class="text-end">
+                                    <a asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@item.ProductId"
+                                       class="action-btn edit me-1" title="Düzenle">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+                                    <button type="button" class="action-btn delete" title="Sil"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-name="@item.Title"
+                                            data-url="@Url.Action("DeleteProduct", "Product", new { area = "Admin", id = item.ProductId })">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        <tr id="noResultRow" style="display: none;">
+                            <td colspan="6" class="text-center py-4" style="color: var(--muted);">
+                                <i class="fa fa-search me-2"></i>Aramanızla eşleşen ilan bulunamadı.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-home"></i></div>
+                <h5 class="fw-bold mb-1">Henüz ilan yok</h5>
+                <p class="mb-4" style="color: var(--muted);">İlk ilanı ekleyerek başlayın.</p>
+                <a asp-area="Admin" asp-controller="Product" asp-action="CreateProduct" class="btn btn-primary px-4">
+                    <i class="fa fa-plus me-2"></i>İlan Ekle
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteModalLabel">İlanı sil</h5>
+                <p class="delete-text">
+                    <span class="delete-name" id="deleteProductName"></span> ilanını silmek üzeresiniz.
+                    Bu işlem geri alınamaz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Silme modalı: tıklanan ilanın başlığını ve silme adresini modala aktar
+        var deleteModal = document.getElementById("deleteModal");
+        deleteModal.addEventListener("show.bs.modal", function (event) {
+            var button = event.relatedTarget;
+            document.getElementById("deleteProductName").textContent = "\"" + button.getAttribute("data-name") + "\"";
+            document.getElementById("deleteForm").setAttribute("action", button.getAttribute("data-url"));
+        });
+
+        // Canlı arama: başlık, şehir, ilçe, kategori ve danışmana göre
+        var searchInput = document.getElementById("productSearch");
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                var term = this.value.trim().toLocaleLowerCase("tr");
+                var rows = document.querySelectorAll("#productTable tr[data-search]");
+                var visibleCount = 0;
+
+                rows.forEach(function (row) {
+                    var match = row.getAttribute("data-search").toLocaleLowerCase("tr").includes(term);
+                    row.style.display = match ? "" : "none";
+                    if (match) visibleCount++;
+                });
+
+                document.getElementById("noResultRow").style.display = visibleCount === 0 ? "" : "none";
+            });
+        }
+    });
+</script>

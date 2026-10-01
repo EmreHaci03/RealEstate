@@ -1,0 +1,529 @@
+﻿@model List<ResultSubscriberDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Bülten Aboneleri";
+
+    var totalCount = Model.Count;
+    var activeCount = Model.Count(x => x.IsActive);
+    var passiveCount = totalCount - activeCount;
+}
+
+<style>
+    .sub-page .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 100%;
+    }
+
+    .sub-page .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+        .sub-page .stat-icon.total {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .sub-page .stat-icon.active {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+        }
+
+        .sub-page .stat-icon.passive {
+            background: rgba(107, 114, 128, .12);
+            color: #6b7280;
+        }
+
+    .sub-page .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+    }
+
+    .sub-page .stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .sub-page .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .sub-page .search-box {
+        position: relative;
+        max-width: 300px;
+        width: 100%;
+    }
+
+        .sub-page .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .sub-page .search-box input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .sub-page .filter-group {
+        display: inline-flex;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 3px;
+    }
+
+    .sub-page .filter-btn {
+        border: 0;
+        background: transparent;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: .85rem;
+        font-weight: 500;
+        color: var(--muted);
+    }
+
+        .sub-page .filter-btn.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+    .sub-page .sub-email {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        color: var(--text);
+        word-break: break-all;
+    }
+
+    .sub-page .sub-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: .9rem;
+        flex-shrink: 0;
+        text-transform: uppercase;
+    }
+
+    .sub-page .sub-date {
+        font-size: .88rem;
+        color: var(--text);
+    }
+
+        .sub-page .sub-date small {
+            display: block;
+            color: var(--muted);
+            font-size: .76rem;
+        }
+
+    .sub-page .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+        .sub-page .status-pill::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .sub-page .status-pill.active {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+        }
+
+        .sub-page .status-pill.passive {
+            background: rgba(107, 114, 128, .12);
+            color: #6b7280;
+        }
+
+    .sub-page .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all .15s ease;
+    }
+
+        .sub-page .action-btn.to-passive:hover {
+            background: rgba(245, 158, 11, .12);
+            color: #d97706;
+            border-color: transparent;
+        }
+
+        .sub-page .action-btn.to-active:hover {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+            border-color: transparent;
+        }
+
+        .sub-page .action-btn.delete:hover {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+            border-color: transparent;
+        }
+
+    .sub-page .row-id {
+        color: var(--muted);
+        font-size: .85rem;
+        font-weight: 500;
+    }
+
+    .sub-page .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .sub-page .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .delete-name {
+        color: var(--text);
+        font-weight: 600;
+        word-break: break-all;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+
+        .delete-modal .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4 sub-page">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Bülten Aboneleri</h4>
+            <p class="mb-0" style="color: var(--muted);">Footer'daki bülten formundan abone olan e-posta adreslerini buradan yönetebilirsiniz.</p>
+        </div>
+        @if (Model.Any(x => x.IsActive))
+        {
+            <button type="button" class="btn btn-outline-primary px-4" id="copyEmailsBtn">
+                <i class="fa fa-copy me-2"></i>Aktif E-postaları Kopyala
+            </button>
+        }
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon total"><i class="fa fa-users"></i></div>
+                <div><div class="stat-value">@totalCount</div><div class="stat-label">Toplam abone</div></div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon active"><i class="fa fa-check-circle"></i></div>
+                <div><div class="stat-value">@activeCount</div><div class="stat-label">Aktif</div></div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon passive"><i class="fa fa-pause-circle"></i></div>
+                <div><div class="stat-value">@passiveCount</div><div class="stat-label">Pasif</div></div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="bg-light rounded p-4">
+        @if (Model.Any())
+        {
+            <div class="toolbar">
+                <div class="filter-group" role="group" aria-label="Duruma göre filtrele">
+                    <button type="button" class="filter-btn active" data-filter="all">Tümü</button>
+                    <button type="button" class="filter-btn" data-filter="active">Aktif</button>
+                    <button type="button" class="filter-btn" data-filter="passive">Pasif</button>
+                </div>
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="subscriberSearch" class="form-control" placeholder="E-posta ara..." />
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col" style="width: 70px;">#</th>
+                            <th scope="col">E-posta</th>
+                            <th scope="col">Abonelik Tarihi</th>
+                            <th scope="col">Durum</th>
+                            <th scope="col" class="text-end" style="width: 120px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscriberTable">
+                        @foreach (var item in Model.OrderByDescending(x => x.DateTime))
+                        {
+                            var initial = string.IsNullOrEmpty(item.Email) ? "?" : item.Email.Substring(0, 1);
+
+                            <tr data-search="@item.Email?.ToLower()" data-status="@(item.IsActive ? "active" : "passive")">
+                                <td class="row-id">#@item.SubscriberId</td>
+                                <td>
+                                    <div class="sub-email">
+                                        <div class="sub-avatar">@initial</div>
+                                        @item.Email
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="sub-date">
+                                        @item.DateTime.ToString("dd.MM.yyyy")
+                                        <small>@item.DateTime.ToString("HH:mm")</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="status-pill active">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-pill passive">Pasif</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <form asp-area="Admin" asp-controller="Subscriber" asp-action="ChangeSubscriberStatus"
+                                          asp-route-id="@item.SubscriberId" asp-route-isActive="@(!item.IsActive)"
+                                          method="post" class="d-inline">
+                                        @if (item.IsActive)
+                                        {
+                                            <button type="submit" class="action-btn to-passive me-1" title="Pasif yap">
+                                                <i class="fa fa-pause"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="action-btn to-active me-1" title="Aktif yap">
+                                                <i class="fa fa-play"></i>
+                                            </button>
+                                        }
+                                    </form>
+                                    <button type="button" class="action-btn delete" title="Sil"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-name="@item.Email"
+                                            data-url="@Url.Action("DeleteSubscriber", "Subscriber", new { area = "Admin", id = item.SubscriberId })">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        <tr id="noResultRow" style="display: none;">
+                            <td colspan="5" class="text-center py-4" style="color: var(--muted);">
+                                <i class="fa fa-search me-2"></i>Eşleşen abone bulunamadı.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-paper-plane"></i></div>
+                <h5 class="fw-bold mb-1">Henüz abone yok</h5>
+                <p class="mb-0" style="color: var(--muted);">Footer'daki bülten formundan abone olanlar burada görünecek.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-user-minus"></i></div>
+                <h5 id="deleteModalLabel">Aboneyi sil</h5>
+                <p class="delete-text">
+                    <span class="delete-name" id="deleteSubscriberEmail"></span> adresini abone listesinden silmek üzeresiniz.
+                    Bu işlem geri alınamaz. Sadece bülten göndermeyi durdurmak istiyorsanız aboneyi pasif yapabilirsiniz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Silme modalı
+        document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
+            var button = event.relatedTarget;
+            document.getElementById("deleteSubscriberEmail").textContent = button.getAttribute("data-name");
+            document.getElementById("deleteForm").setAttribute("action", button.getAttribute("data-url"));
+        });
+
+        // Arama + durum filtresi
+        var searchInput = document.getElementById("subscriberSearch");
+        var filterButtons = document.querySelectorAll(".filter-btn");
+        var currentFilter = "all";
+
+        function applyFilters() {
+            var term = searchInput ? searchInput.value.trim().toLocaleLowerCase("tr") : "";
+            var rows = document.querySelectorAll("#subscriberTable tr[data-search]");
+            var visibleCount = 0;
+
+            rows.forEach(function (row) {
+                var matchSearch = row.getAttribute("data-search").includes(term);
+                var matchFilter = currentFilter === "all" || row.getAttribute("data-status") === currentFilter;
+                var visible = matchSearch && matchFilter;
+                row.style.display = visible ? "" : "none";
+                if (visible) visibleCount++;
+            });
+
+            var noResult = document.getElementById("noResultRow");
+            if (noResult) noResult.style.display = visibleCount === 0 ? "" : "none";
+        }
+
+        if (searchInput) searchInput.addEventListener("input", applyFilters);
+
+        filterButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                filterButtons.forEach(function (b) { b.classList.remove("active"); });
+                this.classList.add("active");
+                currentFilter = this.getAttribute("data-filter");
+                applyFilters();
+            });
+        });
+
+        // Aktif e-postaları panoya kopyala
+        var copyBtn = document.getElementById("copyEmailsBtn");
+        if (copyBtn) {
+            copyBtn.addEventListener("click", function () {
+                var emails = Array.from(document.querySelectorAll('#subscriberTable tr[data-status="active"]'))
+                    .map(function (row) { return row.getAttribute("data-search"); });
+
+                navigator.clipboard.writeText(emails.join(", ")).then(function () {
+                    copyBtn.innerHTML = '<i class="fa fa-check me-2"></i>' + emails.length + " adres kopyalandı";
+                    setTimeout(function () {
+                        copyBtn.innerHTML = '<i class="fa fa-copy me-2"></i>Aktif E-postaları Kopyala';
+                    }, 2500);
+                });
+            });
+        }
+    });
+</script>

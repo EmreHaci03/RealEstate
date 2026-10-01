@@ -1,0 +1,245 @@
+﻿@model CreateEmployeeDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Yeni Danışman";
+}
+
+<style>
+    .emp-preview-label {
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .emp-preview-card {
+        position: sticky;
+        top: 90px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        text-align: center;
+        box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25);
+    }
+
+    .emp-preview-cover {
+        height: 84px;
+        background: linear-gradient(135deg, var(--primary), #818cf8);
+    }
+
+    .emp-preview-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        margin: -48px auto 0;
+        border: 4px solid var(--surface);
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 1.6rem;
+        font-weight: 700;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .emp-preview-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+    .emp-preview-body {
+        padding: 14px 22px 22px;
+    }
+
+    .emp-preview-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .emp-preview-title {
+        font-size: .88rem;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .emp-preview-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 600;
+        margin-top: 10px;
+        background: rgba(16, 185, 129, .12);
+        color: #059669;
+    }
+
+        .emp-preview-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .emp-preview-contact {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        text-align: left;
+    }
+
+        .emp-preview-contact div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: .86rem;
+            color: var(--text);
+            word-break: break-all;
+        }
+
+            .emp-preview-contact div + div {
+                margin-top: 10px;
+            }
+
+        .emp-preview-contact i {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Yeni Danışman</h4>
+            <p class="mb-0" style="color: var(--muted);">Danışman bilgilerini doldurun. Yeni danışmanlar aktif olarak eklenir.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="bg-light rounded p-4 h-100">
+                <h6 class="mb-4">Danışman Bilgileri</h6>
+
+                <form asp-area="Admin" asp-controller="Employee" asp-action="CreateEmployee" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label">Ad Soyad</label>
+                            <input asp-for="Name" class="form-control" data-preview="name" placeholder="Örn: Ayşe Demir" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Title" class="form-label">Unvan</label>
+                            <input asp-for="Title" class="form-control" data-preview="title" placeholder="Örn: Kıdemli Emlak Danışmanı" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Mail" class="form-label">E-posta</label>
+                            <input asp-for="Mail" type="email" class="form-control" data-preview="mail" placeholder="ornek@site.com" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                            <input asp-for="PhoneNumber" type="tel" class="form-control" data-preview="phone" placeholder="+90 (500) 000 00 00" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="ImageUrl" class="form-label">Fotoğraf (URL)</label>
+                            <input asp-for="ImageUrl" class="form-control" data-preview="image" placeholder="https://..." />
+                            <div class="form-text">Boş bırakılırsa ad soyadın baş harfleri gösterilir.</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-plus me-2"></i>Danışmanı Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="emp-preview-label"><i class="fa fa-eye me-1"></i>Canlı Önizleme</div>
+            <div class="emp-preview-card">
+                <div class="emp-preview-cover"></div>
+                <div class="emp-preview-avatar">
+                    <span id="pvInitials">?</span>
+                    <img id="pvImage" alt="Fotoğraf" style="display: none;" />
+                </div>
+                <div class="emp-preview-body">
+                    <div class="emp-preview-name" id="pvName">Ad Soyad</div>
+                    <div class="emp-preview-title" id="pvTitle">Unvan</div>
+                    <span class="emp-preview-status">Aktif</span>
+                    <div class="emp-preview-contact">
+                        <div><i class="fa fa-envelope"></i><span id="pvMail">E-posta adresi</span></div>
+                        <div><i class="fa fa-phone"></i><span id="pvPhone">Telefon numarası</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var field = function (name) { return document.querySelector('[data-preview="' + name + '"]'); };
+
+        function initials(name) {
+            var parts = name.trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return "?";
+            return parts.slice(0, 2).map(function (p) { return p.charAt(0); }).join("").toLocaleUpperCase("tr");
+        }
+
+        function update() {
+            var name = field("name").value.trim();
+            document.getElementById("pvName").textContent = name || "Ad Soyad";
+            document.getElementById("pvInitials").textContent = initials(name);
+            document.getElementById("pvTitle").textContent = field("title").value.trim() || "Unvan";
+            document.getElementById("pvMail").textContent = field("mail").value.trim() || "E-posta adresi";
+            document.getElementById("pvPhone").textContent = field("phone").value.trim() || "Telefon numarası";
+
+            var img = document.getElementById("pvImage");
+            var url = field("image").value.trim();
+            if (url) { img.src = url; img.style.display = ""; }
+            else { img.style.display = "none"; }
+        }
+
+        document.getElementById("pvImage").addEventListener("error", function () { this.style.display = "none"; });
+
+        document.querySelectorAll("[data-preview]").forEach(function (el) {
+            el.addEventListener("input", update);
+            el.addEventListener("change", update);
+        });
+
+        update();
+    });
+</script>

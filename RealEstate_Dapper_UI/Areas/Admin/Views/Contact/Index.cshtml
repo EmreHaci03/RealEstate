@@ -1,0 +1,432 @@
+﻿@model List<ResultContactDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Mesajlar";
+
+    var today = DateTime.Today;
+    var totalCount = Model.Count;
+    var todayCount = Model.Count(x => x.SendDate.Date == today);
+    var weekCount = Model.Count(x => x.SendDate.Date >= today.AddDays(-7));
+
+    string RelativeDate(DateTime date)
+    {
+        var diff = DateTime.Now - date;
+        if (diff.TotalMinutes < 1) return "Az önce";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes} dk önce";
+        if (date.Date == today) return date.ToString("HH:mm");
+        if (date.Date == today.AddDays(-1)) return "Dün";
+        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays} gün önce";
+        return date.ToString("dd.MM.yyyy");
+    }
+}
+
+<style>
+    .msg-page .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .msg-page .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+        .msg-page .stat-icon.total {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .msg-page .stat-icon.today {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+        }
+
+        .msg-page .stat-icon.week {
+            background: rgba(245, 158, 11, .12);
+            color: #d97706;
+        }
+
+    .msg-page .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+    }
+
+    .msg-page .stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .msg-page .search-box {
+        position: relative;
+        max-width: 320px;
+        width: 100%;
+    }
+
+        .msg-page .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .msg-page .search-box input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .msg-list {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--surface);
+    }
+
+    .msg-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+        text-decoration: none;
+        color: inherit;
+        transition: background .15s ease;
+        position: relative;
+    }
+
+        .msg-item + .msg-item {
+            border-top: 1px solid var(--line);
+        }
+
+        .msg-item:hover {
+            background: var(--primary-soft);
+        }
+
+    .msg-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: .9rem;
+        flex-shrink: 0;
+    }
+
+    .msg-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .msg-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .msg-name {
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .msg-date {
+        font-size: .78rem;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .msg-subject {
+        font-size: .9rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .msg-snippet {
+        font-size: .85rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .msg-delete {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        opacity: 0;
+        transition: all .15s ease;
+    }
+
+    .msg-item:hover .msg-delete {
+        opacity: 1;
+    }
+
+    .msg-delete:hover {
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        border-color: transparent;
+    }
+
+    .msg-page .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .msg-page .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .delete-name {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4 msg-page">
+
+    <div class="mb-4">
+        <h4 class="mb-1 fw-bold">Mesajlar</h4>
+        <p class="mb-0" style="color: var(--muted);">İletişim formundan gelen mesajları buradan görüntüleyebilirsiniz.</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon total"><i class="fa fa-envelope"></i></div>
+                <div>
+                    <div class="stat-value">@totalCount</div>
+                    <div class="stat-label">Toplam mesaj</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon today"><i class="fa fa-calendar-day"></i></div>
+                <div>
+                    <div class="stat-value">@todayCount</div>
+                    <div class="stat-label">Bugün gelen</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon week"><i class="fa fa-calendar-week"></i></div>
+                <div>
+                    <div class="stat-value">@weekCount</div>
+                    <div class="stat-label">Son 7 gün</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="bg-light rounded p-4">
+        @if (Model.Any())
+        {
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h6 class="mb-0">Gelen Kutusu</h6>
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="messageSearch" class="form-control" placeholder="Gönderen, konu veya e-posta ara..." />
+                </div>
+            </div>
+
+            <div class="msg-list" id="messageList">
+                @foreach (var item in Model.OrderByDescending(x => x.SendDate))
+                {
+                    var parts = (item.Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "?";
+                    var searchText = $"{item.Name} {item.Subject} {item.Mail} {item.Message}".ToLower();
+
+                    <a class="msg-item" data-search="@searchText"
+                       asp-area="Admin" asp-controller="Contact" asp-action="ContactDetail" asp-route-id="@item.ContactId">
+                        <div class="msg-avatar">@initials</div>
+                        <div class="msg-body">
+                            <div class="msg-top">
+                                <span class="msg-name">@item.Name</span>
+                                <span class="msg-date" title="@item.SendDate.ToString("dd.MM.yyyy HH:mm")">@RelativeDate(item.SendDate)</span>
+                            </div>
+                            <div class="msg-subject">@item.Subject</div>
+                            <div class="msg-snippet">@item.Message</div>
+                        </div>
+                        <button type="button" class="msg-delete" title="Sil"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-name="@item.Name"
+                                data-url="@Url.Action("DeleteContact", "Contact", new { area = "Admin", id = item.ContactId })"
+                                onclick="event.preventDefault();">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </a>
+                }
+                <div id="noResult" class="text-center py-4" style="display: none; color: var(--muted);">
+                    <i class="fa fa-search me-2"></i>Aramanızla eşleşen mesaj bulunamadı.
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-inbox"></i></div>
+                <h5 class="fw-bold mb-1">Gelen kutusu boş</h5>
+                <p class="mb-0" style="color: var(--muted);">İletişim formundan gelen mesajlar burada görünecek.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteModalLabel">Mesajı sil</h5>
+                <p class="delete-text">
+                    <span class="delete-name" id="deleteSenderName"></span> tarafından gönderilen mesajı silmek üzeresiniz.
+                    Bu işlem geri alınamaz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
+            var button = event.relatedTarget;
+            document.getElementById("deleteSenderName").textContent = "\"" + button.getAttribute("data-name") + "\"";
+            document.getElementById("deleteForm").setAttribute("action", button.getAttribute("data-url"));
+        });
+
+        var searchInput = document.getElementById("messageSearch");
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                var term = this.value.trim().toLocaleLowerCase("tr");
+                var items = document.querySelectorAll("#messageList .msg-item");
+                var visibleCount = 0;
+
+                items.forEach(function (item) {
+                    var match = item.getAttribute("data-search").toLocaleLowerCase("tr").includes(term);
+                    item.style.display = match ? "" : "none";
+                    if (match) visibleCount++;
+                });
+
+                document.getElementById("noResult").style.display = visibleCount === 0 ? "" : "none";
+            });
+        }
+    });
+</script>

@@ -1,0 +1,312 @@
+﻿
+<head>
+    <meta charset="utf-8">
+    <title>DASHMIN - Bootstrap Admin Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="~/dashmin-1.0.0/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/dashmin-1.0.0/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/dashmin-1.0.0/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/dashmin-1.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="~/dashmin-1.0.0/css/style.css" rel="stylesheet">
+
+    <!-- 2026 görünüm: mevcut stillerin üzerine yazar, yapıya dokunmaz -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-soft: rgba(79, 70, 229, .10);
+            --page-bg: #f5f6fa;
+            --surface: #ffffff;
+            --line: #e8e9f0;
+            --muted: #6b7280;
+            --text: #1f2937;
+            --radius: 14px;
+        }
+
+        body {
+            font-family: "Inter", system-ui, "Segoe UI", sans-serif;
+            color: var(--text);
+            background: var(--page-bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container-xxl {
+            max-width: 100%;
+            background: var(--page-bg) !important;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text);
+            letter-spacing: -.01em;
+        }
+
+        .text-primary {
+            color: var(--primary) !important;
+        }
+
+        a {
+            color: var(--primary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--line);
+        }
+
+            .sidebar .navbar {
+                background: transparent !important;
+            }
+
+            .sidebar .navbar-brand h3 {
+                font-weight: 700;
+                font-size: 1.35rem;
+            }
+
+            .sidebar .navbar-nav {
+                padding: 0 .75rem;
+            }
+
+            .sidebar .navbar .navbar-nav .nav-link {
+                color: var(--muted);
+                font-weight: 500;
+                font-size: .93rem;
+                padding: .65rem 1rem;
+                margin-bottom: 2px;
+                border: 0;
+                border-radius: 10px;
+                transition: background .15s, color .15s;
+            }
+
+                .sidebar .navbar .navbar-nav .nav-link i {
+                    width: auto;
+                    height: auto;
+                    background: transparent !important;
+                    color: inherit;
+                    border-radius: 0;
+                    margin-right: .6rem !important;
+                }
+
+                .sidebar .navbar .navbar-nav .nav-link:hover,
+                .sidebar .navbar .navbar-nav .nav-link.active {
+                    background: var(--primary-soft);
+                    color: var(--primary);
+                    border: 0;
+                }
+
+                .sidebar .navbar .navbar-nav .nav-link.active {
+                    font-weight: 600;
+                }
+
+            .sidebar .navbar .dropdown-item {
+                padding-left: 3rem;
+                border-radius: 8px;
+                color: var(--muted);
+                font-size: .88rem;
+            }
+
+                .sidebar .navbar .dropdown-item:hover {
+                    background: var(--primary-soft);
+                    color: var(--primary);
+                }
+
+        /* Üst bar */
+        .content .navbar {
+            background: rgba(245, 246, 250, .8) !important;
+            backdrop-filter: saturate(180%) blur(12px);
+            border-bottom: 1px solid var(--line);
+            height: 68px;
+        }
+
+            .content .navbar .sidebar-toggler,
+            .content .navbar .navbar-nav .nav-link i {
+                background: transparent !important;
+                color: var(--text);
+                border-radius: 10px;
+            }
+
+                .content .navbar .sidebar-toggler:hover {
+                    background: var(--primary-soft) !important;
+                }
+
+            .content .navbar .navbar-nav .nav-link {
+                color: var(--text);
+                font-weight: 500;
+                font-size: .9rem;
+            }
+
+            .content .navbar form input {
+                background: var(--surface);
+                border: 1px solid var(--line) !important;
+                border-radius: 10px;
+                height: 40px;
+                min-width: 280px;
+            }
+
+                .content .navbar form input:focus {
+                    border-color: var(--primary) !important;
+                    box-shadow: 0 0 0 3px var(--primary-soft);
+                }
+
+        /* Dropdown menüler */
+        .dropdown-menu {
+            background: var(--surface) !important;
+            border: 1px solid var(--line) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 12px 32px rgba(16, 24, 40, .10);
+            padding: .4rem;
+        }
+
+        .content .navbar .dropdown-menu .dropdown-item {
+            border-radius: 8px;
+            padding: .55rem .75rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-soft);
+        }
+
+        .dropdown-divider {
+            border-color: var(--line);
+            opacity: 1;
+            margin: .3rem 0;
+        }
+
+        /* Kartlar (şablondaki bg-light kutular) */
+        .content .bg-light {
+            background: var(--surface) !important;
+            border: 1px solid var(--line);
+            border-radius: var(--radius) !important;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+        }
+
+        .content .navbar.bg-light {
+            border-radius: 0 !important;
+            border-width: 0 0 1px 0;
+            box-shadow: none;
+        }
+
+        .content .bg-light h6 {
+            font-weight: 600;
+        }
+
+        .content .bg-light p {
+            color: var(--muted);
+            font-size: .88rem;
+            font-weight: 500;
+        }
+
+        .content .bg-light .fa-3x {
+            font-size: 1.3rem;
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--primary-soft);
+        }
+
+        /* Tablo */
+        .table {
+            --bs-table-bg: transparent;
+        }
+
+        .table-bordered > :not(caption) > * > * {
+            border-width: 0 0 1px 0;
+        }
+
+        .table-bordered > :not(caption) > * {
+            border-width: 0;
+        }
+
+        .table thead th {
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--muted) !important;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding-top: .85rem;
+            padding-bottom: .85rem;
+            border-color: var(--line);
+        }
+
+        .table tr.text-dark {
+            color: var(--muted) !important;
+        }
+
+        .table-hover > tbody > tr:hover > * {
+            --bs-table-bg-state: var(--primary-soft);
+        }
+
+        /* Butonlar ve formlar */
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+            .btn-primary:hover, .btn-primary:focus {
+                background: #4338ca;
+                border-color: #4338ca;
+            }
+
+        .btn-sm {
+            border-radius: 8px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border-color: var(--line);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px var(--primary-soft);
+            }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .back-to-top {
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, .3);
+        }
+
+        /* Footer */
+        .content .bg-light.rounded-top {
+            border-radius: var(--radius) var(--radius) 0 0 !important;
+            color: var(--muted);
+            font-size: .88rem;
+        }
+
+        /* Spinner */
+        #spinner {
+            background: var(--page-bg) !important;
+        }
+    </style>
+</head>

@@ -1,0 +1,234 @@
+﻿@model UpdateAdressDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "İletişim Bilgilerini Güncelle";
+}
+
+<style>
+    .adr-preview-label {
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .adr-preview {
+        position: sticky;
+        top: 90px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25);
+    }
+
+    .adr-preview-body {
+        padding: 22px;
+    }
+
+    .adr-preview h6 {
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 10px;
+    }
+
+    .adr-preview-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: .86rem;
+        color: var(--text);
+        margin-bottom: 10px;
+        word-break: break-word;
+    }
+
+        .adr-preview-row i {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            font-size: .8rem;
+        }
+
+        .adr-preview-row strong {
+            color: var(--muted);
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+    .adr-preview-divider {
+        height: 1px;
+        background: var(--line);
+        margin: 16px 0;
+    }
+
+    .adr-preview-map {
+        height: 180px;
+        background: var(--primary-soft);
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        border-top: 1px solid var(--line);
+    }
+
+        .adr-preview-map iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+    .section-title {
+        font-size: .8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin: 8px 0 4px;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İletişim Bilgilerini Güncelle</h4>
+            <p class="mb-0" style="color: var(--muted);">Değişiklikleri sağda, iletişim sayfasındaki görünümüyle anında görün.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Adress" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Geri Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-light rounded p-4 h-100">
+                <form asp-area="Admin" asp-controller="Adress" asp-action="UpdateAdress" method="post">
+                    <input type="hidden" asp-for="AdressId" />
+
+                    <div class="row g-3">
+
+                        <div class="col-12"><div class="section-title">Adres</div></div>
+
+                        <div class="col-12">
+                            <label asp-for="AdressTitle1" class="form-label">Adres Başlığı</label>
+                            <input asp-for="AdressTitle1" class="form-control" data-preview="title1" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label">Açık Adres</label>
+                            <textarea asp-for="Description" class="form-control" rows="2" data-preview="desc" required></textarea>
+                        </div>
+
+                        <div class="col-12"><div class="section-title">İletişim</div></div>
+
+                        <div class="col-12">
+                            <label asp-for="AdressTitle2" class="form-label">İletişim Başlığı</label>
+                            <input asp-for="AdressTitle2" class="form-control" data-preview="title2" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone1" class="form-label">Cep Telefonu</label>
+                            <input asp-for="Phone1" type="tel" class="form-control" data-preview="phone1" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone2" class="form-label">Sabit Telefon</label>
+                            <input asp-for="Phone2" type="tel" class="form-control" data-preview="phone2" />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label">E-posta</label>
+                            <input asp-for="Email" type="email" class="form-control" data-preview="email" required />
+                        </div>
+
+                        <div class="col-12"><div class="section-title">Harita</div></div>
+
+                        <div class="col-12">
+                            <label asp-for="Location" class="form-label">Harita Adresi (Embed URL)</label>
+                            <input asp-for="Location" class="form-control" data-preview="location" />
+                            <div class="form-text">Google Maps'te <strong>Paylaş → Harita yerleştir</strong> sekmesindeki <code>src</code> adresini yapıştırın.</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-save me-2"></i>Değişiklikleri Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="Adress" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="adr-preview-label"><i class="fa fa-eye me-1"></i>İletişim Sayfasında Böyle Görünecek</div>
+            <div class="adr-preview">
+                <div class="adr-preview-body">
+                    <h6 id="pvTitle1">Adres Başlığı</h6>
+                    <div class="adr-preview-row"><i class="fa fa-map-marker-alt"></i><span id="pvDesc">Açık adres</span></div>
+
+                    <div class="adr-preview-divider"></div>
+
+                    <h6 id="pvTitle2">İletişim Başlığı</h6>
+                    <div class="adr-preview-row"><i class="fa fa-mobile-alt"></i><span><strong>Cep:</strong><span id="pvPhone1">-</span></span></div>
+                    <div class="adr-preview-row" id="pvPhone2Row"><i class="fa fa-phone"></i><span><strong>Tel:</strong><span id="pvPhone2">-</span></span></div>
+                    <div class="adr-preview-row mb-0"><i class="fa fa-envelope"></i><span><strong>E-posta:</strong><span id="pvEmail">-</span></span></div>
+                </div>
+                <div class="adr-preview-map" id="pvMap">
+                    <div><i class="fa fa-map fa-2x"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var field = function (name) { return document.querySelector('[data-preview="' + name + '"]'); };
+        var mapTimer;
+
+        function update() {
+            document.getElementById("pvTitle1").textContent = field("title1").value.trim() || "Adres Başlığı";
+            document.getElementById("pvDesc").textContent = field("desc").value.trim() || "Açık adres";
+            document.getElementById("pvTitle2").textContent = field("title2").value.trim() || "İletişim Başlığı";
+            document.getElementById("pvPhone1").textContent = field("phone1").value.trim() || "-";
+            document.getElementById("pvEmail").textContent = field("email").value.trim() || "-";
+
+            var phone2 = field("phone2").value.trim();
+            document.getElementById("pvPhone2").textContent = phone2;
+            document.getElementById("pvPhone2Row").style.display = phone2 ? "" : "none";
+        }
+
+        function updateMap() {
+            clearTimeout(mapTimer);
+            mapTimer = setTimeout(function () {
+                var url = field("location").value.trim();
+                var map = document.getElementById("pvMap");
+                map.innerHTML = url.startsWith("https://")
+                    ? '<iframe src="' + url.replace(/"/g, "") + '" loading="lazy"></iframe>'
+                    : '<div><i class="fa fa-map fa-2x"></i></div>';
+            }, 600);
+        }
+
+        document.querySelectorAll("[data-preview]").forEach(function (el) {
+            el.addEventListener("input", el.getAttribute("data-preview") === "location" ? updateMap : update);
+        });
+
+        update();
+        updateMap();
+    });
+</script>

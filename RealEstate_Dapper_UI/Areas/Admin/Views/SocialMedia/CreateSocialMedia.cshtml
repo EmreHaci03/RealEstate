@@ -1,0 +1,166 @@
+﻿@model CreateSocialMediaDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Yeni Sosyal Medya Hesabı";
+}
+
+<style>
+    .sm-preview-label { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 10px; }
+    .sm-preview { position: sticky; top: 90px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25); }
+    .sm-preview-card { display: flex; align-items: center; gap: 16px; padding: 22px; }
+    .sm-preview-icon { width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; font-size: 26px; color: #fff; background: var(--primary); flex-shrink: 0; transition: background .2s ease; }
+    .sm-preview-name { font-weight: 700; color: var(--text); font-size: 1.05rem; }
+    .sm-preview-url { font-size: .82rem; color: var(--muted); word-break: break-all; margin-top: 2px; }
+    .sm-preview-footer { border-top: 1px solid var(--line); padding: 16px 22px; background: var(--page-bg); display: flex; align-items: center; gap: 10px; }
+    .sm-preview-footer span { font-size: .85rem; font-weight: 600; color: var(--text); }
+    .sm-preview-footer i.round { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--primary); transition: background .2s ease; }
+
+    .platform-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+    .platform-option { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: .85rem; font-weight: 500; cursor: pointer; transition: all .15s ease; }
+    .platform-option i { font-size: 16px; width: 18px; text-align: center; }
+    .platform-option:hover { border-color: var(--primary); }
+    .platform-option.selected { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+    .section-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 8px 0 4px; }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Yeni Sosyal Medya Hesabı</h4>
+            <p class="mb-0" style="color: var(--muted);">Footer'da görünecek yeni bir hesap ekleyin.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="SocialMedia" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-light rounded p-4 h-100">
+                <form asp-area="Admin" asp-controller="SocialMedia" asp-action="CreateSocialMedia" method="post">
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <div class="section-title">Platform Seçin</div>
+                            <div class="form-text mb-2">Seçince ad, ikon ve adres alanları otomatik doldurulur.</div>
+                            <div class="platform-picker">
+                                <button type="button" class="platform-option" data-name="Instagram" data-icon="fa fa-instagram" data-url="https://www.instagram.com/"><i class="fab fa-instagram"></i>Instagram</button>
+                                <button type="button" class="platform-option" data-name="Facebook" data-icon="fa fa-facebook" data-url="https://www.facebook.com/"><i class="fab fa-facebook"></i>Facebook</button>
+                                <button type="button" class="platform-option" data-name="Twitter" data-icon="fa fa-twitter" data-url="https://x.com/"><i class="fab fa-twitter"></i>Twitter</button>
+                                <button type="button" class="platform-option" data-name="LinkedIn" data-icon="fa fa-linkedin" data-url="https://www.linkedin.com/"><i class="fab fa-linkedin"></i>LinkedIn</button>
+                                <button type="button" class="platform-option" data-name="YouTube" data-icon="fa fa-youtube-play" data-url="https://www.youtube.com/"><i class="fab fa-youtube"></i>YouTube</button>
+                                <button type="button" class="platform-option" data-name="WhatsApp" data-icon="fa fa-whatsapp" data-url="https://wa.me/"><i class="fab fa-whatsapp"></i>WhatsApp</button>
+                                <button type="button" class="platform-option" data-name="Pinterest" data-icon="fa fa-pinterest" data-url="https://www.pinterest.com/"><i class="fab fa-pinterest"></i>Pinterest</button>
+                            </div>
+                        </div>
+
+                        <div class="col-12"><div class="section-title">Hesap Bilgileri</div></div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label">Platform Adı</label>
+                            <input asp-for="Name" class="form-control" data-preview="name" placeholder="Örn: Instagram" maxlength="50" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Icon" class="form-label">İkon Sınıfı</label>
+                            <input asp-for="Icon" class="form-control" data-preview="icon" placeholder="Örn: fa fa-instagram" maxlength="50" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="SocialMediaUrl" class="form-label">Profil Adresi</label>
+                            <input asp-for="SocialMediaUrl" type="url" class="form-control" data-preview="url" placeholder="https://www.instagram.com/kullaniciadi" maxlength="250" required />
+                            <div class="form-text">Adresin sonuna kendi kullanıcı adınızı eklemeyi unutmayın.</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-plus me-2"></i>Hesabı Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="SocialMedia" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="sm-preview-label"><i class="fa fa-eye me-1"></i>Önizleme</div>
+            <div class="sm-preview">
+                <div class="sm-preview-card">
+                    <div class="sm-preview-icon" id="pvIconBox"><i id="pvIcon" class="fas fa-link"></i></div>
+                    <div>
+                        <div class="sm-preview-name" id="pvName">Platform adı</div>
+                        <div class="sm-preview-url" id="pvUrl">https://...</div>
+                    </div>
+                </div>
+                <div class="sm-preview-footer">
+                    <span>Footer'da:</span>
+                    <i class="round" id="pvFooterIcon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var field = function (name) { return document.querySelector('[data-preview="' + name + '"]'); };
+        var options = document.querySelectorAll(".platform-option");
+        var colors = { instagram: "#E4405F", facebook: "#1877F2", twitter: "#111827", linkedin: "#0A66C2", youtube: "#FF0000", whatsapp: "#25D366", pinterest: "#E60023", tiktok: "#000000" };
+
+        function adminIcon(icon) {
+            if (!icon) return "fas fa-link";
+            return icon.replace("fa fa-", "fab fa-").replace("youtube-play", "youtube");
+        }
+
+        function brandColor(icon) {
+            icon = (icon || "").toLowerCase();
+            for (var key in colors) { if (icon.indexOf(key) !== -1) return colors[key]; }
+            return "#4f46e5";
+        }
+
+        function update() {
+            var icon = field("icon").value.trim();
+            var faClass = adminIcon(icon);
+            var color = brandColor(icon);
+
+            document.getElementById("pvName").textContent = field("name").value.trim() || "Platform adı";
+            document.getElementById("pvUrl").textContent = field("url").value.trim() || "https://...";
+            document.getElementById("pvIcon").className = faClass;
+            document.getElementById("pvIconBox").style.background = color;
+
+            var footerIcon = document.getElementById("pvFooterIcon");
+            footerIcon.className = "round " + faClass;
+            footerIcon.style.background = color;
+
+            options.forEach(function (btn) {
+                btn.classList.toggle("selected", btn.getAttribute("data-icon") === icon);
+            });
+        }
+
+        options.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                field("name").value = this.getAttribute("data-name");
+                field("icon").value = this.getAttribute("data-icon");
+                field("url").value = this.getAttribute("data-url");
+                update();
+                field("url").focus();
+            });
+        });
+
+        document.querySelectorAll("[data-preview]").forEach(function (el) {
+            el.addEventListener("input", update);
+        });
+
+        update();
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@model CreateCategoryDto
+
+@{
+    ViewData["Title"] = "Yeni Kategori";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h6 class="mb-1">Yeni Kategori</h6>
+                <p class="mb-0">Sisteme yeni bir kategori ekleyin.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i>Listeye Dön
+            </a>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+            </div>
+        }
+
+        <form asp-area="Admin" asp-controller="Category" asp-action="CreateCategory" method="post">
+            <div class="mb-3">
+                <label for="CategoryName" class="form-label">Kategori Adı</label>
+                <input type="text" id="CategoryName" name="CategoryName" value="@Model?.CategoryName"
+                       class="form-control" placeholder="Örn: Villa" required />
+            </div>
+
+            <div class="form-check form-switch mb-4">
+                <input type="checkbox" id="CategoryStatus" name="CategoryStatus" value="true"
+                       class="form-check-input" role="switch" checked="@(Model?.CategoryStatus ?? true)" />
+                <input type="hidden" name="CategoryStatus" value="false" />
+                <label for="CategoryStatus" class="form-check-label">Aktif</label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-plus me-2"></i>Kaydet
+                </button>
+                <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>

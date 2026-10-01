@@ -1,0 +1,293 @@
+﻿@using System.Globalization
+@model UpdateProductDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "İlanı Güncelle";
+    var tr = new CultureInfo("tr-TR");
+}
+
+<style>
+    .preview-card {
+        position: sticky;
+        top: 90px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25);
+    }
+
+    .preview-img-wrap {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        background: var(--primary-soft);
+    }
+
+        .preview-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .preview-img-empty {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        font-size: 32px;
+    }
+
+    .preview-category {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, .92);
+        color: var(--primary);
+        font-size: .75rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 999px;
+    }
+
+    .preview-body {
+        padding: 18px 20px 20px;
+    }
+
+    .preview-price {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .preview-title {
+        font-weight: 600;
+        color: var(--text);
+        margin: 4px 0 6px;
+        line-height: 1.35;
+    }
+
+    .preview-location {
+        font-size: .85rem;
+        color: var(--muted);
+    }
+
+    .preview-desc {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-top: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .preview-employee {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        font-size: .85rem;
+        color: var(--text);
+    }
+
+        .preview-employee i {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, .14);
+            color: #d97706;
+            display: grid;
+            place-items: center;
+        }
+
+    .preview-label {
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İlanı Güncelle</h4>
+            <p class="mb-0" style="color: var(--muted);">İlan bilgilerini düzenleyin, değişiklikleri sağda anında görün.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- Sol: Form -->
+        <div class="col-lg-8">
+            <div class="bg-light rounded p-4 h-100">
+                <h6 class="mb-4">İlan Bilgileri</h6>
+
+                <form asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" method="post">
+                    <input type="hidden" asp-for="ProductId" />
+
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label">İlan Başlığı</label>
+                            <input asp-for="Title" class="form-control" data-preview="title" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Category" class="form-label">Kategori</label>
+                            <select asp-for="Category" asp-items="ViewBag.Categories" class="form-select" data-preview="category" required>
+                                <option value="">Kategori seçin</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Employee" class="form-label">Danışman</label>
+                            <select asp-for="Employee" asp-items="ViewBag.Employees" class="form-select" data-preview="employee" required>
+                                <option value="">Danışman seçin</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="form-label">Fiyat (₺)</label>
+                            <input asp-for="Price" type="number" min="0" step="1000" class="form-control" data-preview="price" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CoverImage" class="form-label">Kapak Resmi (URL)</label>
+                            <input asp-for="CoverImage" class="form-control" data-preview="image" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label">Şehir</label>
+                            <input asp-for="City" class="form-control" data-preview="city" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="District" class="form-label">İlçe</label>
+                            <input asp-for="District" class="form-control" data-preview="district" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Adress" class="form-label">Adres</label>
+                            <input asp-for="Adress" class="form-control" />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label">Açıklama</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" data-preview="description"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-save me-2"></i>Değişiklikleri Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sağ: Canlı önizleme -->
+        <div class="col-lg-4">
+            <div class="preview-label"><i class="fa fa-eye me-1"></i>Canlı Önizleme</div>
+            <div class="preview-card">
+                <div class="preview-img-wrap">
+                    <img id="pvImage" src="@Model?.CoverImage" alt="Kapak resmi"
+                         style="@(string.IsNullOrEmpty(Model?.CoverImage) ? "display:none" : "")" />
+                    <div id="pvImageEmpty" class="preview-img-empty"
+                         style="@(string.IsNullOrEmpty(Model?.CoverImage) ? "" : "display:none")">
+                        <i class="fa fa-image"></i>
+                    </div>
+                    <span id="pvCategory" class="preview-category">Kategori</span>
+                </div>
+                <div class="preview-body">
+                    <div class="preview-price" id="pvPrice">₺@(Model?.Price.ToString("N0", tr) ?? "0")</div>
+                    <div class="preview-title" id="pvTitle">@(string.IsNullOrEmpty(Model?.Title) ? "İlan başlığı" : Model.Title)</div>
+                    <div class="preview-location">
+                        <i class="fa fa-map-marker-alt me-1"></i><span id="pvLocation">@Model?.District, @Model?.City</span>
+                    </div>
+                    <div class="preview-desc" id="pvDescription">@Model?.Description</div>
+                    <div class="preview-employee">
+                        <i class="fa fa-user-tie"></i>
+                        <span id="pvEmployee">Danışman</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var field = function (name) { return document.querySelector('[data-preview="' + name + '"]'); };
+        var formatter = new Intl.NumberFormat("tr-TR");
+
+        function selectedText(select, fallback) {
+            if (!select || !select.value) return fallback;
+            return select.options[select.selectedIndex].text;
+        }
+
+        function update() {
+            var title = field("title").value.trim();
+            document.getElementById("pvTitle").textContent = title || "İlan başlığı";
+
+            var price = parseFloat(field("price").value) || 0;
+            document.getElementById("pvPrice").textContent = "₺" + formatter.format(price);
+
+            var city = field("city").value.trim();
+            var district = field("district").value.trim();
+            document.getElementById("pvLocation").textContent = [district, city].filter(Boolean).join(", ") || "Konum";
+
+            document.getElementById("pvDescription").textContent = field("description").value.trim();
+
+            document.getElementById("pvCategory").textContent = selectedText(field("category"), "Kategori");
+            document.getElementById("pvEmployee").textContent = selectedText(field("employee"), "Danışman atanmadı");
+
+            var img = document.getElementById("pvImage");
+            var empty = document.getElementById("pvImageEmpty");
+            var url = field("image").value.trim();
+            if (url) {
+                img.src = url;
+                img.style.display = "";
+                empty.style.display = "none";
+            } else {
+                img.style.display = "none";
+                empty.style.display = "";
+            }
+        }
+
+        // Resim adresi bozuksa boş görseli göster
+        document.getElementById("pvImage").addEventListener("error", function () {
+            this.style.display = "none";
+            document.getElementById("pvImageEmpty").style.display = "";
+        });
+
+        document.querySelectorAll("[data-preview]").forEach(function (el) {
+            el.addEventListener("input", update);
+            el.addEventListener("change", update);
+        });
+
+        update();
+    });
+</script>

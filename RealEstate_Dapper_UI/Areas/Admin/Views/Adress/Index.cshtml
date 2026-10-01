@@ -1,0 +1,282 @@
+﻿@model List<ResultAdressDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Adres";
+}
+
+<style>
+    .wwa-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        position: relative;
+    }
+
+        .wwa-card + .wwa-card {
+            margin-top: 16px;
+        }
+
+    .wwa-badge {
+        display: inline-block;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--primary);
+        background: var(--primary-soft);
+        padding: 5px 12px;
+        border-radius: 999px;
+    }
+
+    .wwa-subtitle {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 12px 0 14px;
+        line-height: 1.35;
+    }
+
+    .wwa-desc {
+        color: var(--muted);
+        font-size: .92rem;
+        line-height: 1.7;
+        margin-bottom: 10px;
+    }
+
+    .wwa-actions {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 6px;
+    }
+
+    .wwa-id {
+        font-size: .8rem;
+        color: var(--muted);
+        font-weight: 500;
+        margin-left: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all .15s ease;
+    }
+
+        .action-btn.edit:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+            border-color: transparent;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    .info-note {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: var(--primary-soft);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: .88rem;
+    }
+
+        .info-note i {
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İletişim Bilgileri</h4>
+            <p class="mb-0" style="color: var(--muted);">İletişim sayfasında ve footer'da görünen adres, telefon ve e-posta bilgilerini buradan yönetebilirsiniz.</p>
+        </div>
+        @if (!Model.Any())
+        {
+            <a asp-area="Admin" asp-controller="Adress" asp-action="CreateAdress" class="btn btn-primary px-4">
+                <i class="fa fa-plus me-2"></i>İletişim Bilgisi Ekle
+            </a>
+        }
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        @if (Model.Count > 1)
+        {
+            <div class="info-note mb-3">
+                <i class="fa fa-info-circle"></i>
+                <div>Birden fazla kayıt var. Ana sayfada sadece <strong>ilk kayıt</strong> gösterilir, diğerlerini silebilirsiniz.</div>
+            </div>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="wwa-card">
+                <div class="wwa-actions">
+                    <a asp-area="Admin" asp-controller="Adress" asp-action="UpdateAdress" asp-route-id="@item.AdressId"
+                       class="action-btn edit" title="Düzenle">
+                        <i class="fa fa-pen"></i>
+                    </a>
+                    <button type="button" class="action-btn delete" title="Sil"
+                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                            data-url="@Url.Action("DeleteAdress", "Adress", new { area = "Admin", id = item.AdressId })">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+
+                <span class="wwa-badge">@item.AdressTitle1</span><span class="wwa-id">#@item.AdressId</span>
+                <div class="wwa-subtitle">@item.Description</div>
+                <p class="wwa-desc">@item.AdressTitle2</p>
+                <p class="wwa-desc mb-0">@item.Phone1</p>
+                <p class="wwa-desc mb-0">@item.Phone2</p>
+                <p class="wwa-desc mb-0">@item.Email</p>
+                <p class="wwa-desc mb-0">@item.Location</p>
+            </div>
+        }
+    }
+    else
+    {
+<div class="bg-light rounded p-4">
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fa fa-map-marker-alt"></i></div>
+        <h5 class="fw-bold mb-1">Henüz iletişim bilgisi yok</h5>
+        <p class="mb-4" style="color: var(--muted);">İletişim sayfasında ve footer'da görünecek ofis adresi, telefon ve e-posta bilgilerini ekleyin.</p>
+        <a asp-area="Admin" asp-controller="Adress" asp-action="CreateAdress" class="btn btn-primary px-4">
+            <i class="fa fa-plus me-2"></i>İletişim Bilgisi Ekle
+        </a>
+    </div>
+</div>
+    }
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteModalLabel">İçeriği sil</h5>
+                <p class="delete-text">Bu "Biz Kimiz" içeriğini silmek üzeresiniz. Silerseniz ana sayfadaki bölüm boş görünür. Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
+            document.getElementById("deleteForm").setAttribute("action", event.relatedTarget.getAttribute("data-url"));
+        });
+    });
+</script>

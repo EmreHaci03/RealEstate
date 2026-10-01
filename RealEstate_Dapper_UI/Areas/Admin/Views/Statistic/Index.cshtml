@@ -1,0 +1,186 @@
+﻿@model ResultStatisticDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "İstatistikler";
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+}
+
+<style>
+    .st-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .st-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px -20px rgba(16, 24, 40, .3);
+        }
+
+    .st-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .st-value {
+        font-size: 1.65rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--text);
+    }
+
+        .st-value.text {
+            font-size: 1.2rem;
+        }
+
+    .st-label {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .c-indigo {
+        background: rgba(79, 70, 229, .12);
+        color: #4f46e5;
+    }
+
+    .c-sky {
+        background: rgba(14, 165, 233, .12);
+        color: #0284c7;
+    }
+
+    .c-emerald {
+        background: rgba(16, 185, 129, .12);
+        color: #059669;
+    }
+
+    .c-amber {
+        background: rgba(245, 158, 11, .12);
+        color: #d97706;
+    }
+
+    .c-rose {
+        background: rgba(244, 63, 94, .12);
+        color: #e11d48;
+    }
+
+    .c-violet {
+        background: rgba(139, 92, 246, .12);
+        color: #7c3aed;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="mb-4">
+        <h4 class="mb-1 fw-bold">İstatistikler</h4>
+        <p class="mb-0" style="color: var(--muted);">İlanlar, danışmanlar ve kategoriler hakkında özet bilgiler.</p>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-indigo"><i class="fa fa-home"></i></div>
+                <div><div class="st-value">@Model.TotalProduct</div><div class="st-label">Toplam İlan</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-sky"><i class="fa fa-layer-group"></i></div>
+                <div><div class="st-value">@Model.TotalCategory</div><div class="st-label">Kategori Sayısı</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-amber"><i class="fa fa-user-tie"></i></div>
+                <div><div class="st-value">@Model.TotalEmployee</div><div class="st-label">Toplam Danışman</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-emerald"><i class="fa fa-user-check"></i></div>
+                <div><div class="st-value">@Model.ActiveEmployee</div><div class="st-label">Aktif Danışman</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-violet"><i class="fa fa-city"></i></div>
+                <div><div class="st-value">@Model.TotalCity</div><div class="st-label">Farklı Şehir</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-emerald"><i class="fa fa-lira-sign"></i></div>
+                <div><div class="st-value">₺@Model.AveragePrice.ToString("N0", tr)</div><div class="st-label">Ortalama İlan Fiyatı</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-rose"><i class="fa fa-arrow-up"></i></div>
+                <div><div class="st-value">₺@Model.MaxPrice.ToString("N0", tr)</div><div class="st-label">En Yüksek Fiyat</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-sky"><i class="fa fa-arrow-down"></i></div>
+                <div><div class="st-value">₺@Model.MinPrice.ToString("N0", tr)</div><div class="st-label">En Düşük Fiyat</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-indigo"><i class="fa fa-map-marker-alt"></i></div>
+                <div><div class="st-value text">@(Model.TopCity ?? "-")</div><div class="st-label">En Çok İlan Olan Şehir</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-amber"><i class="fa fa-star"></i></div>
+                <div><div class="st-value text">@(Model.TopCategory ?? "-")</div><div class="st-label">En Popüler Kategori</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-violet"><i class="fa fa-trophy"></i></div>
+                <div><div class="st-value text">@(Model.TopEmployee ?? "-")</div><div class="st-label">En Çok İlanı Olan Danışman</div></div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="st-card">
+                <div class="st-icon c-rose"><i class="fa fa-paper-plane"></i></div>
+                <div><div class="st-value">@Model.ActiveSubscriber</div><div class="st-label">Aktif Bülten Abonesi</div></div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,499 @@
+﻿@model List<ResultEmployeeDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Danışmanlar";
+
+    var totalCount = Model.Count;
+    var activeCount = Model.Count(x => x.Status);
+    var passiveCount = totalCount - activeCount;
+}
+
+<style>
+    .emp-page .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .emp-page .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+        .emp-page .stat-icon.total {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .emp-page .stat-icon.active {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+        }
+
+        .emp-page .stat-icon.passive {
+            background: rgba(107, 114, 128, .12);
+            color: #6b7280;
+        }
+
+    .emp-page .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+    }
+
+    .emp-page .stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .emp-page .search-box {
+        position: relative;
+        max-width: 300px;
+        width: 100%;
+    }
+
+        .emp-page .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .emp-page .search-box input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .emp-page .emp-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .emp-page .emp-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        object-fit: cover;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: .9rem;
+    }
+
+    .emp-page .emp-name {
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1.3;
+    }
+
+    .emp-page .emp-title {
+        font-size: .8rem;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .emp-page .contact-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .85rem;
+        color: var(--text);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .emp-page .contact-line + .contact-line {
+            margin-top: 4px;
+        }
+
+        .emp-page .contact-line i {
+            width: 14px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .emp-page .contact-line:hover {
+            color: var(--primary);
+        }
+
+    .emp-page .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+        .emp-page .status-pill::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .emp-page .status-pill.active {
+            background: rgba(16, 185, 129, .12);
+            color: #059669;
+        }
+
+        .emp-page .status-pill.passive {
+            background: rgba(107, 114, 128, .12);
+            color: #6b7280;
+        }
+
+    .emp-page .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all .15s ease;
+    }
+
+        .emp-page .action-btn.edit:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .emp-page .action-btn.delete:hover {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+            border-color: transparent;
+        }
+
+    .emp-page .row-id {
+        color: var(--muted);
+        font-size: .85rem;
+        font-weight: 500;
+    }
+
+    .emp-page .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .emp-page .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    /* Silme modalı */
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .delete-name {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+
+        .delete-modal .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4 emp-page">
+
+    <!-- Başlık -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Danışmanlar</h4>
+            <p class="mb-0" style="color: var(--muted);">Emlak danışmanlarını buradan yönetebilirsiniz.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Employee" asp-action="CreateEmployee" class="btn btn-primary px-4">
+            <i class="fa fa-plus me-2"></i>Yeni Danışman
+        </a>
+    </div>
+
+    <!-- Özet kartları -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon total"><i class="fa fa-user-tie"></i></div>
+                <div>
+                    <div class="stat-value">@totalCount</div>
+                    <div class="stat-label">Toplam danışman</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon active"><i class="fa fa-check-circle"></i></div>
+                <div>
+                    <div class="stat-value">@activeCount</div>
+                    <div class="stat-label">Aktif</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon passive"><i class="fa fa-pause-circle"></i></div>
+                <div>
+                    <div class="stat-value">@passiveCount</div>
+                    <div class="stat-label">Pasif</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirimler -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <!-- Liste -->
+    <div class="bg-light rounded p-4">
+        @if (Model.Any())
+        {
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h6 class="mb-0">Danışman Listesi</h6>
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="employeeSearch" class="form-control" placeholder="Ad, unvan, e-posta veya telefon ara..." />
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col" style="width: 70px;">#</th>
+                            <th scope="col">Danışman</th>
+                            <th scope="col">İletişim</th>
+                            <th scope="col">Durum</th>
+                            <th scope="col" class="text-end" style="width: 120px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTable">
+                        @foreach (var item in Model)
+                        {
+                            var parts = (item.Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "?";
+                            var searchText = $"{item.Name} {item.Title} {item.Mail} {item.PhoneNumber}".ToLower();
+
+                            <tr data-search="@searchText">
+                                <td class="row-id">#@item.EmployeeId</td>
+                                <td>
+                                    <div class="emp-info">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img class="emp-avatar" src="@item.ImageUrl" alt="@item.Name" loading="lazy" />
+                                        }
+                                        else
+                                        {
+                                            <div class="emp-avatar">@initials</div>
+                                        }
+                                        <div>
+                                            <div class="emp-name">@item.Name</div>
+                                            <div class="emp-title">@item.Title</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Mail))
+                                    {
+                                        <a class="contact-line" href="mailto:@item.Mail">
+                                            <i class="fa fa-envelope"></i>@item.Mail
+                                        </a>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.PhoneNumber))
+                                    {
+                                        <a class="contact-line" href="tel:@item.PhoneNumber.Replace(" ", "")">
+                                            <i class="fa fa-phone"></i>@item.PhoneNumber
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Status)
+                                    {
+                                        <span class="status-pill active">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-pill passive">Pasif</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-area="Admin" asp-controller="Employee" asp-action="UpdateEmployee" asp-route-id="@item.EmployeeId"
+                                       class="action-btn edit me-1" title="Düzenle">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+                                    <button type="button" class="action-btn delete" title="Sil"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-name="@item.Name"
+                                            data-url="@Url.Action("DeleteEmployee", "Employee", new { area = "Admin", id = item.EmployeeId })">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        <tr id="noResultRow" style="display: none;">
+                            <td colspan="5" class="text-center py-4" style="color: var(--muted);">
+                                <i class="fa fa-search me-2"></i>Aramanızla eşleşen danışman bulunamadı.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-user-tie"></i></div>
+                <h5 class="fw-bold mb-1">Henüz danışman yok</h5>
+                <p class="mb-4" style="color: var(--muted);">İlk danışmanı ekleyerek başlayın.</p>
+                <a asp-area="Admin" asp-controller="Employee" asp-action="CreateEmployee" class="btn btn-primary px-4">
+                    <i class="fa fa-plus me-2"></i>Danışman Ekle
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-user-times"></i></div>
+                <h5 id="deleteModalLabel">Danışmanı sil</h5>
+                <p class="delete-text">
+                    <span class="delete-name" id="deleteEmployeeName"></span> adlı danışmanı silmek üzeresiniz.
+                    Bu işlem geri alınamaz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Silme modalı: tıklanan danışmanın adını ve silme adresini modala aktar
+        var deleteModal = document.getElementById("deleteModal");
+        deleteModal.addEventListener("show.bs.modal", function (event) {
+            var button = event.relatedTarget;
+            document.getElementById("deleteEmployeeName").textContent = "\"" + button.getAttribute("data-name") + "\"";
+            document.getElementById("deleteForm").setAttribute("action", button.getAttribute("data-url"));
+        });
+
+        // Canlı arama: ad, unvan, e-posta ve telefona göre
+        var searchInput = document.getElementById("employeeSearch");
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                var term = this.value.trim().toLocaleLowerCase("tr");
+                var rows = document.querySelectorAll("#employeeTable tr[data-search]");
+                var visibleCount = 0;
+
+                rows.forEach(function (row) {
+                    var match = row.getAttribute("data-search").toLocaleLowerCase("tr").includes(term);
+                    row.style.display = match ? "" : "none";
+                    if (match) visibleCount++;
+                });
+
+                document.getElementById("noResultRow").style.display = visibleCount === 0 ? "" : "none";
+            });
+        }
+    });
+</script>

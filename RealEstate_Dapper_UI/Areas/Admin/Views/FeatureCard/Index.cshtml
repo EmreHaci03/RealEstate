@@ -1,0 +1,351 @@
+﻿@model List<ResultFeatureCardDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Özellik Kartları";
+}
+
+<style>
+    .fc-card {
+        height: 100%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 26px 24px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+        .fc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 36px -20px rgba(16, 24, 40, .3);
+            border-color: transparent;
+        }
+
+    .fc-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--primary-soft), rgba(129, 140, 248, .15));
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+    .fc-subtitle {
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--primary);
+        margin-bottom: 6px;
+    }
+
+    .fc-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .fc-desc {
+        color: var(--muted);
+        font-size: .88rem;
+        line-height: 1.65;
+        margin-bottom: 16px;
+        flex: 1;
+    }
+
+    .fc-button {
+        font-size: .85rem;
+        font-weight: 600;
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .fc-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        font-size: .76rem;
+        color: var(--muted);
+    }
+
+        .fc-meta code {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: .74rem;
+        }
+
+    .fc-actions {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        display: flex;
+        gap: 6px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all .15s ease;
+    }
+
+        .action-btn.edit:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+            border-color: transparent;
+        }
+
+    .add-card {
+        height: 100%;
+        min-height: 280px;
+        border: 2px dashed var(--line);
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+        .add-card:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .add-card i {
+            font-size: 24px;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .delete-name {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+
+        .delete-modal .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Özellik Kartları</h4>
+            <p class="mb-0" style="color: var(--muted);">Ana sayfada "Hepsi tek yerde, Danışmana bağlanın" gibi butonlu kartları buradan yönetebilirsiniz.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="FeatureCard" asp-action="CreateFeatureCard" class="btn btn-primary px-4">
+            <i class="fa fa-plus me-2"></i>Yeni Kart
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <div class="fc-card">
+                        <div class="fc-actions">
+                            <a asp-area="Admin" asp-controller="FeatureCard" asp-action="UpdateFeatureCard" asp-route-id="@item.FeatureCardId"
+                               class="action-btn edit" title="Düzenle">
+                                <i class="fa fa-pen"></i>
+                            </a>
+                            <button type="button" class="action-btn delete" title="Sil"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    data-name="@item.Title"
+                                    data-url="@Url.Action("DeleteFeatureCard", "FeatureCard", new { area = "Admin", id = item.FeatureCardId })">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="fc-icon"><i class="@item.Icon"></i></div>
+                        <div class="fc-subtitle">@item.SubTitle</div>
+                        <div class="fc-title">@item.Title</div>
+                        <p class="fc-desc">@item.Description</p>
+                        <span class="fc-button">@item.ButtonText <i class="fa fa-long-arrow-alt-right"></i></span>
+
+                        <div class="fc-meta">
+                            <span>#@item.FeatureCardId</span>
+                            <span>·</span>
+                            <code>@item.Icon</code>
+                            <span>·</span>
+                            <span title="Buton linki"><i class="fa fa-link me-1"></i>@item.ButtonUrl</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-md-6 col-xl-4">
+                <a asp-area="Admin" asp-controller="FeatureCard" asp-action="CreateFeatureCard" class="add-card">
+                    <i class="fa fa-plus-circle"></i>
+                    <span class="fw-semibold">Yeni kart ekle</span>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-light rounded p-4">
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-star"></i></div>
+                <h5 class="fw-bold mb-1">Henüz özellik kartı yok</h5>
+                <p class="mb-4" style="color: var(--muted);">Ana sayfadaki özellik bölümü için ilk kartı ekleyin.</p>
+                <a asp-area="Admin" asp-controller="FeatureCard" asp-action="CreateFeatureCard" class="btn btn-primary px-4">
+                    <i class="fa fa-plus me-2"></i>Kart Ekle
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteModalLabel">Kartı sil</h5>
+                <p class="delete-text">
+                    <span class="delete-name" id="deleteCardName"></span> kartını silmek üzeresiniz.
+                    Kart ana sayfadan kaldırılacak. Bu işlem geri alınamaz.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
+            var button = event.relatedTarget;
+            document.getElementById("deleteCardName").textContent = "\"" + button.getAttribute("data-name") + "\"";
+            document.getElementById("deleteForm").setAttribute("action", button.getAttribute("data-url"));
+        });
+    });
+</script>

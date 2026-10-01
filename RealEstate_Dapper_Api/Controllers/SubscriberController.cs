@@ -44,7 +44,7 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok("Aboneliğiniz başarıyla oluşturuldu.");
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriber(int id)
         {
             var value = await _subscriberRepository.GetByIdAsync(id);

@@ -1,0 +1,215 @@
+﻿@model RealEstate_Dapper_UI.DTOS.TestimonialDtos.UpdateTestimonialDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Yorumu Güncelle";
+}
+
+<style>
+    .tst-preview-label {
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .tst-preview {
+        position: sticky;
+        top: 90px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px;
+        box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25);
+        position: relative;
+    }
+
+    .tst-preview-quote {
+        position: absolute;
+        top: 22px;
+        right: 24px;
+        font-size: 34px;
+        color: var(--primary-soft);
+    }
+
+    .tst-preview-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+        padding-right: 40px;
+    }
+
+    .tst-preview-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), #818cf8);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+
+    .tst-preview-name {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 1.05rem;
+    }
+
+    .tst-preview-title {
+        font-size: .85rem;
+        color: var(--muted);
+    }
+
+    .tst-preview-stars {
+        color: #f5b301;
+        font-size: .85rem;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+    }
+
+    .tst-preview-comment {
+        color: var(--muted);
+        font-size: .95rem;
+        line-height: 1.7;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .tst-preview-hidden {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(107, 114, 128, .1);
+        color: #6b7280;
+        font-size: .82rem;
+        display: none;
+    }
+
+    .char-count {
+        font-size: .78rem;
+        color: var(--muted);
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Yorumu Güncelle</h4>
+            <p class="mb-0" style="color: var(--muted);">Değişiklikleri sağda, ana sayfadaki görünümüyle anında görün.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Testimonial" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+    <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+        <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-light rounded p-4 h-100">
+                <h6 class="mb-4">Yorum Bilgileri</h6>
+
+                <form asp-area="Admin" asp-controller="Testimonial" asp-action="UpdateTestimonial" method="post">
+                    <input type="hidden" asp-for="TestimonialId" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="NameSurname" class="form-label">Ad Soyad</label>
+                            <input asp-for="NameSurname" class="form-control" data-preview="name" maxlength="100" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Title" class="form-label">Meslek</label>
+                            <input asp-for="Title" class="form-control" data-preview="title" maxlength="100" required />
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <label asp-for="Comment" class="form-label">Yorum</label>
+                                <span class="char-count" id="commentCount">0 karakter</span>
+                            </div>
+                            <textarea asp-for="Comment" class="form-control" rows="4" data-preview="comment" required></textarea>
+                            <div class="form-text">Kısa yorumlar (1-2 cümle) kayan kartta daha iyi görünür.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input asp-for="Status" class="form-check-input" id="statusSwitch" type="checkbox" role="switch" data-preview="status" />
+                                <label for="statusSwitch" class="form-check-label">Ana sayfada göster</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-save me-2"></i>Değişiklikleri Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="Testimonial" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="tst-preview-label"><i class="fa fa-eye me-1"></i>Ana Sayfada Böyle Görünecek</div>
+            <div class="tst-preview">
+                <i class="fa fa-quote-right tst-preview-quote"></i>
+                <div class="tst-preview-head">
+                    <div class="tst-preview-avatar" id="pvInitials">?</div>
+                    <div>
+                        <div class="tst-preview-name" id="pvName">Ad Soyad</div>
+                        <div class="tst-preview-title" id="pvTitle">Meslek</div>
+                    </div>
+                </div>
+                <div class="tst-preview-stars">
+                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                </div>
+                <p class="tst-preview-comment" id="pvComment"></p>
+                <div class="tst-preview-hidden" id="pvHidden"><i class="fa fa-eye-slash me-1"></i>Bu yorum pasif olduğu için ana sayfada görünmeyecek.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var field = function (name) { return document.querySelector('[data-preview="' + name + '"]'); };
+
+        function initials(name) {
+            var parts = name.trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return "?";
+            return parts.slice(0, 2).map(function (p) { return p.charAt(0); }).join("").toLocaleUpperCase("tr");
+        }
+
+        function update() {
+            var name = field("name").value.trim();
+            var comment = field("comment").value.trim();
+
+            document.getElementById("pvName").textContent = name || "Ad Soyad";
+            document.getElementById("pvInitials").textContent = initials(name);
+            document.getElementById("pvTitle").textContent = field("title").value.trim() || "Meslek";
+            document.getElementById("pvComment").textContent = comment ? "\"" + comment + "\"" : "";
+            document.getElementById("commentCount").textContent = field("comment").value.length + " karakter";
+            document.getElementById("pvHidden").style.display = field("status").checked ? "none" : "block";
+        }
+
+        document.querySelectorAll("[data-preview]").forEach(function (el) {
+            el.addEventListener("input", update);
+            el.addEventListener("change", update);
+        });
+
+        update();
+    });
+</script>

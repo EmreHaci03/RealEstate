@@ -1,0 +1,172 @@
+﻿@model UpdateServiceDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Hizmeti Güncelle";
+}
+
+<style>
+    .srv-preview-label {
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .srv-preview {
+        position: sticky;
+        top: 90px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px -18px rgba(16, 24, 40, .25);
+    }
+
+    .srv-preview-head {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--primary);
+        background: var(--primary-soft);
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 999px;
+        margin-bottom: 16px;
+    }
+
+    .srv-preview-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+    }
+
+        .srv-preview-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: .88rem;
+            color: var(--muted);
+        }
+
+            .srv-preview-list li span.tick {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: var(--primary-soft);
+                color: var(--primary);
+                display: grid;
+                place-items: center;
+                font-size: .7rem;
+                flex-shrink: 0;
+            }
+
+            .srv-preview-list li.new-item {
+                color: var(--text);
+                font-weight: 600;
+            }
+
+                .srv-preview-list li.new-item span.tick {
+                    background: var(--primary);
+                    color: #fff;
+                    box-shadow: 0 0 0 4px var(--primary-soft);
+                }
+
+    .srv-preview-note {
+        font-size: .8rem;
+        color: var(--muted);
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Hizmeti Güncelle</h4>
+            <p class="mb-0" style="color: var(--muted);">Hizmet adını ya da görünürlüğünü değiştirin.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Service" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-light rounded p-4 h-100">
+                <h6 class="mb-4">Hizmet Bilgileri</h6>
+
+                <form asp-area="Admin" asp-controller="Service" asp-action="UpdateService" method="post">
+                    <input type="hidden" asp-for="ServiceId" />
+
+                    <div class="mb-4">
+                        <label asp-for="ServiceName" class="form-label">Hizmet Adı</label>
+                        <input asp-for="ServiceName" class="form-control" id="serviceName" maxlength="100" required />
+                        <div class="form-text">Kısa ve net tutun, ana sayfada tek satırda görünür.</div>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <input asp-for="ServiceStatus" class="form-check-input" id="serviceStatus" type="checkbox" role="switch" />
+                        <label for="serviceStatus" class="form-check-label">Ana sayfada göster</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-save me-2"></i>Değişiklikleri Kaydet
+                        </button>
+                        <a asp-area="Admin" asp-controller="Service" asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="srv-preview-label"><i class="fa fa-eye me-1"></i>Ana Sayfada Böyle Görünecek</div>
+            <div class="srv-preview">
+                <span class="srv-preview-head">Hizmetlerimiz</span>
+                <ul class="srv-preview-list">
+                    <li><span class="tick"><i class="fa fa-check"></i></span>Uzman danışmanlık</li>
+                    <li><span class="tick"><i class="fa fa-check"></i></span>Tapu süreç takibi</li>
+                    <li class="new-item" id="pvItem"><span class="tick"><i class="fa fa-check"></i></span><span id="pvName">Hizmet</span></li>
+                </ul>
+                <div class="srv-preview-note" id="pvNote"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var nameInput = document.getElementById("serviceName");
+        var statusInput = document.getElementById("serviceStatus");
+
+        function update() {
+            document.getElementById("pvName").textContent = nameInput.value.trim() || "Hizmet";
+
+            var visible = statusInput.checked;
+            document.getElementById("pvItem").style.display = visible ? "" : "none";
+            document.getElementById("pvNote").innerHTML = visible
+                ? '<i class="fa fa-info-circle me-1"></i>Vurgulanan madde düzenlediğiniz hizmettir.'
+                : '<i class="fa fa-eye-slash me-1"></i>Bu hizmet pasif olduğu için ana sayfada görünmeyecek.';
+        }
+
+        nameInput.addEventListener("input", update);
+        statusInput.addEventListener("change", update);
+        update();
+    });
+</script>

@@ -1,0 +1,273 @@
+﻿@model GetContactByIdDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Mesaj Detayı";
+
+    var parts = (Model.Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "?";
+    var replySubject = Uri.EscapeDataString("Re: " + Model.Subject);
+}
+
+<style>
+    .msg-detail {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .msg-detail-head {
+        padding: 24px 28px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .msg-detail-subject {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 18px;
+        line-height: 1.35;
+    }
+
+    .msg-sender {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .msg-sender-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .msg-sender-name {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .msg-sender-mail {
+        font-size: .85rem;
+        color: var(--muted);
+    }
+
+    .msg-sender-date {
+        margin-left: auto;
+        text-align: right;
+        font-size: .82rem;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .msg-detail-body {
+        padding: 28px;
+        font-size: .95rem;
+        line-height: 1.8;
+        color: var(--text);
+        white-space: pre-line;
+        word-break: break-word;
+    }
+
+    .msg-detail-foot {
+        padding: 18px 28px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: var(--page-bg);
+    }
+
+    .info-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+    }
+
+        .info-card h6 {
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: .88rem;
+    }
+
+        .info-row + .info-row {
+            margin-top: 14px;
+        }
+
+        .info-row i {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .info-row small {
+            display: block;
+            color: var(--muted);
+            font-size: .75rem;
+        }
+
+        .info-row span {
+            color: var(--text);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+    .delete-modal .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(16, 24, 40, .2);
+    }
+
+    .delete-modal .modal-body {
+        padding: 32px 28px 8px;
+        text-align: center;
+    }
+
+    .delete-modal .delete-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, .1);
+        color: #dc2626;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, .05);
+    }
+
+    .delete-modal h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .delete-modal .delete-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 0;
+    }
+
+    .delete-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .delete-modal .modal-footer .btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .delete-modal .btn-danger {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Mesaj Detayı</h4>
+            <p class="mb-0" style="color: var(--muted);">#@Model.ContactId numaralı mesaj</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Contact" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Gelen Kutusuna Dön
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="msg-detail">
+                <div class="msg-detail-head">
+                    <div class="msg-detail-subject">@Model.Subject</div>
+                    <div class="msg-sender">
+                        <div class="msg-sender-avatar">@initials</div>
+                        <div>
+                            <div class="msg-sender-name">@Model.Name</div>
+                            <div class="msg-sender-mail">@Model.Mail</div>
+                        </div>
+                        <div class="msg-sender-date">
+                            @Model.SendDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))<br />
+                            @Model.SendDate.ToString("HH:mm")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="msg-detail-body">@Model.Message</div>
+
+                <div class="msg-detail-foot">
+                    <a href="mailto:@Model.Mail?subject=@replySubject" class="btn btn-primary px-4">
+                        <i class="fa fa-reply me-2"></i>Yanıtla
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fa fa-trash me-2"></i>Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="info-card">
+                <h6>Gönderen Bilgileri</h6>
+                <div class="info-row">
+                    <i class="fa fa-user"></i>
+                    <div><small>Ad Soyad</small><span>@Model.Name</span></div>
+                </div>
+                <div class="info-row">
+                    <i class="fa fa-envelope"></i>
+                    <div><small>E-posta</small><span><a href="mailto:@Model.Mail">@Model.Mail</a></span></div>
+                </div>
+                <div class="info-row">
+                    <i class="fa fa-clock"></i>
+                    <div><small>Gönderim Tarihi</small><span>@Model.SendDate.ToString("dd.MM.yyyy HH:mm")</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme modalı -->
+<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="delete-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteModalLabel">Mesajı sil</h5>
+                <p class="delete-text">Bu mesajı silmek üzeresiniz. Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form asp-area="Admin" asp-controller="Contact" asp-action="DeleteContact" asp-route-id="@Model.ContactId"
+                      method="post" class="d-flex flex-fill m-0">
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

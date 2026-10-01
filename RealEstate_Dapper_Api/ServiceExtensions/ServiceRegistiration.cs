@@ -10,6 +10,7 @@ using RealEstate_Dapper_Api.Repository.ProductDetail;
 using RealEstate_Dapper_Api.Repository.ProductDetailDto;
 using RealEstate_Dapper_Api.Repository.Service;
 using RealEstate_Dapper_Api.Repository.SocialMedia;
+using RealEstate_Dapper_Api.Repository.Statistic;
 using RealEstate_Dapper_Api.Repository.Subscriber;
 using RealEstate_Dapper_Api.Repository.Testimonial;
 using RealEstate_Dapper_Api.Repository.WhoWeAre;
@@ -34,6 +35,7 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<ISocialMediaRepository, SocialMediaRepository>();
             services.AddScoped<IAdressRepository, AdressRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IStatisticRepository, StatisticRepository>();
             return services;
         }
     }

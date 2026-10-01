@@ -18,7 +18,7 @@ namespace RealEstate_Dapper_Api.Repository.Category
             string query = "insert into Category(CategoryName,CategoryStatus) values(@CategoryName,@CategoryStatus)";
             var parameters = new DynamicParameters();
             parameters.Add("@CategoryName", dto.CategoryName);
-            parameters.Add("@CategoryStatus", true);
+            parameters.Add("@CategoryStatus", dto.CategoryStatus);
             using(var connection= _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
