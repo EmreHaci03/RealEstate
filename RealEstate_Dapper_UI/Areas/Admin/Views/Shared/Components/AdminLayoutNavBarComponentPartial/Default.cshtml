@@ -1,87 +1,219 @@
-﻿     <!-- Navbar Start -->
+﻿@model List<ResultContactDto>
+@{
+    var messages = (Model ?? new List<ResultContactDto>())
+        .OrderByDescending(x => x.SendDate)
+        .Take(4)
+        .ToList();
+
+    var todayCount = (Model ?? new List<ResultContactDto>()).Count(x => x.SendDate.Date == DateTime.Today);
+
+    string Initials(string name)
+    {
+        var parts = (name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "?";
+    }
+
+    string RelativeDate(DateTime date)
+    {
+        var diff = DateTime.Now - date;
+        if (diff.TotalMinutes < 1) return "Az önce";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes} dk önce";
+        if (diff.TotalHours < 24 && date.Date == DateTime.Today) return $"{(int)diff.TotalHours} saat önce";
+        if (date.Date == DateTime.Today.AddDays(-1)) return "Dün";
+        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays} gün önce";
+        return date.ToString("dd.MM.yyyy");
+    }
+}
+
+<style>
+    .nb-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: .8rem;
+        flex-shrink: 0;
+    }
+
+    .nb-badge {
+        position: absolute;
+        top: 10px;
+        left: 22px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #e11d48;
+        color: #fff;
+        font-size: .65rem;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        border: 2px solid #fff;
+    }
+
+    .nb-menu {
+        min-width: 320px;
+    }
+
+    .nb-menu-head {
+        padding: .5rem .75rem;
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: var(--muted);
+    }
+
+    .nb-msg-name {
+        font-weight: 600;
+        font-size: .86rem;
+        color: var(--text);
+    }
+
+    .nb-msg-subject {
+        font-size: .8rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    .nb-msg-time {
+        font-size: .72rem;
+        color: var(--muted);
+    }
+
+    .nb-notif-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        font-size: .85rem;
+    }
+
+    .nb-empty {
+        padding: 1.25rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: .85rem;
+    }
+</style>
+
+<!-- Navbar Start -->
 <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-    <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex d-lg-none me-4">
         <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
     </a>
     <a href="#" class="sidebar-toggler flex-shrink-0">
         <i class="fa fa-bars"></i>
     </a>
     <form class="d-none d-md-flex ms-4">
-        <input class="form-control border-0" type="search" placeholder="Search">
+        <input class="form-control border-0" type="search" placeholder="Ara...">
     </form>
+
     <div class="navbar-nav align-items-center ms-auto">
+
+        <!-- Mesajlar -->
         <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <a href="#" class="nav-link dropdown-toggle position-relative" data-bs-toggle="dropdown">
                 <i class="fa fa-envelope me-lg-2"></i>
-                <span class="d-none d-lg-inline-flex">Message</span>
+                @if (todayCount > 0)
+                {
+                    <span class="nb-badge">@todayCount</span>
+                }
+                <span class="d-none d-lg-inline-flex">Mesajlar</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a href="#" class="dropdown-item">
-                    <div class="d-flex align-items-center">
-                        <img class="rounded-circle" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="ms-2">
-                            <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                            <small>15 minutes ago</small>
-                        </div>
-                    </div>
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    <div class="d-flex align-items-center">
-                        <img class="rounded-circle" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="ms-2">
-                            <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                            <small>15 minutes ago</small>
-                        </div>
-                    </div>
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    <div class="d-flex align-items-center">
-                        <img class="rounded-circle" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="ms-2">
-                            <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                            <small>15 minutes ago</small>
-                        </div>
-                    </div>
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item text-center">See all message</a>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0 nb-menu">
+                <div class="nb-menu-head">Son Mesajlar</div>
+
+                @if (messages.Any())
+                {
+                    @foreach (var item in messages)
+                    {
+                        <a asp-area="Admin" asp-controller="Contact" asp-action="ContactDetail" asp-route-id="@item.ContactId" class="dropdown-item">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="nb-avatar">@Initials(item.Name)</div>
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <span class="nb-msg-name">@item.Name</span>
+                                        <span class="nb-msg-time">@RelativeDate(item.SendDate)</span>
+                                    </div>
+                                    <div class="nb-msg-subject">@item.Subject</div>
+                                </div>
+                            </div>
+                        </a>
+                        <hr class="dropdown-divider">
+                    }
+                }
+                else
+                {
+                    <div class="nb-empty"><i class="fa fa-inbox me-1"></i>Henüz mesaj yok</div>
+                    <hr class="dropdown-divider">
+                }
+
+                <a asp-area="Admin" asp-controller="Contact" asp-action="Index" class="dropdown-item text-center fw-semibold">Tüm mesajları gör</a>
             </div>
         </div>
+
+        <!-- Bildirimler -->
         <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="fa fa-bell me-lg-2"></i>
-                <span class="d-none d-lg-inline-flex">Notificatin</span>
+                <span class="d-none d-lg-inline-flex">Bildirimler</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a href="#" class="dropdown-item">
-                    <h6 class="fw-normal mb-0">Profile updated</h6>
-                    <small>15 minutes ago</small>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0 nb-menu">
+                <div class="nb-menu-head">Bildirimler</div>
+                <a asp-area="Admin" asp-controller="Subscriber" asp-action="Index" class="dropdown-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="nb-notif-icon" style="background: rgba(245, 158, 11, .12); color: #d97706;"><i class="fa fa-paper-plane"></i></div>
+                        <div>
+                            <h6 class="fw-normal mb-0" style="font-size: .86rem;">Yeni bülten abonesi</h6>
+                            <small style="color: var(--muted);">15 dk önce</small>
+                        </div>
+                    </div>
                 </a>
                 <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    <h6 class="fw-normal mb-0">New user added</h6>
-                    <small>15 minutes ago</small>
+                <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="dropdown-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="nb-notif-icon" style="background: rgba(79, 70, 229, .12); color: #4f46e5;"><i class="fa fa-home"></i></div>
+                        <div>
+                            <h6 class="fw-normal mb-0" style="font-size: .86rem;">Yeni ilan eklendi</h6>
+                            <small style="color: var(--muted);">1 saat önce</small>
+                        </div>
+                    </div>
                 </a>
                 <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    <h6 class="fw-normal mb-0">Password changed</h6>
-                    <small>15 minutes ago</small>
+                <a asp-area="Admin" asp-controller="Testimonial" asp-action="Index" class="dropdown-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="nb-notif-icon" style="background: rgba(16, 185, 129, .12); color: #059669;"><i class="fa fa-quote-left"></i></div>
+                        <div>
+                            <h6 class="fw-normal mb-0" style="font-size: .86rem;">Yeni müşteri yorumu</h6>
+                            <small style="color: var(--muted);">Dün</small>
+                        </div>
+                    </div>
                 </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item text-center">See all notifications</a>
             </div>
         </div>
+
+        <!-- Profil -->
         <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img class="rounded-circle me-lg-2" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                <span class="d-none d-lg-inline-flex">John Doe</span>
+                <span class="d-none d-lg-inline-flex">Emre Hacı</span>
             </a>
             <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a href="#" class="dropdown-item">My Profile</a>
-                <a href="#" class="dropdown-item">Settings</a>
-                <a href="#" class="dropdown-item">Log Out</a>
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="dropdown-item"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank" class="dropdown-item"><i class="fa fa-external-link-alt me-2"></i>Siteye Git</a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-item text-danger"><i class="fa fa-sign-out-alt me-2"></i>Çıkış Yap</a>
             </div>
         </div>
     </div>

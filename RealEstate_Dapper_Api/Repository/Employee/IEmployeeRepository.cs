@@ -5,6 +5,7 @@ namespace RealEstate_Dapper_Api.Repository.Employee
     public interface IEmployeeRepository
     {
         Task<List<ResultEmployeeDto>> GetAllAsync();
+        Task<List<ResultEmployeeDto>> GetActiveEmployees();
         Task<GetEmployeeByIdDto> GetByIdAsync(int id);
 
         Task CreateAsync(CreateEmployeeDto dto);

@@ -23,6 +23,13 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok(values);
         }
 
+        [HttpGet("ActiveEmployees")]
+        public async Task<IActionResult> GetActiveEmployee()
+        {
+            var values = await employeeRepository.GetActiveEmployees();
+            return Ok(values);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployeeById(int id)
         {

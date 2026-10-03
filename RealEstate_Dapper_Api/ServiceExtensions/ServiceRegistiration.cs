@@ -3,6 +3,7 @@ using RealEstate_Dapper_Api.Repository.BottomGrid;
 using RealEstate_Dapper_Api.Repository.Category;
 using RealEstate_Dapper_Api.Repository.Client;
 using RealEstate_Dapper_Api.Repository.Contact;
+using RealEstate_Dapper_Api.Repository.Dashboard;
 using RealEstate_Dapper_Api.Repository.Employee;
 using RealEstate_Dapper_Api.Repository.FeatureCardDto;
 using RealEstate_Dapper_Api.Repository.Product;
@@ -36,6 +37,7 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IAdressRepository, AdressRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IStatisticRepository, StatisticRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
             return services;
         }
     }

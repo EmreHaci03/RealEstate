@@ -1,0 +1,37 @@
+﻿@model List<ResultEmployeeDto>
+
+<div class="w3l-news" id="agents">
+    <section id="grids5-block" class="py-5">
+        <div class="container py-lg-5 py-md-4 py-2">
+            <div class="text-center">
+                <h6 class="title-small">Ekibimiz</h6>
+                <h3 class="title-big mt-3">Danışmanlarımız</h3>
+            </div>
+            <div class="row mt-lg-5 mt-4 pt-3">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-5">
+                        <div class="grids5-info">
+                            <span class="posted-date">
+                                <a href="tel:@item.PhoneNumber?.Replace(" ", "")">
+                                    <span class="big"><i class="fa fa-phone"></i></span>
+                                    <span class="small">Ara</span>
+                                </a>
+                            </span>
+                            <a href="mailto:@item.Mail" class="d-block zoom">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/starter/assets/images/p1.jpg" : item.ImageUrl)"
+                                     alt="@item.Name" class="img-fluid news-image" loading="lazy" />
+                            </a>
+                            <div class="blog-info">
+                                <span class="category">@item.Title</span>
+                                <h4><a href="mailto:@item.Mail">@item.Name</a></h4>
+                                <p class="mb-1"><i class="fa fa-envelope me-2"></i>@item.Mail</p>
+                                <p class="mb-0"><i class="fa fa-phone me-2"></i>@item.PhoneNumber</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>

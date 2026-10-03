@@ -1,0 +1,12 @@
+﻿@model List<ResultDashboardAveragePriceByCategoryDto>
+<div class="col-lg-12 col-xl-3">
+    <div class="db-panel">
+        <div class="db-panel-head">
+            <h6 class="db-panel-title">Kategoriye Göre Ort. Fiyat</h6>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="db-price-row"><span>@item.CategoryName<small>@item.TotalProductCount</small></span><span>₺@item.AveragePrice</span></div>
+        }
+    </div>
+</div>

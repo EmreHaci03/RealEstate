@@ -1,0 +1,43 @@
+﻿@model ResultDashboardSummaryDto
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="db-kpi">
+            <div class="db-kpi-top">
+                <div class="db-kpi-icon c-indigo"><i class="fa fa-home"></i></div>
+                <span class="db-kpi-sub">9 şehirde</span>
+            </div>
+            <div class="db-kpi-value">@Model.TotalProduct</div>
+            <div class="db-kpi-label">Toplam ilan</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="db-kpi">
+            <div class="db-kpi-top">
+                <div class="db-kpi-icon c-emerald"><i class="fa fa-lira-sign"></i></div>
+                <span class="db-kpi-sub">Ort. ₺14,7M</span>
+            </div>
+            <div class="db-kpi-value">₺@Model.TotalProductValue</div>
+            <div class="db-kpi-label">Toplam portföy değeri</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="db-kpi">
+            <div class="db-kpi-top">
+                <div class="db-kpi-icon c-rose"><i class="fa fa-envelope"></i></div>
+                <span class="db-kpi-sub">Bugün 3</span>
+            </div>
+            <div class="db-kpi-value">@Model.MonthMessage</div>
+            <div class="db-kpi-label">Bu ay gelen mesaj</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="db-kpi">
+            <div class="db-kpi-top">
+                <div class="db-kpi-icon c-amber"><i class="fa fa-paper-plane"></i></div>
+                <span class="db-kpi-sub">Bu ay +14</span>
+            </div>
+            <div class="db-kpi-value">@Model.ActiveSubscribers</div>
+            <div class="db-kpi-label">Aktif bülten abonesi</div>
+        </div>
+    </div>
+</div>

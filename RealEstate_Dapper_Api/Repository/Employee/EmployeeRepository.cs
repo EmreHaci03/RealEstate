@@ -43,6 +43,17 @@ namespace RealEstate_Dapper_Api.Repository.Employee
             }
         }
 
+        public async Task<List<ResultEmployeeDto>> GetActiveEmployees()
+        {
+            string query = "Select * From Employee Where Status=1";
+
+            using(var connection = _context.CreateConnection())
+            {
+                var values=await connection.QueryAsync<ResultEmployeeDto>(query);
+                return values.ToList();
+            }
+        }
+
         public async Task<List<ResultEmployeeDto>> GetAllAsync()
         {
             string query = "Select EmployeeId,Name,Title,Mail,PhoneNumber,ImageUrl,Status From Employee";

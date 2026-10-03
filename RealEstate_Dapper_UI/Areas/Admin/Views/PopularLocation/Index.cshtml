@@ -1,0 +1,362 @@
+﻿@model List<ResultProductCountByCityDto>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Popüler Lokasyonlar";
+
+    var ordered = Model.OrderByDescending(x => x.ProductCount).ToList();
+    var totalCity = ordered.Count;
+    var totalProduct = ordered.Sum(x => x.ProductCount);
+    var topCity = ordered.FirstOrDefault();
+    var maxCount = ordered.Any() ? ordered.Max(x => x.ProductCount) : 1;
+}
+
+<style>
+    .loc-page .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 100%;
+    }
+
+    .loc-page .stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+        .loc-page .stat-icon.city {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .loc-page .stat-icon.product {
+            background: rgba(14, 165, 233, .12);
+            color: #0284c7;
+        }
+
+        .loc-page .stat-icon.top {
+            background: rgba(245, 158, 11, .12);
+            color: #d97706;
+        }
+
+    .loc-page .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--text);
+    }
+
+        .loc-page .stat-value.text {
+            font-size: 1.2rem;
+        }
+
+    .loc-page .stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .loc-page .info-note {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: var(--primary-soft);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: .88rem;
+    }
+
+        .loc-page .info-note i {
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+    .loc-page .search-box {
+        position: relative;
+        max-width: 280px;
+        width: 100%;
+    }
+
+        .loc-page .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .loc-page .search-box input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .loc-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        height: 100%;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+        .loc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 36px -20px rgba(16, 24, 40, .35);
+        }
+
+    .loc-cover {
+        position: relative;
+        aspect-ratio: 16 / 10;
+        background: var(--primary-soft);
+        overflow: hidden;
+    }
+
+        .loc-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
+        }
+
+    .loc-card:hover .loc-cover img {
+        transform: scale(1.06);
+    }
+
+    .loc-cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0deg, rgba(2, 6, 23, .7) 0%, rgba(2, 6, 23, 0) 55%);
+    }
+
+    .loc-rank {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 1;
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, .92);
+        color: var(--text);
+        font-weight: 700;
+        font-size: .85rem;
+        display: grid;
+        place-items: center;
+    }
+
+        .loc-rank.gold {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .loc-rank.silver {
+            background: #94a3b8;
+            color: #fff;
+        }
+
+        .loc-rank.bronze {
+            background: #b45309;
+            color: #fff;
+        }
+
+    .loc-name {
+        position: absolute;
+        left: 16px;
+        bottom: 12px;
+        z-index: 1;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .loc-body {
+        padding: 16px 18px 18px;
+    }
+
+    .loc-count {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+    }
+
+        .loc-count b {
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+
+        .loc-count span {
+            font-size: .8rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+    .loc-track {
+        height: 7px;
+        background: var(--primary-soft);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .loc-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--primary), #818cf8);
+    }
+
+    .loc-page .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+    }
+
+    .loc-page .empty-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4 loc-page">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Popüler Lokasyonlar</h4>
+            <p class="mb-0" style="color: var(--muted);">Ana sayfadaki "Popüler Lokasyonlar" bölümünde görünen şehirler ve ilan sayıları.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-primary px-4">
+            <i class="fa fa-home me-2"></i>İlanlara Git
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon city"><i class="fa fa-city"></i></div>
+                <div><div class="stat-value">@totalCity</div><div class="stat-label">Şehir</div></div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon product"><i class="fa fa-home"></i></div>
+                <div><div class="stat-value">@totalProduct</div><div class="stat-label">Toplam ilan</div></div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="stat-card">
+                <div class="stat-icon top"><i class="fa fa-trophy"></i></div>
+                <div><div class="stat-value text">@(topCity?.City ?? "-")</div><div class="stat-label">En çok ilan olan şehir</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-note mb-4">
+        <i class="fa fa-info-circle"></i>
+        <div>Bu liste ilanlardan otomatik oluşur. Bir şehir eklemek ya da çıkarmak için o şehirde ilan ekleyin veya silin. Kapak resmi, şehirdeki ilanlardan birinden alınır.</div>
+    </div>
+
+    <div class="bg-light rounded p-4">
+        @if (ordered.Any())
+        {
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <h6 class="mb-0">Şehir Sıralaması</h6>
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="citySearch" class="form-control" placeholder="Şehir ara..." />
+                </div>
+            </div>
+
+            <div class="row g-3" id="cityGrid">
+                @{ var rank = 1; }
+                @foreach (var item in ordered)
+                {
+                    var percent = (int)Math.Round(item.ProductCount * 100.0 / maxCount);
+                    var share = totalProduct > 0 ? Math.Round(item.ProductCount * 100.0 / totalProduct) : 0;
+                    var rankClass = rank == 1 ? "gold" : rank == 2 ? "silver" : rank == 3 ? "bronze" : "";
+
+                    <div class="col-sm-6 col-lg-4 col-xl-3 city-item" data-search="@item.City?.ToLower()">
+                        <div class="loc-card">
+                            <div class="loc-cover">
+                                @if (!string.IsNullOrEmpty(item.CoverImage))
+                                {
+                                    <img src="@item.CoverImage" alt="@item.City" loading="lazy" />
+                                }
+                                <span class="loc-rank @rankClass">#@rank</span>
+                                <span class="loc-name">@item.City</span>
+                            </div>
+                            <div class="loc-body">
+                                <div class="loc-count">
+                                    <b>@item.ProductCount ilan</b>
+                                    <span>%@share</span>
+                                </div>
+                                <div class="loc-track"><div class="loc-fill" style="width: @percent%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    rank++;
+                }
+            </div>
+
+            <div id="noResult" class="text-center py-4" style="display: none; color: var(--muted);">
+                <i class="fa fa-search me-2"></i>Eşleşen şehir bulunamadı.
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa fa-map-marked-alt"></i></div>
+                <h5 class="fw-bold mb-1">Henüz lokasyon yok</h5>
+                <p class="mb-4" style="color: var(--muted);">İlan eklendikçe şehirler burada otomatik olarak listelenecek.</p>
+                <a asp-area="Admin" asp-controller="Product" asp-action="CreateProduct" class="btn btn-primary px-4">
+                    <i class="fa fa-plus me-2"></i>İlan Ekle
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var searchInput = document.getElementById("citySearch");
+        if (!searchInput) return;
+
+        searchInput.addEventListener("input", function () {
+            var term = this.value.trim().toLocaleLowerCase("tr");
+            var items = document.querySelectorAll("#cityGrid .city-item");
+            var visibleCount = 0;
+
+            items.forEach(function (item) {
+                var match = item.getAttribute("data-search").toLocaleLowerCase("tr").includes(term);
+                item.style.display = match ? "" : "none";
+                if (match) visibleCount++;
+            });
+
+            document.getElementById("noResult").style.display = visibleCount === 0 ? "" : "none";
+        });
+    });
+</script>

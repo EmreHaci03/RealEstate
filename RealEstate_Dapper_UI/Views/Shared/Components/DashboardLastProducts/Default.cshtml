@@ -1,0 +1,32 @@
+﻿@model List<ResultProductWithDetailDto>
+@{
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+}
+
+<div class="col-lg-6 col-xl-5">
+    <div class="db-panel">
+        <div class="db-panel-head">
+            <h6 class="db-panel-title">Son Eklenen İlanlar</h6>
+            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="db-panel-link">Tümünü gör</a>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="db-listing">
+                    <img src="@item.CoverImage" alt="@item.Title" loading="lazy" />
+                    <div>
+                        <div class="db-listing-title">@item.Title</div>
+                        <div class="db-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>@item.District, @item.City · @item.CategoryName</div>
+                    </div>
+                    <div class="db-listing-price">₺@item.Price.ToString("N0", tr)</div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="mb-0 text-center py-4" style="color: var(--muted);">Henüz ilan yok.</p>
+        }
+    </div>
+</div>

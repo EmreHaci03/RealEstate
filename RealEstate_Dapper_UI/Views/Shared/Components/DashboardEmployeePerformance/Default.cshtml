@@ -1,0 +1,19 @@
+﻿@model List<ResultEmployePerformanceDto>
+<div class="col-lg-6 col-xl-4">
+    <div class="db-panel">
+        <div class="db-panel-head">
+            <h6 class="db-panel-title">Danışman Performansı</h6>
+            <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="db-panel-link">Tümü</a>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="db-bar-row">
+                <div class="db-bar-avatar">@item.EmployeeName.Substring(0,1)</div>
+                <div class="flex-grow-1">
+                    <div class="db-bar-top"><span>@item.EmployeeName</span><span>@item.PropertyCount ilan</span></div>
+                    <div class="db-bar-track"><div class="db-bar-fill" style="width: 100%;"></div></div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
