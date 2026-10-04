@@ -71,9 +71,23 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
             }
         }
 
-        public Task<ResultAgentProductCountByCategoryDto> ResultAgentProductCountByCategoryAsync(int userId)
+        public async Task<List<ResultAgentProductCountByCategoryDto>> ResultAgentProductCountByCategoryAsync(int userId)
         {
-            throw new NotImplementedException();
+            string query = @"
+             DECLARE @EmployeeId INT = (
+        SELECT e.EmployeeId
+        FROM Employee e
+        INNER JOIN AppUser u ON e.Mail = u.Email
+        WHERE u.UserId = @UserId
+    );
+                Select Count(*) As ProductCount,c.CategoryName as CategoryName From Product p inner join Category c on p.Category=c.CategoryId Where Employee=@EmployeeId Group By CategoryName ";
+        var parameters=new DynamicParameters();    
+            parameters.Add("@UserId",userId);
+        using(var connection = _context.CreateConnection())
+            {
+                var values= await connection.QueryAsync<ResultAgentProductCountByCategoryDto>(query, parameters);
+                return values.ToList();
+            }
         }
     }
 }

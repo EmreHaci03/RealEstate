@@ -573,19 +573,22 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            new Chart(document.getElementById("agCategoryChart"), {
-                type: "doughnut",
-                data: {
-                    labels: ["Daire", "Villa", "Müstakil Ev", "Dükkan", "Rezidans", "Arsa"],
-                    datasets: [{
-                        data: [1, 1, 1, 1, 1, 1],
-                        backgroundColor: ["#059669", "#0ea5e9", "#f59e0b", "#8b5cf6", "#f43f5e", "#64748b"],
-                        borderWidth: 2,
-                        borderColor: "#fff"
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: "65%" }
-            });
+
+           new Chart(document.getElementById("agCategoryChart"), {
+    type: "doughnut",
+    data: {
+        labels: @Html.Raw(ViewBag.CategoryName),
+        datasets: [{
+            data: @Html.Raw(ViewBag.ProductCount),
+            backgroundColor: ["#059669", "#0ea5e9", "#f59e0b", "#8b5cf6", "#f43f5e", "#64748b"],
+            borderWidth: 2,
+            borderColor: "#fff"
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "65%" }
+});
+
+
 
             new Chart(document.getElementById("agAvgPriceChart"), {
                 type: "bar",

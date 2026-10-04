@@ -6,7 +6,7 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
     {
         Task<ResultStatisticDto> GetStatisticsAsync();
 
-        Task<ResultAgentProductCountByCategoryDto> ResultAgentProductCountByCategoryAsync(int userId);
+        Task<List<ResultAgentProductCountByCategoryDto>> ResultAgentProductCountByCategoryAsync(int userId);
 
         Task<ResultAgentStatisticDto> GetAgentStatisticsAsync(int userId);
     }

@@ -33,6 +33,13 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(values);
         }
+
+        [HttpGet("GetAgentProductCountByCategory/{userId}")]
+        public async Task<IActionResult> GetAgentProductCountByCategory(int userId)
+        {
+            var values = await _statisticRepository.ResultAgentProductCountByCategoryAsync(userId);
+            return Ok(values);
+        }
     }
 }
 

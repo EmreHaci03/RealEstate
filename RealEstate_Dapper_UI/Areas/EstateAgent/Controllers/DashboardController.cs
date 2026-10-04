@@ -21,22 +21,35 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-
             if (string.IsNullOrEmpty(userId))
                 return RedirectToAction("Login", "Account", new { area = "" });
 
-            
-
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"https://localhost:7025/api/Statistic/GetAgentStatistics/{userId}");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData=await responseMessage.Content.ReadAsStringAsync(); 
-                var values=JsonConvert.DeserializeObject<ResultAgentStatisticDto>(jsonData);
-                return View(values); 
 
+            var stats = new ResultAgentStatisticDto();
+            ViewBag.CategoryName = "[]";
+            ViewBag.ProductCount = "[]";
+
+            // 1. İstatistikler
+            var statResponse = await client.GetAsync($"https://localhost:7025/api/Statistic/GetAgentStatistics/{userId}");
+            if (statResponse.IsSuccessStatusCode)
+            {
+                var jsonData = await statResponse.Content.ReadAsStringAsync();
+                stats = JsonConvert.DeserializeObject<ResultAgentStatisticDto>(jsonData) ?? new();
             }
-            return View();
+
+            // 2. Kategori dağılımı
+            var categoryResponse = await client.GetAsync($"https://localhost:7025/api/Statistic/GetAgentProductCountByCategory/{userId}");
+            if (categoryResponse.IsSuccessStatusCode)
+            {
+                var jsonData = await categoryResponse.Content.ReadAsStringAsync();
+                var categoryValues = JsonConvert.DeserializeObject<List<ResultAgentProductCountByCategoryDto>>(jsonData) ?? new();
+
+                ViewBag.CategoryName = JsonConvert.SerializeObject(categoryValues.Select(x => x.CategoryName));
+                ViewBag.ProductCount = JsonConvert.SerializeObject(categoryValues.Select(x => x.ProductCount));
+            }
+
+            return View(stats);
         }
     }
 }
