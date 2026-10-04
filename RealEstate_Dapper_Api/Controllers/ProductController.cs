@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ProductDtos;
 using RealEstate_Dapper_Api.Repository.Product;
+using System.Security.Claims;
 
 namespace RealEstate_Dapper_Api.Controllers
 {
@@ -40,6 +42,12 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetProductAdvertsListByUser/{userId}")]
+        public async Task<IActionResult> GetProductAdvertsListByUser(int userId)
+        {
+            var values = await productRepository.GetProductAdvertsListByUserAsync(userId);
+            return Ok(values);
+        }
 
         [HttpGet("ProductListWithCategory")]
         public async Task<IActionResult> ProductListWithCategory()
@@ -50,6 +58,7 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok(values);
         }
 
+
         [HttpGet("ProductListWithAllDetail")]
         public async Task<IActionResult> ProductListWithDetail()
         {
@@ -58,6 +67,13 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Emlak Bilgisi Alınamadı!");
 
 
+            return Ok(values);
+        }
+
+        [HttpGet("ProductAdvertsListByEmployee")]
+        public async Task<IActionResult> ProductAdvertsListByEmployee(int id)
+        {
+            var values = await productRepository.GetProductAdvertsListByEmployeeAsync(id);
             return Ok(values);
         }
 
@@ -85,6 +101,8 @@ namespace RealEstate_Dapper_Api.Controllers
             await productRepository.UpdateAsync(dto);
             return Ok("Emlak Başarıyla Güncellendi");
         }
+
+
 
     }
 }

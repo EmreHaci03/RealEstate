@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.DashboardDtos;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

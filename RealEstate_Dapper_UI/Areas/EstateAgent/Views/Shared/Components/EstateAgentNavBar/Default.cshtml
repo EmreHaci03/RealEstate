@@ -1,5 +1,5 @@
 ﻿<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-    <a asp-area="Agent" asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex d-lg-none me-4">
+    <a asp-area="EstateAgent" asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex d-lg-none me-4">
         <h2 class="text-primary mb-0"><i class="fa fa-home"></i></h2>
     </a>
     <a href="#" class="sidebar-toggler flex-shrink-0">
@@ -7,18 +7,28 @@
     </a>
 
     <div class="navbar-nav align-items-center ms-auto">
-        <a asp-area="Agent" asp-controller="MyProduct" asp-action="CreateProduct" class="btn btn-primary btn-sm me-3 d-none d-md-inline-flex align-items-center">
+        <a asp-area="EstateAgent" asp-controller="MyProduct" asp-action="CreateProduct" class="btn btn-primary btn-sm me-3 d-none d-md-inline-flex align-items-center">
             <i class="fa fa-plus me-2"></i>Yeni İlan
         </a>
 
         <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <span class="agent-avatar me-lg-2 d-inline-grid" style="width: 36px; height: 36px; font-size: .8rem;">Emre</span>
-                <span class="d-none d-lg-inline-flex">Hacı</span>
-            </a>
+
+            @if (User.Identity.IsAuthenticated == true)
+            {
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <span class="agent-avatar me-lg-2 d-inline-grid" style="width: 36px; height: 36px; font-size: .8rem;">@User.Identity.Name</span>
+                </a>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Account" asp-action="Login" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <span class="agent-avatar me-lg-2 d-inline-grid" style="width: 36px; height: 36px; font-size: .8rem;">Üye</span>
+                    <span class="d-none d-lg-inline-flex"></span>
+                </a>
+            }
             <div class="dropdown-menu dropdown-menu-end m-0">
-                <a asp-area="Agent" asp-controller="Profile" asp-action="Index" class="dropdown-item"><i class="fa fa-user me-2"></i>Profilim</a>
-                <a asp-area="Agent" asp-controller="MyProduct" asp-action="Index" class="dropdown-item"><i class="fa fa-home me-2"></i>İlanlarım</a>
+                <a asp-area="EstateAgent" asp-controller="Profile" asp-action="Index" class="dropdown-item"><i class="fa fa-user me-2"></i>Profilim</a>
+                <a asp-area="EstateAgent" asp-controller="MyProduct" asp-action="Index" class="dropdown-item"><i class="fa fa-home me-2"></i>İlanlarım</a>
                 <hr class="dropdown-divider">
                 <a asp-area="" asp-controller="Login" asp-action="Logout" class="dropdown-item text-danger"><i class="fa fa-sign-out-alt me-2"></i>Çıkış Yap</a>
             </div>

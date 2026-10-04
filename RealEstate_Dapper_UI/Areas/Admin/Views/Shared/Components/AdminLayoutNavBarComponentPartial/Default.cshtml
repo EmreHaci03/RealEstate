@@ -204,18 +204,25 @@
         </div>
 
         <!-- Profil -->
-        <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img class="rounded-circle me-lg-2" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                <span class="d-none d-lg-inline-flex">Emre Hacı</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="dropdown-item"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank" class="dropdown-item"><i class="fa fa-external-link-alt me-2"></i>Siteye Git</a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item text-danger"><i class="fa fa-sign-out-alt me-2"></i>Çıkış Yap</a>
+        @if (User.Identity.IsAuthenticated == true)
+        {
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <img class="rounded-circle me-lg-2" src="~/dashmin-1.0.0/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <span class="d-none d-lg-inline-flex">@User.Identity.Name</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="dropdown-item"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank" class="dropdown-item"><i class="fa fa-external-link-alt me-2"></i>Siteye Git</a>
+                    <hr class="dropdown-divider">
+                    <a asp-controller="Account" asp-area="" asp-action="LogOut" class="dropdown-item text-danger"><i class="fa fa-sign-out-alt me-2"></i>Çıkış Yap</a>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-area="" asp-action="Login">Giriş Yap</a>
+        }
     </div>
 </nav>
 <!-- Navbar End -->

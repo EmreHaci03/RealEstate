@@ -1,0 +1,607 @@
+﻿@model RealEstate_Dapper_UI.DTOS.StatisticDtos.ResultAgentStatisticDto
+@{
+    Layout = "~/Areas/EstateAgent/Views/Shared/_EstateAgentLayout.cshtml";
+    ViewData["Title"] = "Panelim";
+
+    var hour = DateTime.Now.Hour;
+    var greeting = hour < 12 ? "Günaydın" : hour < 18 ? "İyi günler" : "İyi akşamlar";
+    var today = DateTime.Now.ToString("dd MMMM yyyy, dddd", new System.Globalization.CultureInfo("tr-TR"));
+}
+
+<style>
+    .ag-hero {
+        background: linear-gradient(135deg, #047857 0%, #059669 55%, #34d399 100%);
+        border-radius: 20px;
+        padding: 28px 30px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ag-hero::before {
+            content: "";
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .ag-hero::after {
+            content: "";
+            position: absolute;
+            right: 90px;
+            bottom: -80px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .07);
+        }
+
+        .ag-hero h3 {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .ag-hero p {
+            color: rgba(255, 255, 255, .88);
+            margin: 0;
+        }
+
+    .ag-hero-date {
+        font-size: .85rem;
+        color: rgba(255, 255, 255, .78);
+        margin-bottom: 10px;
+    }
+
+    .ag-hero-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+        .ag-hero-actions a {
+            background: rgba(255, 255, 255, .16);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .28);
+            border-radius: 12px;
+            padding: 9px 16px;
+            font-size: .88rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background .2s ease;
+        }
+
+            .ag-hero-actions a:hover {
+                background: rgba(255, 255, 255, .28);
+            }
+
+    .ag-kpi {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+        height: 100%;
+    }
+
+    .ag-kpi-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
+
+    .ag-kpi-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        font-size: 19px;
+    }
+
+    .ag-kpi-sub {
+        font-size: .75rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .ag-kpi-value {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.1;
+    }
+
+    .ag-kpi-label {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .c-green {
+        background: rgba(5, 150, 105, .12);
+        color: #059669;
+    }
+
+    .c-sky {
+        background: rgba(14, 165, 233, .12);
+        color: #0284c7;
+    }
+
+    .c-amber {
+        background: rgba(245, 158, 11, .12);
+        color: #d97706;
+    }
+
+    .c-violet {
+        background: rgba(139, 92, 246, .12);
+        color: #7c3aed;
+    }
+
+    .c-rose {
+        background: rgba(244, 63, 94, .12);
+        color: #e11d48;
+    }
+
+    .ag-panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        height: 100%;
+    }
+
+    .ag-panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .ag-panel-title {
+        font-weight: 700;
+        color: var(--text);
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .ag-panel-link {
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .ag-chart {
+        position: relative;
+        height: 280px;
+    }
+
+        .ag-chart.sm {
+            height: 240px;
+        }
+
+    .ag-quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+        .ag-quick a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 18px 10px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all .2s ease;
+        }
+
+            .ag-quick a i {
+                font-size: 20px;
+                color: var(--primary);
+            }
+
+            .ag-quick a:hover {
+                border-color: var(--primary);
+                background: var(--primary-soft);
+                color: var(--primary);
+            }
+
+    .ag-listing {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+        .ag-listing + .ag-listing {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+        }
+
+        .ag-listing img {
+            width: 58px;
+            height: 44px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--primary-soft);
+        }
+
+    .ag-listing-title {
+        font-weight: 600;
+        color: var(--text);
+        font-size: .9rem;
+        line-height: 1.3;
+    }
+
+    .ag-listing-meta {
+        font-size: .78rem;
+        color: var(--muted);
+    }
+
+    .ag-listing-price {
+        margin-left: auto;
+        font-weight: 700;
+        color: var(--text);
+        font-size: .9rem;
+        white-space: nowrap;
+    }
+
+    .ag-highlight {
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+    }
+
+        .ag-highlight + .ag-highlight {
+            margin-top: 12px;
+        }
+
+    .ag-highlight-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 17px;
+        background: rgba(255, 255, 255, .75);
+        flex-shrink: 0;
+    }
+
+    .ag-highlight-label {
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .ag-highlight-title {
+        font-weight: 700;
+        color: var(--text);
+        margin: 2px 0;
+        font-size: .92rem;
+    }
+
+    .ag-highlight-meta {
+        font-size: .82rem;
+        color: var(--muted);
+    }
+
+    .ag-bar-row + .ag-bar-row {
+        margin-top: 14px;
+    }
+
+    .ag-bar-top {
+        display: flex;
+        justify-content: space-between;
+        font-size: .85rem;
+        margin-bottom: 5px;
+    }
+
+        .ag-bar-top span:first-child {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .ag-bar-top span:last-child {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+    .ag-bar-track {
+        height: 7px;
+        background: var(--primary-soft);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .ag-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #059669, #34d399);
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <!-- Karşılama -->
+    <div class="ag-hero mb-4">
+        <div class="position-relative" style="z-index: 1;">
+            <div class="ag-hero-date"><i class="fa fa-calendar-alt me-1"></i>@today</div>
+            <h3>@greeting, @User.Identity?.Name 👋</h3>
+            <p>Portföyünde 6 ilan var. Bu hafta 2 yeni ilan ekledin, harika gidiyorsun.</p>
+        </div>
+        <div class="ag-hero-actions">
+            <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvert"><i class="fa fa-plus me-2"></i>Yeni İlan</a>
+            <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index"><i class="fa fa-home me-2"></i>İlanlarım</a>
+            <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank"><i class="fa fa-external-link-alt me-2"></i>Siteyi Görüntüle</a>
+        </div>
+    </div>
+
+    <!-- KPI kartları -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="ag-kpi">
+                <div class="ag-kpi-top">
+                    <div class="ag-kpi-icon c-green"><i class="fa fa-home"></i></div>
+                    <span class="ag-kpi-sub">Portföyüm</span>
+                </div>
+                <div class="ag-kpi-value">@Model.TotalProduct</div>
+                <div class="ag-kpi-label">Toplam ilanım</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="ag-kpi">
+                <div class="ag-kpi-top">
+                    <div class="ag-kpi-icon c-amber"><i class="fa fa-lira-sign"></i></div>
+                    <span class="ag-kpi-sub">Toplam değer</span>
+                </div>
+                <div class="ag-kpi-value">₺@Model.TotalProductValue.ToString("N0")</div>
+                <div class="ag-kpi-label">Portföy değerim</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="ag-kpi">
+                <div class="ag-kpi-top">
+                    <div class="ag-kpi-icon c-sky"><i class="fa fa-layer-group"></i></div>
+                    <span class="ag-kpi-sub">Çeşitlilik</span>
+                </div>
+                <div class="ag-kpi-value">@Model.DifferentCategoryValue</div>
+                <div class="ag-kpi-label">Farklı kategori</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="ag-kpi">
+                <div class="ag-kpi-top">
+                    <div class="ag-kpi-icon c-violet"><i class="fa fa-trophy"></i></div>
+                    <span class="ag-kpi-sub">İlan sayısına göre</span>
+                </div>
+                <div class="ag-kpi-value">@(Model.EstateAgentRanking).</div>
+                <div class="ag-kpi-label">Danışman sıralamam</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Şehir grafiği + hızlı işlemler -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-8">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">İlanlarımın Şehirlere Göre Dağılımı</h6>
+                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="ag-panel-link">Tümünü gör</a>
+                </div>
+                <div class="ag-chart"><canvas id="agCityChart"></canvas></div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Hızlı İşlemler</h6>
+                </div>
+                <div class="ag-quick">
+                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvert"><i class="fa fa-plus-circle"></i>İlan Ekle</a>
+                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index"><i class="fa fa-home"></i>İlanlarım</a>
+                    <a asp-area="EstateAgent" asp-controller="MyMessage" asp-action="Index"><i class="fa fa-inbox"></i>Mesajlarım</a>
+                    <a asp-area="EstateAgent" asp-controller="Profile" asp-action="Index"><i class="fa fa-user-circle"></i>Profilim</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori + fiyat aralıkları + öne çıkanlar -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6 col-xl-4">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Kategori Dağılımım</h6>
+                </div>
+                <div class="ag-chart sm"><canvas id="agCategoryChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-xl-4">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Fiyat Aralıklarım</h6>
+                </div>
+                <div class="ag-bar-row">
+                    <div class="ag-bar-top"><span>5 Milyon altı</span><span>1 ilan</span></div>
+                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
+                </div>
+                <div class="ag-bar-row">
+                    <div class="ag-bar-top"><span>5 - 10 Milyon</span><span>3 ilan</span></div>
+                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 100%;"></div></div>
+                </div>
+                <div class="ag-bar-row">
+                    <div class="ag-bar-top"><span>10 - 20 Milyon</span><span>1 ilan</span></div>
+                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
+                </div>
+                <div class="ag-bar-row">
+                    <div class="ag-bar-top"><span>20 Milyon üstü</span><span>1 ilan</span></div>
+                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 col-xl-4">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Öne Çıkan İlanlarım</h6>
+                </div>
+                <div class="ag-highlight" style="background: rgba(245, 158, 11, .1);">
+                    <div class="ag-highlight-icon" style="color: #d97706;"><i class="fa fa-crown"></i></div>
+                    <div>
+                        <div class="ag-highlight-label" style="color: #d97706;">En pahalı</div>
+                        <div class="ag-highlight-title">Havuzlu Müstakil Villa</div>
+                        <div class="ag-highlight-meta">₺37.000.000 · Muğla</div>
+                    </div>
+                </div>
+                <div class="ag-highlight" style="background: rgba(5, 150, 105, .1);">
+                    <div class="ag-highlight-icon" style="color: #059669;"><i class="fa fa-tag"></i></div>
+                    <div>
+                        <div class="ag-highlight-label" style="color: #059669;">En uygun</div>
+                        <div class="ag-highlight-title">İmarlı Konut Arsası</div>
+                        <div class="ag-highlight-meta">₺2.750.000 · Bursa</div>
+                    </div>
+                </div>
+                <div class="ag-highlight" style="background: var(--primary-soft);">
+                    <div class="ag-highlight-icon" style="color: var(--primary);"><i class="fa fa-clock"></i></div>
+                    <div>
+                        <div class="ag-highlight-label" style="color: var(--primary);">En yeni</div>
+                        <div class="ag-highlight-title">Rezidansta 1+1 Kiralık Yatırım</div>
+                        <div class="ag-highlight-meta">₺5.950.000 · İstanbul</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son ilanlar + ortalama fiyat grafiği -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6 col-xl-5">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Son Eklediğim İlanlar</h6>
+                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="ag-panel-link">Tümü</a>
+                </div>
+
+                <div class="ag-listing">
+                    <img src="https://picsum.photos/seed/p7/200/150" alt="" />
+                    <div>
+                        <div class="ag-listing-title">Rezidansta 1+1 Kiralık Yatırım</div>
+                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Ataşehir, İstanbul · Rezidans</div>
+                    </div>
+                    <div class="ag-listing-price">₺5.950.000</div>
+                </div>
+                <div class="ag-listing">
+                    <img src="https://picsum.photos/seed/p6/200/150" alt="" />
+                    <div>
+                        <div class="ag-listing-title">Cadde Üzeri Dükkan</div>
+                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Şişli, İstanbul · Dükkan</div>
+                    </div>
+                    <div class="ag-listing-price">₺5.400.000</div>
+                </div>
+                <div class="ag-listing">
+                    <img src="https://picsum.photos/seed/p4/200/150" alt="" />
+                    <div>
+                        <div class="ag-listing-title">Bahçeli Müstakil Ev</div>
+                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Urla, İzmir · Müstakil Ev</div>
+                    </div>
+                    <div class="ag-listing-price">₺6.900.000</div>
+                </div>
+                <div class="ag-listing">
+                    <img src="https://picsum.photos/seed/p1/200/150" alt="" />
+                    <div>
+                        <div class="ag-listing-title">Deniz Manzaralı 3+1 Daire</div>
+                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Karşıyaka, İzmir · Daire</div>
+                    </div>
+                    <div class="ag-listing-price">₺9.300.000</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-xl-7">
+            <div class="ag-panel">
+                <div class="ag-panel-head">
+                    <h6 class="ag-panel-title">Kategorilere Göre Ortalama Fiyatım</h6>
+                </div>
+                <div class="ag-chart"><canvas id="agAvgPriceChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (typeof Chart === "undefined") return;
+
+            new Chart(document.getElementById("agCityChart"), {
+                type: "bar",
+                data: {
+                    labels: ["İstanbul", "İzmir", "Muğla", "Bursa"],
+                    datasets: [{
+                        label: "İlan sayısı",
+                        data: [2, 2, 1, 1],
+                        backgroundColor: "rgba(5, 150, 105, .75)",
+                        hoverBackgroundColor: "#059669",
+                        borderRadius: 8,
+                        maxBarThickness: 48
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            new Chart(document.getElementById("agCategoryChart"), {
+                type: "doughnut",
+                data: {
+                    labels: ["Daire", "Villa", "Müstakil Ev", "Dükkan", "Rezidans", "Arsa"],
+                    datasets: [{
+                        data: [1, 1, 1, 1, 1, 1],
+                        backgroundColor: ["#059669", "#0ea5e9", "#f59e0b", "#8b5cf6", "#f43f5e", "#64748b"],
+                        borderWidth: 2,
+                        borderColor: "#fff"
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: "65%" }
+            });
+
+            new Chart(document.getElementById("agAvgPriceChart"), {
+                type: "bar",
+                data: {
+                    labels: ["Villa", "Daire", "Müstakil Ev", "Rezidans", "Dükkan", "Arsa"],
+                    datasets: [{
+                        label: "Ortalama fiyat (₺)",
+                        data: [37000000, 9300000, 6900000, 5950000, 5400000, 2750000],
+                        backgroundColor: "rgba(14, 165, 233, .7)",
+                        hoverBackgroundColor: "#0ea5e9",
+                        borderRadius: 8,
+                        maxBarThickness: 44
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        });
+    </script>
+}

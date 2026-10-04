@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using RealEstate_Dapper_Api.Context;
+using RealEstate_Dapper_Api.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_Api.DTOS.ProductDtos;
 
 namespace RealEstate_Dapper_Api.Repository.Product
@@ -65,6 +66,37 @@ namespace RealEstate_Dapper_Api.Repository.Product
             {
                 var values = await connection.QueryFirstOrDefaultAsync<GetProductByIdDto>(query, parameters);
                 return values;
+            }
+        }
+
+        public async Task<List<ResultProductWithCategoryDto>> GetProductAdvertsListByEmployeeAsync(int id)
+        {
+            string query = "Select ProductId,Title,Price,City,District,Description,CoverImage,Adress,c.CategoryName From Product p inner join Category c on p.Category=c.CategoryId Where Employee=@Employee";
+            var parameters = new DynamicParameters();
+            parameters.Add("@Employee", id);
+            using (var connection = _context.CreateConnection())
+            {
+                var values = await connection.QueryAsync<ResultProductWithCategoryDto>(query,parameters);
+                return values.ToList();
+            }
+        }
+
+        public async Task<List<ResultProductWithCategoryDto>> GetProductAdvertsListByUserAsync(int userId)
+        {
+            string query = @"SELECT p.ProductId, p.Title, p.Price, p.City, p.District, p.Description,
+                            p.CoverImage, p.Adress, c.CategoryName
+                     FROM Product p
+                     INNER JOIN Category c ON p.Category = c.CategoryId
+                     INNER JOIN Employee e ON p.Employee = e.EmployeeId
+                     INNER JOIN AppUser u ON e.Mail = u.Email
+                     WHERE u.UserId = @UserId";
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var values = await connection.QueryAsync<ResultProductWithCategoryDto>(query, parameters);
+                return values.ToList();
             }
         }
 

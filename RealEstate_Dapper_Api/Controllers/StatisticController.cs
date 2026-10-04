@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RealEstate_Dapper_Api.DTOS.StatisticDtos;
 using RealEstate_Dapper_Api.Repository.Statistic;
 
 namespace RealEstate_Dapper_Api.Controllers
@@ -21,5 +22,17 @@ namespace RealEstate_Dapper_Api.Controllers
             var values=await _statisticRepository.GetStatisticsAsync();
             return Ok(values);
         }
+
+        [HttpGet("GetAgentStatistics/{userId}")]
+        public async Task<IActionResult> GetAgentStatistics(int userId)
+        {
+            var values = await _statisticRepository.GetAgentStatisticsAsync(userId);
+
+            if (values == null)
+                return Ok(new ResultAgentStatisticDto());
+
+            return Ok(values);
+        }
     }
 }
+

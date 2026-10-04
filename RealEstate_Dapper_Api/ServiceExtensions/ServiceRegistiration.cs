@@ -6,6 +6,7 @@ using RealEstate_Dapper_Api.Repository.Contact;
 using RealEstate_Dapper_Api.Repository.Dashboard;
 using RealEstate_Dapper_Api.Repository.Employee;
 using RealEstate_Dapper_Api.Repository.FeatureCardDto;
+using RealEstate_Dapper_Api.Repository.Login;
 using RealEstate_Dapper_Api.Repository.Product;
 using RealEstate_Dapper_Api.Repository.ProductDetail;
 using RealEstate_Dapper_Api.Repository.ProductDetailDto;
@@ -39,6 +40,7 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IStatisticRepository, StatisticRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<JwtTokenGenerator>();
             return services;
         }

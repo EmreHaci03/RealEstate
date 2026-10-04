@@ -13,6 +13,32 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
             _context = context;
         }
 
+        public async Task<ResultAgentStatisticDto> GetAgentStatisticsAsync(int userId)
+        {
+            string query = @"
+    DECLARE @EmployeeId INT = (
+        SELECT e.EmployeeId
+        FROM Employee e
+        INNER JOIN AppUser u ON e.Mail = u.Email
+        WHERE u.UserId = @UserId
+    );
+
+    SELECT
+        (SELECT COUNT(*) FROM Product WHERE Employee = @EmployeeId) AS TotalProduct,
+        (SELECT ISNULL(SUM(Price), 0) FROM Product WHERE Employee = @EmployeeId) AS TotalProductValue,
+        (SELECT COUNT(DISTINCT Category) FROM Product WHERE Employee = @EmployeeId) AS DifferentCategoryValue";
+            
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId);
+
+            using(var connection = _context.CreateConnection())
+            {
+                return await connection.QueryFirstAsync<ResultAgentStatisticDto>(query,parameters);
+            }
+
+        }
+
         public async Task<ResultStatisticDto> GetStatisticsAsync()
         {
             string query = @"
@@ -43,6 +69,11 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
             {
                 return await connection.QueryFirstAsync<ResultStatisticDto>(query);
             }
+        }
+
+        public Task<ResultAgentProductCountByCategoryDto> ResultAgentProductCountByCategoryAsync(int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
