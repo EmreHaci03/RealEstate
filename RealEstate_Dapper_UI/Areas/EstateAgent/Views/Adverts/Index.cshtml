@@ -1,0 +1,547 @@
+﻿@{
+    Layout = "~/Areas/EstateAgent/Views/Shared/_EstateAgentLayout.cshtml";
+    ViewData["Title"] = "İlanlarım";
+}
+
+<style>
+    .adv-stat {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 100%;
+    }
+
+    .adv-stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        font-size: 19px;
+        flex-shrink: 0;
+    }
+
+    .adv-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.1;
+    }
+
+    .adv-stat-label {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-top: 3px;
+    }
+
+    .c-green {
+        background: rgba(5, 150, 105, .12);
+        color: #059669;
+    }
+
+    .c-sky {
+        background: rgba(14, 165, 233, .12);
+        color: #0284c7;
+    }
+
+    .c-gray {
+        background: rgba(107, 114, 128, .12);
+        color: #6b7280;
+    }
+
+    .c-amber {
+        background: rgba(245, 158, 11, .12);
+        color: #d97706;
+    }
+
+    .adv-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .adv-tabs {
+        display: inline-flex;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 4px;
+    }
+
+    .adv-tab {
+        border: 0;
+        background: transparent;
+        padding: 7px 16px;
+        border-radius: 9px;
+        font-size: .86rem;
+        font-weight: 500;
+        color: var(--muted);
+    }
+
+        .adv-tab.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .adv-tab span {
+            font-size: .75rem;
+            opacity: .8;
+            margin-left: 4px;
+        }
+
+    .adv-search {
+        position: relative;
+        max-width: 280px;
+        width: 100%;
+    }
+
+        .adv-search i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .adv-search input {
+            padding-left: 38px;
+            height: 42px;
+        }
+
+    .adv-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+        .adv-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 36px -20px rgba(16, 24, 40, .35);
+        }
+
+        .adv-card.is-passive {
+            opacity: .7;
+        }
+
+    .adv-cover {
+        position: relative;
+        aspect-ratio: 16 / 10;
+        background: var(--primary-soft);
+        overflow: hidden;
+    }
+
+        .adv-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
+        }
+
+    .adv-card:hover .adv-cover img {
+        transform: scale(1.05);
+    }
+
+    .adv-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, .94);
+        color: var(--primary);
+        font-size: .74rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 999px;
+    }
+
+    .adv-status {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .72rem;
+        font-weight: 700;
+        padding: 5px 11px;
+        border-radius: 999px;
+        color: #fff;
+    }
+
+        .adv-status::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .adv-status.active {
+            background: rgba(5, 150, 105, .92);
+        }
+
+        .adv-status.passive {
+            background: rgba(75, 85, 99, .92);
+        }
+
+    .adv-body {
+        padding: 16px 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .adv-price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .adv-title {
+        font-weight: 600;
+        color: var(--text);
+        margin: 4px 0 6px;
+        line-height: 1.35;
+    }
+
+    .adv-location {
+        font-size: .82rem;
+        color: var(--muted);
+        margin-bottom: 12px;
+    }
+
+    .adv-features {
+        display: flex;
+        gap: 14px;
+        font-size: .8rem;
+        color: var(--muted);
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        margin-top: auto;
+    }
+
+        .adv-features i {
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+    .adv-actions {
+        display: flex;
+        gap: 8px;
+        padding: 0 18px 16px;
+    }
+
+        .adv-actions a, .adv-actions button {
+            flex: 1;
+            height: 38px;
+            border-radius: 10px;
+            font-size: .84rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+    .adv-btn-light {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+    }
+
+        .adv-btn-light:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+    .adv-add {
+        height: 100%;
+        min-height: 360px;
+        border: 2px dashed var(--line);
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+        .adv-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .adv-add i {
+            font-size: 28px;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İlanlarım</h4>
+            <p class="mb-0" style="color: var(--muted);">Sorumlu olduğun ilanları buradan takip edip yönetebilirsin.</p>
+        </div>
+        <a asp-area="Agent" asp-controller="Adverts" asp-action="CreateAdvert" class="btn btn-primary px-4">
+            <i class="fa fa-plus me-2"></i>Yeni İlan
+        </a>
+    </div>
+
+    <!-- Özet -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="adv-stat">
+                <div class="adv-stat-icon c-green"><i class="fa fa-home"></i></div>
+                <div><div class="adv-stat-value">6</div><div class="adv-stat-label">Toplam ilan</div></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="adv-stat">
+                <div class="adv-stat-icon c-sky"><i class="fa fa-check-circle"></i></div>
+                <div><div class="adv-stat-value">5</div><div class="adv-stat-label">Yayında</div></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="adv-stat">
+                <div class="adv-stat-icon c-gray"><i class="fa fa-pause-circle"></i></div>
+                <div><div class="adv-stat-value">1</div><div class="adv-stat-label">Pasif</div></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="adv-stat">
+                <div class="adv-stat-icon c-amber"><i class="fa fa-lira-sign"></i></div>
+                <div><div class="adv-stat-value">₺67,3M</div><div class="adv-stat-label">Portföy değeri</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtre + arama -->
+    <div class="adv-toolbar">
+        <div class="adv-tabs" role="group" aria-label="Duruma göre filtrele">
+            <button type="button" class="adv-tab active" data-filter="all">Tümü <span>6</span></button>
+            <button type="button" class="adv-tab" data-filter="active">Yayında <span>5</span></button>
+            <button type="button" class="adv-tab" data-filter="passive">Pasif <span>1</span></button>
+        </div>
+        <div class="adv-search">
+            <i class="fa fa-search"></i>
+            <input type="text" id="advSearch" class="form-control" placeholder="Başlık, şehir veya kategori ara..." />
+        </div>
+    </div>
+
+    <!-- İlanlar -->
+    <div class="row g-4 mb-4" id="advGrid">
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="active" data-search="bahçeli müstakil ev urla izmir müstakil ev">
+            <div class="adv-card">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p4/800/600" alt="Bahçeli Müstakil Ev" loading="lazy" />
+                    <span class="adv-badge">Müstakil Ev</span>
+                    <span class="adv-status active">Yayında</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺6.900.000</div>
+                    <div class="adv-title">Bahçeli Müstakil Ev</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Urla, İzmir</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>180 m²</span>
+                        <span><i class="fa fa-door-open"></i>5 oda</span>
+                        <span><i class="fa fa-bath"></i>2 banyo</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="active" data-search="cadde üzeri dükkan şişli istanbul dükkan">
+            <div class="adv-card">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p6/800/600" alt="Cadde Üzeri Dükkan" loading="lazy" />
+                    <span class="adv-badge">Dükkan</span>
+                    <span class="adv-status active">Yayında</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺5.400.000</div>
+                    <div class="adv-title">Cadde Üzeri Dükkan</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Şişli, İstanbul</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>120 m²</span>
+                        <span><i class="fa fa-door-open"></i>1 oda</span>
+                        <span><i class="fa fa-bath"></i>1 banyo</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="active" data-search="rezidansta 1+1 kiralık yatırım ataşehir istanbul rezidans">
+            <div class="adv-card">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p7/800/600" alt="Rezidansta 1+1" loading="lazy" />
+                    <span class="adv-badge">Rezidans</span>
+                    <span class="adv-status active">Yayında</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺5.950.000</div>
+                    <div class="adv-title">Rezidansta 1+1 Kiralık Yatırım</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Ataşehir, İstanbul</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>65 m²</span>
+                        <span><i class="fa fa-door-open"></i>2 oda</span>
+                        <span><i class="fa fa-bath"></i>1 banyo</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="active" data-search="havuzlu villa yalıkavak bodrum muğla villa">
+            <div class="adv-card">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p2/800/600" alt="Havuzlu Villa" loading="lazy" />
+                    <span class="adv-badge">Villa</span>
+                    <span class="adv-status active">Yayında</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺37.000.000</div>
+                    <div class="adv-title">Havuzlu Müstakil Villa</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Yalıkavak, Muğla</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>320 m²</span>
+                        <span><i class="fa fa-door-open"></i>6 oda</span>
+                        <span><i class="fa fa-bath"></i>4 banyo</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="active" data-search="deniz manzaralı 3+1 daire karşıyaka izmir daire">
+            <div class="adv-card">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p1/800/600" alt="Deniz Manzaralı Daire" loading="lazy" />
+                    <span class="adv-badge">Daire</span>
+                    <span class="adv-status active">Yayında</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺9.300.000</div>
+                    <div class="adv-title">Deniz Manzaralı 3+1 Daire</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Karşıyaka, İzmir</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>140 m²</span>
+                        <span><i class="fa fa-door-open"></i>4 oda</span>
+                        <span><i class="fa fa-bath"></i>2 banyo</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-item" data-status="passive" data-search="imarlı konut arsası nilüfer bursa arsa">
+            <div class="adv-card is-passive">
+                <div class="adv-cover">
+                    <img src="https://picsum.photos/seed/p5/800/600" alt="İmarlı Konut Arsası" loading="lazy" />
+                    <span class="adv-badge">Arsa</span>
+                    <span class="adv-status passive">Pasif</span>
+                </div>
+                <div class="adv-body">
+                    <div class="adv-price">₺2.750.000</div>
+                    <div class="adv-title">İmarlı Konut Arsası</div>
+                    <div class="adv-location"><i class="fa fa-map-marker-alt me-1"></i>Nilüfer, Bursa</div>
+                    <div class="adv-features">
+                        <span><i class="fa fa-ruler-combined"></i>750 m²</span>
+                        <span><i class="fa fa-file-contract"></i>Konut imarlı</span>
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    <a href="#" class="adv-btn-light"><i class="fa fa-eye"></i>Detay</a>
+                    <a href="#" class="adv-btn-light"><i class="fa fa-pen"></i>Düzenle</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-4 adv-add-wrap">
+            <a asp-area="Agent" asp-controller="Adverts" asp-action="CreateAdvert" class="adv-add">
+                <i class="fa fa-plus-circle"></i>
+                <span class="fw-semibold">Yeni ilan ekle</span>
+                <small>Portföyüne yeni bir mülk ekle</small>
+            </a>
+        </div>
+    </div>
+
+    <div id="advEmpty" class="text-center py-5" style="display: none; color: var(--muted);">
+        <i class="fa fa-search fa-2x mb-2" style="color: var(--primary);"></i>
+        <div>Aramanla eşleşen ilan bulunamadı.</div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var searchInput = document.getElementById("advSearch");
+            var tabs = document.querySelectorAll(".adv-tab");
+            var addCard = document.querySelector(".adv-add-wrap");
+            var currentFilter = "all";
+
+            function apply() {
+                var term = searchInput.value.trim().toLocaleLowerCase("tr");
+                var visible = 0;
+
+                document.querySelectorAll(".adv-item").forEach(function (item) {
+                    var matchSearch = item.getAttribute("data-search").toLocaleLowerCase("tr").includes(term);
+                    var matchFilter = currentFilter === "all" || item.getAttribute("data-status") === currentFilter;
+                    var show = matchSearch && matchFilter;
+                    item.style.display = show ? "" : "none";
+                    if (show) visible++;
+                });
+
+                // Arama/filtre yokken "yeni ilan" kartını göster
+                addCard.style.display = (term === "" && currentFilter === "all") ? "" : "none";
+                document.getElementById("advEmpty").style.display = visible === 0 ? "" : "none";
+            }
+
+            searchInput.addEventListener("input", apply);
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function () {
+                    tabs.forEach(function (t) { t.classList.remove("active"); });
+                    this.classList.add("active");
+                    currentFilter = this.getAttribute("data-filter");
+                    apply();
+                });
+            });
+        });
+    </script>
+}

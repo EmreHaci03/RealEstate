@@ -1,0 +1,352 @@
+﻿@model RealEstate_Dapper_UI.DTOS.ProductDetailDtos.GetProductDetailByIdDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "İlan Özellikleri";
+
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+
+    // YouTube linkini gömülebilir adrese çevirir (watch?v=, youtu.be ve embed linkleri)
+    string? EmbedUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return null;
+        if (url.Contains("/embed/")) return url;
+        if (url.Contains("watch?v="))
+        {
+            var id = url.Split("watch?v=")[1].Split('&')[0];
+            return $"https://www.youtube.com/embed/{id}";
+        }
+        if (url.Contains("youtu.be/"))
+        {
+            var id = url.Split("youtu.be/")[1].Split('?')[0];
+            return $"https://www.youtube.com/embed/{id}";
+        }
+        return null;
+    }
+
+    var videoEmbed = EmbedUrl(Model.VideoUrl);
+    var mapUrl = string.IsNullOrWhiteSpace(Model.Location)
+        ? null
+        : $"https://maps.google.com/maps?q={Uri.EscapeDataString(Model.Location)}&output=embed";
+}
+
+<style>
+    .pdt-hero {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 55%, #818cf8 100%);
+        border-radius: 20px;
+        padding: 26px 28px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .pdt-hero::before {
+            content: "";
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .1);
+        }
+
+    .pdt-hero-label {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        opacity: .8;
+    }
+
+    .pdt-hero-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 4px 0 10px;
+        color: #fff;
+        position: relative;
+    }
+
+    .pdt-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        position: relative;
+    }
+
+        .pdt-hero-meta span {
+            background: rgba(255, 255, 255, .16);
+            border: 1px solid rgba(255, 255, 255, .25);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: .85rem;
+        }
+
+    .pdt-hero-price {
+        position: relative;
+        text-align: right;
+    }
+
+        .pdt-hero-price small {
+            display: block;
+            opacity: .8;
+            font-size: .8rem;
+        }
+
+        .pdt-hero-price b {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+    .pdt-feature {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .pdt-feature:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px -20px rgba(16, 24, 40, .3);
+        }
+
+    .pdt-feature-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .pdt-feature-value {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.1;
+    }
+
+    .pdt-feature-label {
+        font-size: .8rem;
+        color: var(--muted);
+        margin-top: 3px;
+    }
+
+    .c-indigo {
+        background: rgba(79, 70, 229, .12);
+        color: #4f46e5;
+    }
+
+    .c-sky {
+        background: rgba(14, 165, 233, .12);
+        color: #0284c7;
+    }
+
+    .c-emerald {
+        background: rgba(16, 185, 129, .12);
+        color: #059669;
+    }
+
+    .c-amber {
+        background: rgba(245, 158, 11, .12);
+        color: #d97706;
+    }
+
+    .c-rose {
+        background: rgba(244, 63, 94, .12);
+        color: #e11d48;
+    }
+
+    .c-violet {
+        background: rgba(139, 92, 246, .12);
+        color: #7c3aed;
+    }
+
+    .pdt-panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        height: 100%;
+    }
+
+    .pdt-panel-title {
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--muted);
+        margin-bottom: 14px;
+    }
+
+    .pdt-media {
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        aspect-ratio: 16 / 9;
+        background: var(--primary-soft);
+    }
+
+        .pdt-media iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+    .pdt-empty {
+        height: 100%;
+        min-height: 200px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: var(--muted);
+        font-size: .88rem;
+    }
+
+        .pdt-empty i {
+            font-size: 28px;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+    .pdt-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        font-size: .85rem;
+        font-weight: 600;
+        color: var(--primary);
+        text-decoration: none;
+        word-break: break-all;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">İlan Özellikleri</h4>
+            <p class="mb-0" style="color: var(--muted);">İlana ait teknik detaylar, video ve konum bilgisi.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>Listeye Dön
+        </a>
+    </div>
+
+    <!-- Üst kart -->
+    <div class="pdt-hero mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <div class="pdt-hero-label">Detay #@Model.ProductDetailId</div>
+                <div class="pdt-hero-title">@(string.IsNullOrWhiteSpace(Model.Product) ? "İlan" : Model.Product)</div>
+                <div class="pdt-hero-meta">
+                    <span><i class="fa fa-ruler-combined me-1"></i>@Model.ProductSize m²</span>
+                    <span><i class="fa fa-door-open me-1"></i>@Model.RoomCount oda</span>
+                    <span><i class="fa fa-calendar-alt me-1"></i>@Model.BuildYear yapımı</span>
+                </div>
+            </div>
+            <div class="pdt-hero-price">
+                <small>Fiyat</small>
+                <b>₺@Model.Price.ToString("N0", tr)</b>
+            </div>
+        </div>
+    </div>
+
+    <!-- Özellik kartları -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-indigo"><i class="fa fa-ruler-combined"></i></div>
+                <div><div class="pdt-feature-value">@Model.ProductSize</div><div class="pdt-feature-label">Metrekare</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-sky"><i class="fa fa-door-open"></i></div>
+                <div><div class="pdt-feature-value">@Model.RoomCount</div><div class="pdt-feature-label">Oda</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-violet"><i class="fa fa-bed"></i></div>
+                <div><div class="pdt-feature-value">@Model.BedRoomCount</div><div class="pdt-feature-label">Yatak Odası</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-emerald"><i class="fa fa-bath"></i></div>
+                <div><div class="pdt-feature-value">@Model.BathCount</div><div class="pdt-feature-label">Banyo</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-amber"><i class="fa fa-car"></i></div>
+                <div><div class="pdt-feature-value">@Model.GarageSize</div><div class="pdt-feature-label">Garaj</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="pdt-feature">
+                <div class="pdt-feature-icon c-rose"><i class="fa fa-hammer"></i></div>
+                <div><div class="pdt-feature-value">@Model.BuildYear</div><div class="pdt-feature-label">Yapım Yılı</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video + konum -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="pdt-panel">
+                <div class="pdt-panel-title"><i class="fa fa-play-circle me-1"></i>Tanıtım Videosu</div>
+                @if (videoEmbed != null)
+                {
+                    <div class="pdt-media">
+                        <iframe src="@videoEmbed" title="Tanıtım videosu" loading="lazy"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.VideoUrl))
+                {
+                    <div class="pdt-empty">
+                        <div>
+                            <i class="fa fa-video"></i>
+                            Video sayfada oynatılamıyor.
+                            <br />
+                            <a href="@Model.VideoUrl" target="_blank" rel="noopener" class="pdt-link"><i class="fa fa-external-link-alt"></i>Videoyu aç</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="pdt-empty"><div><i class="fa fa-video-slash"></i>Bu ilan için video eklenmemiş.</div></div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="pdt-panel">
+                <div class="pdt-panel-title"><i class="fa fa-map-marker-alt me-1"></i>Konum</div>
+                @if (mapUrl != null)
+                {
+                    <div class="pdt-media">
+                        <iframe src="@mapUrl" title="Konum" loading="lazy"></iframe>
+                    </div>
+                    <div class="mt-3" style="color: var(--text); font-weight: 500;">
+                        <i class="fa fa-map-pin me-2" style="color: var(--primary);"></i>@Model.Location
+                    </div>
+                }
+                else
+                {
+                    <div class="pdt-empty"><div><i class="fa fa-map"></i>Bu ilan için konum girilmemiş.</div></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.CategoryDtos;
 using RealEstate_Dapper_UI.DTOS.EmployeeDtos;
+using RealEstate_Dapper_UI.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
 using System.Text;
 
@@ -167,6 +168,22 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
 
             TempData["ErrorMessage"] = "İlan güncellenemedi.";
             return RedirectToAction("UpdateProduct", new { id = dto.ProductId });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ProductDetail(int id)
+        {
+            var client=_httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync($"https://localhost:7025/api/ProductDetail/{id}");
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData=await responseMessage.Content.ReadAsStringAsync();
+                var values=JsonConvert.DeserializeObject<GetProductDetailByIdDto>(jsonData);
+                return View(values);
+            }
+
+            return View(new GetProductDetailByIdDto());
         }
 
 

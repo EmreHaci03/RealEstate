@@ -383,6 +383,10 @@
                                 </td>
                                 <td class="price">₺@item.Price.ToString("N0", tr)</td>
                                 <td class="text-end">
+                                    <a asp-area="Admin" asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.ProductId"
+                                       class="action-btn detail me-1" title="Detaylar">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
                                     <a asp-area="Admin" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@item.ProductId"
                                        class="action-btn edit me-1" title="Düzenle">
                                         <i class="fa fa-pen"></i>

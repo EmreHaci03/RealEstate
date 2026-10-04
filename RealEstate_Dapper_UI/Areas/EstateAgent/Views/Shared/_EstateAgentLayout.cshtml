@@ -1,0 +1,49 @@
+﻿@using System.Security.Claims
+@{
+    var userName = User.FindFirst("Username")?.Value ?? User.Identity?.Name ?? "Danışman";
+    var parts = userName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "D";
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    string Active(string controller) => currentController == controller ? "active" : "";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+@await Component.InvokeAsync("EstateAgentHead")
+@await RenderSectionAsync("Styles", required: false)
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <!-- Spinner -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Yükleniyor...</span>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        @await Component.InvokeAsync("EstateAgentSideBar")
+
+        <!-- İçerik -->
+        <div class="content">
+
+            <!-- Üst bar -->
+            @await Component.InvokeAsync("EstateAgentNavBar")
+
+            <!-- Sayfa içeriği -->
+            @RenderBody()
+
+            <!-- Footer -->
+            @await Component.InvokeAsync("EstateAgentFooter")
+        </div>
+
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    @await Component.InvokeAsync("EstateAgentScript")
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

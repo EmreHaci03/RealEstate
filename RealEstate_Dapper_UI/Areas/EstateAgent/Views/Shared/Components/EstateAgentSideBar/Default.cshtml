@@ -1,0 +1,66 @@
+﻿@using System.Security.Claims
+@{
+    var userName = User.FindFirst("Username")?.Value ?? User.Identity?.Name ?? "Danışman";
+    var parts = userName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "D";
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string Active(string controller, string? action = null)
+    {
+        if (currentController != controller) return "";
+        if (action != null && currentAction != action) return "";
+        return "active";
+    }
+}
+
+<div class="sidebar pe-4 pb-3">
+    <nav class="navbar bg-light navbar-light">
+        <a asp-area="Agent" asp-controller="Dashboard" asp-action="Index" class="navbar-brand mx-4 mb-3">
+            <h3 class="text-primary mb-0"><i class="fa fa-home me-2"></i>Emlak<span class="agent-badge">Danışman</span></h3>
+        </a>
+
+        <div class="d-flex align-items-center ms-4 mb-3">
+            <div class="position-relative">
+                <div class="agent-avatar">@initials</div>
+                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+            </div>
+            <div class="ms-3">
+                <h6 class="mb-0">@userName</h6>
+                <span style="font-size: .82rem; color: var(--muted);">Emlak Danışmanı</span>
+            </div>
+        </div>
+
+        <div class="navbar-nav w-100">
+            <div class="sidebar-section">Genel</div>
+            <a asp-area="Agent" asp-controller="Dashboard" asp-action="Index" class="nav-item nav-link @Active("Dashboard")">
+                <i class="fa fa-tachometer-alt me-2"></i>Panelim
+            </a>
+
+            <div class="sidebar-section">İlanlar</div>
+            <a asp-area="Agent" asp-controller="Adverts" asp-action="Index" class="nav-item nav-link @Active("Adverts", "Index")">
+                <i class="fa fa-home me-2"></i>İlanlarım
+            </a>
+            <a asp-area="Agent" asp-controller="Adverts" asp-action="CreateAdvert" class="nav-item nav-link @Active("Adverts", "CreateAdvert")">
+                <i class="fa fa-plus-circle me-2"></i>Yeni İlan
+            </a>
+
+            <div class="sidebar-section">İletişim</div>
+            <a asp-area="Agent" asp-controller="MyMessage" asp-action="Index" class="nav-item nav-link @Active("MyMessage")">
+                <i class="fa fa-inbox me-2"></i>Mesajlarım
+            </a>
+
+            <div class="sidebar-section">Hesap</div>
+            <a asp-area="Agent" asp-controller="Profile" asp-action="Index" class="nav-item nav-link @Active("Profile")">
+                <i class="fa fa-user-circle me-2"></i>Profilim
+            </a>
+            <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank" class="nav-item nav-link">
+                <i class="fa fa-external-link-alt me-2"></i>Siteye Git
+            </a>
+            <a asp-area="" asp-controller="Login" asp-action="Logout" class="nav-item nav-link">
+                <i class="fa fa-sign-out-alt me-2"></i>Çıkış Yap
+            </a>
+        </div>
+    </nav>
+</div>

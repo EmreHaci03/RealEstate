@@ -15,6 +15,7 @@ using RealEstate_Dapper_Api.Repository.Statistic;
 using RealEstate_Dapper_Api.Repository.Subscriber;
 using RealEstate_Dapper_Api.Repository.Testimonial;
 using RealEstate_Dapper_Api.Repository.WhoWeAre;
+using RealEstate_Dapper_Api.Tools;
 
 namespace RealEstate_Dapper_Api.ServiceExtensions
 {
@@ -38,6 +39,7 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IStatisticRepository, StatisticRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<JwtTokenGenerator>();
             return services;
         }
     }
