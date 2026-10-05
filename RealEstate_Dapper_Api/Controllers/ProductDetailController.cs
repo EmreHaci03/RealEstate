@@ -31,6 +31,16 @@ namespace RealEstate_Dapper_Api.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetProductDetailByProductId/{ProductId}")]
+        public async Task<IActionResult> GetProductDetailByProductId(int ProductId)
+        {
+            var values=await productDetailRepository.GetProductDetailByProductId(ProductId);
+            if (values == null)
+                return NotFound("Emlak Detayı Bulunamadı");
+
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateProductDetail(CreateProductDetailDto dto)
         {

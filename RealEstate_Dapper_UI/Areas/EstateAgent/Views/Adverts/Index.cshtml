@@ -263,6 +263,27 @@
                 color: var(--primary);
             }
 
+    .adv-btn-delete {
+        flex: 1;
+        height: 38px;
+        border-radius: 10px;
+        font-size: .84rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: #e11d48;
+        transition: all .15s ease;
+    }
+
+        .adv-btn-delete:hover {
+            border-color: #e11d48;
+            background: rgba(244, 63, 94, .08);
+        }
+
     .adv-add {
         height: 100%;
         min-height: 380px;
@@ -307,6 +328,122 @@
         font-size: 30px;
         margin: 0 auto 16px;
     }
+
+    /* Silme modalı */
+    .del-modal .modal-content {
+        border: none;
+        border-radius: 22px;
+        box-shadow: 0 30px 70px -20px rgba(16, 24, 40, .35);
+        overflow: hidden;
+    }
+
+    .del-modal .modal-body {
+        padding: 34px 28px 10px;
+        text-align: center;
+    }
+
+    .del-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: rgba(244, 63, 94, .1);
+        color: #e11d48;
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        margin: 0 auto 18px;
+        box-shadow: 0 0 0 10px rgba(244, 63, 94, .05);
+        animation: delPop .35s ease;
+    }
+
+    .del-modal h5 {
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--text);
+    }
+
+    .del-text {
+        color: var(--muted);
+        font-size: .92rem;
+        margin-bottom: 20px;
+    }
+
+    .del-preview {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        background: var(--page-bg);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px;
+    }
+
+        .del-preview img {
+            width: 64px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--primary-soft);
+            flex-shrink: 0;
+        }
+
+    .del-preview-info {
+        min-width: 0;
+    }
+
+        .del-preview-info small {
+            display: block;
+            font-size: .72rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .del-preview-info b {
+            display: block;
+            color: var(--text);
+            font-size: .9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    .del-modal .modal-footer {
+        border: none;
+        padding: 20px 28px 28px;
+        gap: 10px;
+    }
+
+        .del-modal .modal-footer .btn {
+            flex: 1;
+            height: 46px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+    .del-modal .btn-danger {
+        background: #e11d48;
+        border-color: #e11d48;
+    }
+
+        .del-modal .btn-danger:hover {
+            background: #be123c;
+            border-color: #be123c;
+        }
+
+    @@keyframes delPop {
+        0% {
+            transform: scale(.6);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
 </style>
 
 <div class="container-fluid pt-4 px-4">
@@ -320,6 +457,22 @@
             <i class="fa fa-plus me-2"></i>Yeni İlan
         </a>
     </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
 
     @if (Model.Any())
     {
@@ -402,6 +555,21 @@
                             <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="UpdateAdvert" asp-route-id="@item.ProductId">
                                 <i class="fa fa-pen"></i>Düzenle
                             </a>
+                            <button type="button" class="adv-btn-delete"
+                                    data-bs-toggle="modal" data-bs-target="#deleteAdvertModal"
+                                    data-name="@item.Title"
+                                    data-image="@item.CoverImage"
+                                    data-url="@Url.Action("DeleteAdvert", "Adverts", new { area = "EstateAgent", id = item.ProductId })">
+                                <i class="fa fa-trash"></i>Sil
+                            </button>
+                        </div>
+                        <div class="adv-actions">
+                            <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvertDetail" asp-route-id="@item.ProductId">
+                                <i class="fa fa-plus"></i>Detay Ekle
+                            </a>
+                            <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="UpdateAdvertDetail" asp-route-id="@item.ProductId">
+                                <i class="fa fa-sliders-h"></i>Detay Düzenle
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -434,9 +602,67 @@
     }
 </div>
 
+<!-- Silme modalı -->
+<div class="modal fade del-modal" id="deleteAdvertModal" tabindex="-1" aria-labelledby="deleteAdvertLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="del-icon"><i class="fa fa-trash-alt"></i></div>
+                <h5 id="deleteAdvertLabel">İlanı sil</h5>
+                <p class="del-text">Bu ilanı silmek üzeresin. Bu işlem geri alınamaz.</p>
+
+                <div class="del-preview">
+                    <img id="delImage" alt="" />
+                    <div class="del-preview-info">
+                        <small>Silinecek ilan</small>
+                        <b id="delName"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Vazgeç</button>
+                <form id="deleteAdvertForm" method="post" class="d-flex flex-fill m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger w-100" id="delSubmit">
+                        <i class="fa fa-trash-alt me-2"></i>Evet, sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
+            // ---------- Silme modalı ----------
+            var deleteModal = document.getElementById("deleteAdvertModal");
+            if (deleteModal) {
+                deleteModal.addEventListener("show.bs.modal", function (event) {
+                    var button = event.relatedTarget;
+                    var image = button.getAttribute("data-image");
+
+                    document.getElementById("delName").textContent = button.getAttribute("data-name");
+                    document.getElementById("deleteAdvertForm").action = button.getAttribute("data-url");
+
+                    var img = document.getElementById("delImage");
+                    img.style.display = image ? "" : "none";
+                    if (image) img.src = image;
+
+                    var submit = document.getElementById("delSubmit");
+                    submit.disabled = false;
+                    submit.innerHTML = '<i class="fa fa-trash-alt me-2"></i>Evet, sil';
+                });
+
+                document.getElementById("deleteAdvertForm").addEventListener("submit", function () {
+                    var submit = document.getElementById("delSubmit");
+                    submit.disabled = true;
+                    submit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Siliniyor...';
+                });
+            }
+
+            // ---------- Arama + kategori filtresi ----------
             var searchInput = document.getElementById("advSearch");
             if (!searchInput) return;
 

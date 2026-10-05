@@ -1,4 +1,5 @@
-﻿using RealEstate_Dapper_Api.DTOS.ProductDtos;
+﻿
+using RealEstate_Dapper_Api.DTOS.ProductDtos;
 
 namespace RealEstate_Dapper_Api.Repository.Product
 {
@@ -6,13 +7,19 @@ namespace RealEstate_Dapper_Api.Repository.Product
     {
         Task<List<ResultProductDto>> GetAllAsync();
         Task<List<ResultProductWithCategoryDto>> ResultProductWithCategoryAsync();
+        Task<bool> CreateAdvertByUserAsync(CreateProductDto dto, int userId);
         Task<List<ResultProductWithCategoryDto>> GetProductAdvertsListByUserAsync(int userId);
+
+        Task<ResultProductDetailDto?> GetAdvertDetailByUserAsync(int productId, int userId);
 
         Task<List<ResultProductWithCategoryDto>> GetProductAdvertsListByEmployeeAsync(int id);
         Task<List<ResultProductWithCategoryAndEmployeeDto>> ResultProductWithCategoryAndEmployeeAsync();
 
         Task<List<ResultProductCountByCityDto>> ResultProductWithCityCount();
         Task<GetProductByIdDto> GetByIdAsync(int id);
+
+        Task<bool> DeleteAdvertByUserAsync(int userId,int productId);
+        Task<bool> UpdateAdvertByUserAsync(UpdateAdvertDto dto,int userId);
 
         Task CreateAsync(CreateProductDto dto);
         Task DeleteAsync(int id);

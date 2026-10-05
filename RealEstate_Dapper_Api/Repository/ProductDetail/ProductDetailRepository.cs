@@ -80,6 +80,25 @@ namespace RealEstate_Dapper_Api.Repository.ProductDetail
             }
         }
 
+        public async Task<GetProductDetailByIdDto?> GetProductDetailByProductId(int productId)
+        {
+            string query = @"
+        SELECT d.ProductDetailId, d.ProductSize, d.BedRoomCount, d.BathCount, d.RoomCount,
+               d.GarageSize, d.BuildYear, d.Price, d.Location, d.VideoUrl, d.Product,
+               p.Title as Product
+        FROM ProductDetails d
+        INNER JOIN Product p ON d.Product = p.ProductId
+        WHERE d.Product = @ProductId";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@ProductId", productId);
+
+            using (var connection = _context.CreateConnection())
+            {
+                return await connection.QueryFirstOrDefaultAsync<GetProductDetailByIdDto>(query, parameters);
+            }
+        }
+
         public async Task UpdateAsync(UpdateProductDetailDto dto)
         {
             string query = "Update ProductDetails Set ProductSize=@ProductSize, BedRoomCount=@BedRoomCount, BathCount=@BathCount, " +

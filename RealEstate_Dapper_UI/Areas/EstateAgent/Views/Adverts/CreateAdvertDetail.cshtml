@@ -1,0 +1,351 @@
+﻿@model CreateProductDetailDto
+@{
+    Layout = "~/Areas/EstateAgent/Views/Shared/_EstateAgentLayout.cshtml";
+    ViewData["Title"] = "Özellik Ekle";
+}
+
+<style>
+    .cd-panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+    }
+
+    .cd-section {
+        font-size: .74rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 4px 0 14px;
+    }
+
+        .cd-section:not(:first-child) {
+            margin-top: 26px;
+            padding-top: 22px;
+            border-top: 1px solid var(--line);
+        }
+
+    .cd-label {
+        font-size: .86rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+    }
+
+    .cd-hint {
+        font-size: .78rem;
+        color: var(--muted);
+        margin-top: 5px;
+    }
+
+    .cd-input-icon {
+        position: relative;
+    }
+
+        .cd-input-icon > i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .cd-input-icon > .form-control {
+            padding-left: 38px;
+        }
+
+    .cd-num {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--surface);
+    }
+
+        .cd-num button {
+            width: 42px;
+            height: 44px;
+            border: 0;
+            background: var(--page-bg);
+            color: var(--text);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+            .cd-num button:hover {
+                background: var(--primary-soft);
+                color: var(--primary);
+            }
+
+        .cd-num input {
+            border: 0;
+            text-align: center;
+            font-weight: 600;
+            height: 44px;
+            box-shadow: none !important;
+        }
+
+    .cd-num-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .cd-num-label i {
+            color: var(--primary);
+            width: 16px;
+            text-align: center;
+        }
+
+    .cd-id {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .78rem;
+        font-weight: 600;
+        color: #d97706;
+        background: rgba(245, 158, 11, .12);
+        padding: 4px 12px;
+        border-radius: 999px;
+    }
+
+    .cd-summary {
+        position: sticky;
+        top: 90px;
+    }
+
+    .cd-sum-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .cd-sum-item {
+        background: var(--page-bg);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+    }
+
+        .cd-sum-item i {
+            color: var(--primary);
+            font-size: 17px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .cd-sum-item b {
+            display: block;
+            font-size: 1.15rem;
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        .cd-sum-item small {
+            color: var(--muted);
+            font-size: .74rem;
+        }
+
+    .cd-sum-price {
+        margin-top: 10px;
+        background: var(--primary-soft);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+    }
+
+        .cd-sum-price small {
+            display: block;
+            color: var(--primary);
+            font-size: .74rem;
+            font-weight: 600;
+        }
+
+        .cd-sum-price b {
+            font-size: 1.35rem;
+            color: var(--text);
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold">Özellik Ekle <span class="cd-id ms-2"><i class="fa fa-hashtag"></i>İlan @Model.Product</span></h4>
+            <p class="mb-0" style="color: var(--muted);">İlanın metrekare, oda sayısı, konum ve video bilgilerini gir.</p>
+        </div>
+        <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i>İlanlarım
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="row g-4 mb-4">
+        <!-- Form -->
+        <div class="col-lg-8">
+            <form asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvertDetail" method="post" class="cd-panel" id="detailForm">
+                <input type="hidden" asp-for="Product" />
+
+                <div class="cd-section">Alan, Yapı ve Fiyat</div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="ProductSize" class="cd-label">Metrekare</label>
+                        <div class="cd-input-icon">
+                            <i class="fa fa-ruler-combined"></i>
+                            <input asp-for="ProductSize" id="inSize" class="form-control" placeholder="Örn. 140" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="BuildYear" class="cd-label">Yapım Yılı</label>
+                        <div class="cd-input-icon">
+                            <i class="fa fa-calendar-alt"></i>
+                            <input asp-for="BuildYear" id="inYear" class="form-control" placeholder="Örn. 2018" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Price" class="cd-label">Fiyat (₺)</label>
+                        <div class="cd-input-icon">
+                            <i class="fa fa-lira-sign"></i>
+                            <input asp-for="Price" id="inPrice" type="number" min="0" step="1000" class="form-control" placeholder="5000000" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cd-section">Odalar</div>
+
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <label class="cd-label cd-num-label" for="RoomCount"><i class="fa fa-door-open"></i>Oda</label>
+                        <div class="cd-num">
+                            <button type="button" data-step="-1" data-target="RoomCount" aria-label="Azalt">−</button>
+                            <input asp-for="RoomCount" type="number" min="0" max="50" class="form-control" />
+                            <button type="button" data-step="1" data-target="RoomCount" aria-label="Artır">+</button>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="cd-label cd-num-label" for="BedRoomCount"><i class="fa fa-bed"></i>Yatak Odası</label>
+                        <div class="cd-num">
+                            <button type="button" data-step="-1" data-target="BedRoomCount" aria-label="Azalt">−</button>
+                            <input asp-for="BedRoomCount" type="number" min="0" max="50" class="form-control" />
+                            <button type="button" data-step="1" data-target="BedRoomCount" aria-label="Artır">+</button>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="cd-label cd-num-label" for="BathCount"><i class="fa fa-bath"></i>Banyo</label>
+                        <div class="cd-num">
+                            <button type="button" data-step="-1" data-target="BathCount" aria-label="Azalt">−</button>
+                            <input asp-for="BathCount" type="number" min="0" max="50" class="form-control" />
+                            <button type="button" data-step="1" data-target="BathCount" aria-label="Artır">+</button>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="cd-label cd-num-label" for="GarageSize"><i class="fa fa-car"></i>Garaj</label>
+                        <div class="cd-num">
+                            <button type="button" data-step="-1" data-target="GarageSize" aria-label="Azalt">−</button>
+                            <input asp-for="GarageSize" type="number" min="0" max="50" class="form-control" />
+                            <button type="button" data-step="1" data-target="GarageSize" aria-label="Artır">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cd-section">Konum ve Video</div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="cd-label">Konum</label>
+                    <div class="cd-input-icon">
+                        <i class="fa fa-map-marker-alt"></i>
+                        <input asp-for="Location" class="form-control" placeholder="Örn. Karşıyaka, İzmir" />
+                    </div>
+                    <div class="cd-hint">Haritada gösterilecek adres. Mahalle, ilçe ve şehir yazman yeterli.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="VideoUrl" class="cd-label">Tanıtım Videosu (YouTube)</label>
+                    <div class="cd-input-icon">
+                        <i class="fa fa-play-circle"></i>
+                        <input asp-for="VideoUrl" type="url" class="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+                    </div>
+                    <div class="cd-hint">İsteğe bağlı.</div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="btn btn-light border px-4">Vazgeç</a>
+                    <button type="submit" class="btn btn-primary px-4" id="saveBtn">
+                        <i class="fa fa-plus me-2"></i>Özellikleri Ekle
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Özet -->
+        <div class="col-lg-4">
+            <div class="cd-summary cd-panel">
+                <div class="cd-section" style="margin-top: 0;">Özet</div>
+                <div class="cd-sum-grid">
+                    <div class="cd-sum-item"><i class="fa fa-ruler-combined"></i><b id="sumSize">-</b><small>m²</small></div>
+                    <div class="cd-sum-item"><i class="fa fa-calendar-alt"></i><b id="sumYear">-</b><small>Yapım yılı</small></div>
+                    <div class="cd-sum-item"><i class="fa fa-door-open"></i><b id="sumRoomCount">0</b><small>Oda</small></div>
+                    <div class="cd-sum-item"><i class="fa fa-bed"></i><b id="sumBedRoomCount">0</b><small>Yatak odası</small></div>
+                    <div class="cd-sum-item"><i class="fa fa-bath"></i><b id="sumBathCount">0</b><small>Banyo</small></div>
+                    <div class="cd-sum-item"><i class="fa fa-car"></i><b id="sumGarageSize">0</b><small>Garaj</small></div>
+                </div>
+                <div class="cd-sum-price">
+                    <small>Fiyat</small>
+                    <b id="sumPrice">₺0</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>document.addEventListener("DOMContentLoaded", function () {
+            var $ = function (id) { return document.getElementById(id); };
+            var formatter = new Intl.NumberFormat("tr-TR");
+            var counterFields = ["RoomCount", "BedRoomCount", "BathCount", "GarageSize"];
+
+            function update() {
+                $("sumSize").textContent = $("inSize").value.trim() || "-";
+                $("sumYear").textContent = $("inYear").value.trim() || "-";
+                var price = parseFloat($("inPrice").value);
+                $("sumPrice").textContent = isNaN(price) ? "₺0" : "₺" + formatter.format(price);
+                counterFields.forEach(function (f) {
+                    $("sum" + f).textContent = $(f).value || "0";
+                });
+            }
+
+            // + / - butonları
+            document.querySelectorAll(".cd-num button").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    var input = $(this.getAttribute("data-target"));
+                    var next = (parseInt(input.value) || 0) + parseInt(this.getAttribute("data-step"));
+                    input.value = Math.max(0, Math.min(50, next));
+                    update();
+                });
+            });
+
+            ["inSize", "inYear", "inPrice"].concat(counterFields).forEach(function (id) {
+                $(id).addEventListener("input", update);
+            });
+
+            update();
+
+            $("detailForm").addEventListener("submit", function () {
+                $("saveBtn").disabled = true;
+                $("saveBtn").innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Kaydediliyor...';
+            });
+        });</script>
+}
