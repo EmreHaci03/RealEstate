@@ -1,0 +1,829 @@
+﻿@model List<ResultProductWithDetailDto>
+@{
+    ViewData["Title"] = "Danışmanın İlanları";
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+
+    var agentName = Model.Select(x => x.EmployeeName).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)) ?? "Emlak Danışmanı";
+    var initials = string.Concat(agentName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => char.ToUpper(x[0])));
+
+    var totalValue = Model.Sum(x => x.Price);
+    var avgPrice = Model.Any() ? Model.Average(x => x.Price) : 0;
+    var cities = Model.Where(x => !string.IsNullOrWhiteSpace(x.City)).Select(x => x.City).Distinct().ToList();
+    var categories = Model.Where(x => !string.IsNullOrWhiteSpace(x.CategoryName))
+                          .GroupBy(x => x.CategoryName)
+                          .Select(g => new { Name = g.Key, Count = g.Count() })
+                          .OrderByDescending(x => x.Count)
+                          .ToList();
+}
+
+<style>
+    .ag-page {
+        --ag-accent: #f15a24;
+        --ag-accent-soft: rgba(241, 90, 36, .1);
+        --ag-text: #1f2937;
+        --ag-muted: #6b7280;
+        --ag-line: #e8eaee;
+        --ag-bg: #f7f8fa;
+        background: var(--ag-bg);
+        padding-bottom: 70px;
+    }
+
+    /* Kapak */
+    .ag-cover {
+        position: relative;
+        height: 240px;
+        background: linear-gradient(120deg, rgba(17, 24, 39, .92), rgba(17, 24, 39, .55)), url('https://picsum.photos/seed/agentcover/1600/500') center/cover;
+    }
+
+        .ag-cover .container {
+            position: relative;
+            height: 100%;
+        }
+
+    .ag-crumb {
+        position: absolute;
+        top: 26px;
+        font-size: .86rem;
+        color: rgba(255, 255, 255, .7);
+    }
+
+        .ag-crumb a {
+            color: rgba(255, 255, 255, .7);
+            text-decoration: none;
+        }
+
+            .ag-crumb a:hover {
+                color: #fff;
+            }
+
+        .ag-crumb .fa {
+            margin: 0 8px;
+            font-size: .7rem;
+        }
+
+    /* Profil kartı */
+    .ag-profile {
+        position: relative;
+        margin-top: -90px;
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        border-radius: 22px;
+        padding: 28px;
+        box-shadow: 0 24px 50px -30px rgba(17, 24, 39, .35);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .ag-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--ag-accent), #fb923c);
+        color: #fff;
+        font-size: 2.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 7px var(--ag-accent-soft);
+        flex-shrink: 0;
+        margin-right: 26px;
+    }
+
+    .ag-info {
+        flex: 1 1 260px;
+    }
+
+    .ag-role {
+        display: inline-block;
+        background: var(--ag-accent-soft);
+        color: var(--ag-accent);
+        font-size: .74rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+    }
+
+    .ag-info h1 {
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--ag-text);
+        margin: 0 0 6px;
+    }
+
+    .ag-info p {
+        color: var(--ag-muted);
+        margin: 0;
+        font-size: .95rem;
+    }
+
+        .ag-info p .fa {
+            color: var(--ag-accent);
+            margin-right: 6px;
+        }
+
+    .ag-actions {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .ag-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 22px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: .92rem;
+        text-decoration: none;
+        margin: 6px 10px 0 0;
+        transition: all .2s;
+    }
+
+        .ag-btn .fa {
+            margin-right: 8px;
+        }
+
+    .ag-btn-primary {
+        background: var(--ag-accent);
+        color: #fff;
+    }
+
+        .ag-btn-primary:hover {
+            color: #fff;
+            text-decoration: none;
+            filter: brightness(.92);
+        }
+
+    .ag-btn-light {
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        color: var(--ag-text);
+    }
+
+        .ag-btn-light:hover {
+            border-color: var(--ag-accent);
+            color: var(--ag-accent);
+            text-decoration: none;
+        }
+
+    /* İstatistik şeridi */
+    .ag-stats {
+        display: flex;
+        flex-wrap: wrap;
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        border-radius: 18px;
+        margin-top: 22px;
+        overflow: hidden;
+    }
+
+    .ag-stat {
+        flex: 1 1 180px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        border-right: 1px solid var(--ag-line);
+    }
+
+        .ag-stat:last-child {
+            border-right: 0;
+        }
+
+    .ag-stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: var(--ag-accent-soft);
+        color: var(--ag-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+
+    .ag-stat b {
+        display: block;
+        font-size: 1.2rem;
+        color: var(--ag-text);
+        line-height: 1.2;
+    }
+
+    .ag-stat small {
+        color: var(--ag-muted);
+        font-size: .78rem;
+    }
+
+    /* Araç çubuğu */
+    .ag-section-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin: 44px 0 18px;
+    }
+
+        .ag-section-head h2 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--ag-text);
+            margin: 0;
+        }
+
+        .ag-section-head span {
+            color: var(--ag-muted);
+            font-size: .9rem;
+        }
+
+    .ag-toolbar {
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        border-radius: 16px;
+        padding: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 26px;
+    }
+
+    .ag-search {
+        position: relative;
+        flex: 1 1 220px;
+        margin: 4px 10px 4px 0;
+    }
+
+        .ag-search .fa {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ag-muted);
+        }
+
+        .ag-search input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid var(--ag-line);
+            border-radius: 12px;
+            padding: 0 14px 0 38px;
+            font-size: .9rem;
+            background: var(--ag-bg);
+        }
+
+            .ag-search input:focus, .ag-select:focus {
+                outline: none;
+                border-color: var(--ag-accent);
+                box-shadow: 0 0 0 3px var(--ag-accent-soft);
+            }
+
+    .ag-select {
+        height: 44px;
+        border: 1px solid var(--ag-line);
+        border-radius: 12px;
+        padding: 0 12px;
+        font-size: .9rem;
+        background: var(--ag-bg);
+        color: var(--ag-text);
+        margin: 4px 10px 4px 0;
+    }
+
+    .ag-view {
+        display: flex;
+        margin: 4px 0;
+    }
+
+        .ag-view button {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--ag-line);
+            background: #fff;
+            color: var(--ag-muted);
+            border-radius: 12px;
+            margin-left: 6px;
+            transition: all .2s;
+        }
+
+            .ag-view button.active, .ag-view button:hover {
+                background: var(--ag-accent);
+                border-color: var(--ag-accent);
+                color: #fff;
+            }
+
+            .ag-view button:focus {
+                outline: none;
+            }
+
+    .ag-chips {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .ag-chip {
+        border: 1px solid var(--ag-line);
+        background: #fff;
+        color: var(--ag-text);
+        border-radius: 999px;
+        padding: 7px 16px;
+        font-size: .85rem;
+        font-weight: 600;
+        margin: 0 8px 8px 0;
+        transition: all .2s;
+    }
+
+        .ag-chip span {
+            display: inline-block;
+            background: var(--ag-bg);
+            color: var(--ag-muted);
+            border-radius: 999px;
+            padding: 0 8px;
+            margin-left: 6px;
+            font-size: .75rem;
+        }
+
+        .ag-chip:hover {
+            border-color: var(--ag-accent);
+            color: var(--ag-accent);
+        }
+
+        .ag-chip.active {
+            background: var(--ag-accent);
+            border-color: var(--ag-accent);
+            color: #fff;
+        }
+
+            .ag-chip.active span {
+                background: rgba(255, 255, 255, .25);
+                color: #fff;
+            }
+
+        .ag-chip:focus {
+            outline: none;
+        }
+
+    /* Kartlar */
+    .ag-item {
+        margin-bottom: 28px;
+    }
+
+    .ag-card {
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        border-radius: 18px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s, box-shadow .25s;
+    }
+
+        .ag-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 40px -24px rgba(17, 24, 39, .35);
+        }
+
+    .ag-img {
+        position: relative;
+        display: block;
+        padding-top: 66%;
+        overflow: hidden;
+        background: #e5e7eb;
+    }
+
+        .ag-img img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .6s;
+        }
+
+    .ag-card:hover .ag-img img {
+        transform: scale(1.07);
+    }
+
+    .ag-img::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(17, 24, 39, .55));
+    }
+
+    .ag-cat {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1;
+        background: rgba(255, 255, 255, .95);
+        color: var(--ag-text);
+        font-size: .74rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+    }
+
+    .ag-id {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        z-index: 1;
+        background: rgba(17, 24, 39, .65);
+        color: #fff;
+        font-size: .74rem;
+        font-weight: 600;
+        padding: 6px 10px;
+        border-radius: 999px;
+    }
+
+    .ag-price {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+        z-index: 1;
+        background: var(--ag-accent);
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.05rem;
+        padding: 7px 14px;
+        border-radius: 10px;
+        box-shadow: 0 8px 18px -6px rgba(241, 90, 36, .6);
+    }
+
+    .ag-body {
+        padding: 18px 20px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .ag-body h3 {
+            font-size: 1.08rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0 0 8px;
+        }
+
+            .ag-body h3 a {
+                color: var(--ag-text);
+                text-decoration: none;
+            }
+
+                .ag-body h3 a:hover {
+                    color: var(--ag-accent);
+                }
+
+    .ag-loc {
+        color: var(--ag-muted);
+        font-size: .86rem;
+        margin-bottom: 10px;
+    }
+
+        .ag-loc .fa {
+            color: var(--ag-accent);
+            margin-right: 5px;
+        }
+
+    .ag-desc {
+        color: var(--ag-muted);
+        font-size: .88rem;
+        line-height: 1.65;
+        margin-bottom: 16px;
+        flex: 1;
+    }
+
+    .ag-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px dashed var(--ag-line);
+        padding-top: 14px;
+        margin-top: auto;
+    }
+
+    .ag-mini {
+        display: flex;
+        align-items: center;
+        font-size: .82rem;
+        color: var(--ag-muted);
+    }
+
+        .ag-mini i {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ag-accent), #fb923c);
+            color: #fff;
+            font-style: normal;
+            font-size: .72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+    .ag-more {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--ag-accent-soft);
+        color: var(--ag-accent);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+        .ag-more:hover {
+            background: var(--ag-accent);
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* Liste görünümü */
+    .ag-grid.is-list .ag-item {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .ag-grid.is-list .ag-card {
+        flex-direction: row;
+    }
+
+    .ag-grid.is-list .ag-img {
+        padding-top: 0;
+        flex: 0 0 340px;
+        min-height: 230px;
+    }
+
+    @@media (max-width: 767px) {
+        .ag-grid.is-list .ag-card {
+            flex-direction: column;
+        }
+
+        .ag-grid.is-list .ag-img {
+            flex: none;
+            padding-top: 66%;
+            min-height: 0;
+        }
+
+        .ag-avatar {
+            margin: 0 0 16px;
+        }
+
+        .ag-cover {
+            height: 200px;
+        }
+    }
+
+    .ag-empty {
+        background: #fff;
+        border: 1px solid var(--ag-line);
+        border-radius: 18px;
+        text-align: center;
+        padding: 70px 20px;
+        margin-top: 30px;
+    }
+
+    .ag-empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: var(--ag-accent-soft);
+        color: var(--ag-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin: 0 auto 16px;
+    }
+
+    .ag-empty h4 {
+        font-weight: 700;
+        color: var(--ag-text);
+    }
+
+    .ag-empty p {
+        color: var(--ag-muted);
+    }
+
+    .ag-noresult {
+        display: none;
+    }
+</style>
+
+<div class="ag-page">
+    <div class="ag-cover">
+        <div class="container">
+            <div class="ag-crumb">
+                <a href="/Default/Index">Anasayfa</a><i class="fa fa-chevron-right"></i>
+                <a href="/Property/PropertyList">İlanlar</a><i class="fa fa-chevron-right"></i>
+                <span>@agentName</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="ag-profile">
+            <div class="ag-avatar">@initials</div>
+            <div class="ag-info">
+                <span class="ag-role"><i class="fa fa-check-circle"></i> Onaylı Danışman</span>
+                <h1>@agentName</h1>
+                <p>
+                    <i class="fa fa-home"></i>@Model.Count aktif ilan
+                    @if (cities.Any())
+                    {
+                        <span style="margin-left:14px;"><i class="fa fa-map-marker"></i>@string.Join(", ", cities.Take(3))@(cities.Count > 3 ? " ..." : "")</span>
+                    }
+                </p>
+                <div class="ag-actions">
+                    <a href="/Contact/Index" class="ag-btn ag-btn-primary"><i class="fa fa-envelope"></i>İletişime Geç</a>
+                    <a href="/Property/PropertyList" class="ag-btn ag-btn-light"><i class="fa fa-th-large"></i>Tüm İlanlar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="ag-stats">
+            <div class="ag-stat">
+                <div class="ag-stat-icon"><i class="fa fa-building"></i></div>
+                <div><b>@Model.Count</b><small>Toplam İlan</small></div>
+            </div>
+            <div class="ag-stat">
+                <div class="ag-stat-icon"><i class="fa fa-briefcase"></i></div>
+                <div><b>@totalValue.ToString("N0", tr) ₺</b><small>Portföy Değeri</small></div>
+            </div>
+            <div class="ag-stat">
+                <div class="ag-stat-icon"><i class="fa fa-line-chart"></i></div>
+                <div><b>@avgPrice.ToString("N0", tr) ₺</b><small>Ortalama Fiyat</small></div>
+            </div>
+            <div class="ag-stat">
+                <div class="ag-stat-icon"><i class="fa fa-map"></i></div>
+                <div><b>@cities.Count</b><small>Farklı Şehir</small></div>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="ag-empty">
+                <div class="ag-empty-icon"><i class="fa fa-folder-open-o"></i></div>
+                <h4>Henüz ilan yok</h4>
+                <p>Bu danışmana ait yayında bir ilan bulunamadı.</p>
+                <a href="/Property/PropertyList" class="ag-btn ag-btn-primary"><i class="fa fa-search"></i>Tüm İlanlara Göz At</a>
+            </div>
+        }
+        else
+        {
+            <div class="ag-section-head">
+                <h2>Danışmanın İlanları</h2>
+                <span id="agCount">@Model.Count ilan listeleniyor</span>
+            </div>
+
+            <div class="ag-toolbar">
+                <div class="ag-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="agSearch" placeholder="İlan başlığı veya konum ara..." />
+                </div>
+                <select class="ag-select" id="agSort">
+                    <option value="">Varsayılan Sıralama</option>
+                    <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+                    <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+                    <option value="new">En Yeni İlan</option>
+                </select>
+                <div class="ag-view">
+                    <button type="button" class="active" data-view="grid" title="Izgara"><i class="fa fa-th-large"></i></button>
+                    <button type="button" data-view="list" title="Liste"><i class="fa fa-list"></i></button>
+                </div>
+            </div>
+
+            @if (categories.Count > 1)
+            {
+                <div class="ag-chips">
+                    <button type="button" class="ag-chip active" data-cat="">Tümü<span>@Model.Count</span></button>
+                    @foreach (var c in categories)
+                    {
+                        <button type="button" class="ag-chip" data-cat="@c.Name">@c.Name<span>@c.Count</span></button>
+                    }
+                </div>
+            }
+
+            <div class="row ag-grid" id="agGrid">
+                @foreach (var item in Model)
+                {
+                    var img = string.IsNullOrWhiteSpace(item.CoverImage) ? $"https://picsum.photos/seed/estate{item.ProductId}/800/560" : item.CoverImage;
+                    var loc = string.Join(", ", new[] { item.District, item.City }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                    var desc = item.Description ?? "";
+                    if (desc.Length > 120) { desc = desc.Substring(0, 120).TrimEnd() + "..."; }
+
+                    <div class="col-lg-4 col-md-6 ag-item"
+                         data-cat="@item.CategoryName"
+                         data-price="@item.Price.ToString(inv)"
+                         data-id="@item.ProductId"
+                         data-text="@($"{item.Title} {loc}".ToLower(tr))">
+                        <div class="ag-card">
+                            <a href="/Property/PropertyDetail/@item.ProductId" class="ag-img">
+                                <img src="@img" alt="@item.Title" loading="lazy" />
+                                @if (!string.IsNullOrWhiteSpace(item.CategoryName))
+                                {
+                                    <span class="ag-cat">@item.CategoryName</span>
+                                }
+                                <span class="ag-id">#@item.ProductId</span>
+                                <span class="ag-price">@item.Price.ToString("N0", tr) ₺</span>
+                            </a>
+                            <div class="ag-body">
+                                <h3><a href="/Property/PropertyDetail/@item.ProductId">@item.Title</a></h3>
+                                @if (!string.IsNullOrWhiteSpace(loc))
+                                {
+                                    <div class="ag-loc"><i class="fa fa-map-marker"></i>@loc</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(desc))
+                                {
+                                    <p class="ag-desc">@desc</p>
+                                }
+                                <div class="ag-foot">
+                                    <div class="ag-mini"><i>@initials</i>@agentName</div>
+                                    <a href="/Property/PropertyDetail/@item.ProductId" class="ag-more" title="Detay"><span class="fa fa-arrow-right"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="ag-empty ag-noresult" id="agNoResult">
+                <div class="ag-empty-icon"><i class="fa fa-search"></i></div>
+                <h4>Sonuç bulunamadı</h4>
+                <p>Arama veya filtreyi değiştirip tekrar deneyin.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    (function () {
+        var grid = document.getElementById('agGrid');
+        if (!grid) return;
+
+        var items = Array.prototype.slice.call(grid.querySelectorAll('.ag-item'));
+        var search = document.getElementById('agSearch');
+        var sort = document.getElementById('agSort');
+        var countEl = document.getElementById('agCount');
+        var noResult = document.getElementById('agNoResult');
+        var activeCat = '';
+
+        function apply() {
+            var q = (search.value || '').toLocaleLowerCase('tr-TR').trim();
+            var visible = 0;
+            items.forEach(function (el) {
+                var okCat = !activeCat || el.getAttribute('data-cat') === activeCat;
+                var okText = !q || el.getAttribute('data-text').indexOf(q) > -1;
+                var show = okCat && okText;
+                el.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            countEl.textContent = visible + ' ilan listeleniyor';
+            noResult.style.display = visible ? 'none' : 'block';
+        }
+
+        search.addEventListener('input', apply);
+
+        document.querySelectorAll('.ag-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                document.querySelectorAll('.ag-chip').forEach(function (c) { c.classList.remove('active'); });
+                chip.classList.add('active');
+                activeCat = chip.getAttribute('data-cat');
+                apply();
+            });
+        });
+
+        sort.addEventListener('change', function () {
+            var v = this.value;
+            var sorted = items.slice();
+            if (v === 'price-asc' || v === 'price-desc') {
+                sorted.sort(function (a, b) {
+                    var pa = parseFloat(a.getAttribute('data-price')), pb = parseFloat(b.getAttribute('data-price'));
+                    return v === 'price-asc' ? pa - pb : pb - pa;
+                });
+            } else if (v === 'new') {
+                sorted.sort(function (a, b) { return b.getAttribute('data-id') - a.getAttribute('data-id'); });
+            }
+            sorted.forEach(function (el) { grid.appendChild(el); });
+        });
+
+        document.querySelectorAll('.ag-view button').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.ag-view button').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                grid.classList.toggle('is-list', btn.getAttribute('data-view') === 'list');
+            });
+        });
+    })();
+</script>

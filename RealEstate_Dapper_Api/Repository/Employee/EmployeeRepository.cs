@@ -77,6 +77,22 @@ namespace RealEstate_Dapper_Api.Repository.Employee
             }
         }
 
+        public async Task<GetEmployeeByProductIdDto?> GetEmployeeByProductIdAsync(int ProductId)
+        {
+            string query = @"SELECT e.EmployeeId, e.Name, e.Title, e.Mail, e.PhoneNumber, e.ImageUrl
+                     FROM Product p
+                     INNER JOIN Employee e ON p.Employee = e.EmployeeId
+                     WHERE p.ProductId = @ProductId";
+
+            var parameters= new DynamicParameters();
+            parameters.Add("@ProductId",ProductId);
+
+            using (var connection = _context.CreateConnection())
+            {
+                return await connection.QueryFirstOrDefaultAsync<GetEmployeeByProductIdDto>(query, parameters);
+            }
+        }
+
         public async Task UpdateAsync(UpdateEmployeeDto dto)
         {
             string query = "Update Employee Set Name=@Name, Title=@Title, Mail=@Mail, PhoneNumber=@PhoneNumber, " +

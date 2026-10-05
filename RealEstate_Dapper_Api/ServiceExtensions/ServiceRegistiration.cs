@@ -10,6 +10,7 @@ using RealEstate_Dapper_Api.Repository.Login;
 using RealEstate_Dapper_Api.Repository.Product;
 using RealEstate_Dapper_Api.Repository.ProductDetail;
 using RealEstate_Dapper_Api.Repository.ProductDetailDto;
+using RealEstate_Dapper_Api.Repository.ProductImage;
 using RealEstate_Dapper_Api.Repository.Service;
 using RealEstate_Dapper_Api.Repository.SocialMedia;
 using RealEstate_Dapper_Api.Repository.Statistic;
@@ -41,6 +42,7 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IStatisticRepository, StatisticRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IProductImageRepository, ProductImageRepository>();
             services.AddScoped<JwtTokenGenerator>();
             return services;
         }

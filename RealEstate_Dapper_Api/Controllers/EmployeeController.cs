@@ -38,6 +38,15 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Çalışan Bilgileri Alınamadı");
             return Ok(employee);
         }
+
+        [HttpGet("GetEmployeeByProduct")]
+        public async Task<IActionResult> GetEmployeeByProductId(int productId)
+        {
+            var values=await employeeRepository.GetEmployeeByProductIdAsync(productId);
+            if (values == null)
+                return NotFound("İlan Sahibi Bulunamadı");
+            return Ok(values);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
         {

@@ -1,0 +1,58 @@
+﻿@model UpdateProductImageDto
+@{
+    ViewData["Title"] = "Görsel Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="bg-light rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h5 class="mb-0"><i class="fa fa-pen text-primary me-2"></i>Görsel Güncelle</h5>
+                    <a asp-area="Admin" asp-controller="ProductImage" asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-1"></i>Geri
+                    </a>
+                </div>
+
+                <form asp-area="Admin" asp-controller="ProductImage" asp-action="UpdateProductImage" method="post">
+                    <input type="hidden" asp-for="ProductImageId" />
+
+                    <div class="mb-3">
+                        <label asp-for="Product" class="form-label">İlan</label>
+                        <select asp-for="Product" asp-items="ViewBag.Products" class="form-select" required>
+                            <option value="">-- İlan seçin --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                        <input asp-for="ImageUrl" id="imageUrl" class="form-control" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="SortOrder" class="form-label">Sıra</label>
+                        <input asp-for="SortOrder" type="number" min="0" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fa fa-save me-1"></i>Güncelle
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="bg-light rounded p-4 h-100">
+                <h6 class="mb-3"><i class="fa fa-eye text-primary me-2"></i>Önizleme</h6>
+                <div class="rounded overflow-hidden bg-white" style="aspect-ratio: 4 / 3;">
+                    <img id="preview" src="@Model.ImageUrl" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>document.getElementById('imageUrl').addEventListener('input', function () {
+        document.getElementById('preview').src = this.value.trim();
+    });</script>

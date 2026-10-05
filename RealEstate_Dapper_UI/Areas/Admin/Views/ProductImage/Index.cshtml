@@ -1,0 +1,339 @@
+﻿@model List<ResultProductImageDto>
+@{
+    ViewData["Title"] = "İlan Görselleri";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var groups = Model.GroupBy(x => x.Product).OrderBy(g => g.Key).ToList();
+}
+
+<style>
+    .pi-thumb {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f3f6f9;
+        aspect-ratio: 4 / 3;
+    }
+
+        .pi-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .4s;
+        }
+
+        .pi-thumb:hover img {
+            transform: scale(1.06);
+        }
+
+    .pi-order {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(0, 0, 0, .65);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 999px;
+    }
+
+    .pi-actions {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        display: flex;
+        gap: 6px;
+        opacity: 0;
+        transition: opacity .2s;
+    }
+
+    .pi-thumb:hover .pi-actions {
+        opacity: 1;
+    }
+
+    .pi-actions a {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+    }
+
+    /* Silme modalı */
+    .pi-modal .modal-content {
+        border: 0;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .35);
+    }
+
+    .pi-modal-img {
+        position: relative;
+        height: 190px;
+        background: #f3f6f9;
+    }
+
+        .pi-modal-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(35%);
+        }
+
+        .pi-modal-img::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, .55));
+        }
+
+    .pi-modal-icon {
+        position: absolute;
+        left: 50%;
+        bottom: -34px;
+        transform: translateX(-50%);
+        z-index: 2;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 24px -8px rgba(220, 53, 69, .55);
+    }
+
+        .pi-modal-icon span {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            animation: piPulse 1.6s infinite;
+        }
+
+    .pi-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 2;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 0;
+        background: rgba(255, 255, 255, .9);
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .pi-modal-close:hover {
+            background: #fff;
+        }
+
+    .pi-modal-body {
+        padding: 48px 28px 24px;
+        text-align: center;
+    }
+
+        .pi-modal-body h5 {
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .pi-modal-body p {
+            color: #6c757d;
+            margin-bottom: 18px;
+        }
+
+    .pi-modal-info {
+        display: flex;
+        justify-content: space-between;
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 14px;
+        text-align: left;
+    }
+
+        .pi-modal-info small {
+            display: block;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .pi-modal-info b {
+            color: #212529;
+        }
+
+    .pi-modal-warn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 14px;
+    }
+
+    .pi-modal-foot {
+        display: flex;
+        gap: 10px;
+        padding: 0 28px 28px;
+    }
+
+        .pi-modal-foot .btn {
+            flex: 1;
+            height: 46px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    @@keyframes piPulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, .45);
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <h5 class="mb-1"><i class="fa fa-images text-primary me-2"></i>İlan Görselleri</h5>
+                <small class="text-muted">@groups.Count ilan · @Model.Count görsel</small>
+            </div>
+            <div class="d-flex gap-2">
+                <input type="text" id="piSearch" class="form-control" placeholder="İlan ara..." style="max-width: 220px;" />
+                <a asp-area="Admin" asp-controller="ProductImage" asp-action="CreateProductImage" class="btn btn-primary text-nowrap">
+                    <i class="fa fa-plus me-1"></i>Yeni Görsel
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-image fa-3x mb-3 d-block"></i>
+                Henüz görsel eklenmemiş.
+            </div>
+        }
+
+        @foreach (var group in groups)
+        {
+            <div class="bg-white rounded p-3 mb-4 pi-group" data-title="@group.Key?.ToLower()">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="mb-0"><i class="fa fa-home text-primary me-2"></i>@group.Key</h6>
+                    <span class="badge bg-primary">@group.Count() görsel</span>
+                </div>
+                <div class="row g-3">
+                    @foreach (var item in group.OrderBy(x => x.SortOrder))
+                    {
+                        <div class="col-6 col-md-4 col-xl-2">
+                            <div class="pi-thumb">
+                                <img src="@item.ImageUrl" alt="@group.Key" loading="lazy" />
+                                <span class="pi-order">#@item.SortOrder</span>
+                                <div class="pi-actions">
+                                    <a asp-area="Admin" asp-controller="ProductImage" asp-action="UpdateProductImage" asp-route-id="@item.ProductImageId" class="btn btn-warning" title="Güncelle">
+                                        <i class="fa fa-pen"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-danger pi-delete" title="Sil"
+                                       data-bs-toggle="modal" data-bs-target="#piDeleteModal"
+                                       data-url="@Url.Action("DeleteProductImage", "ProductImage", new { area = "Admin", id = item.ProductImageId })"
+                                       data-img="@item.ImageUrl"
+                                       data-title="@group.Key"
+                                       data-order="@item.SortOrder">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Silme Modalı -->
+<div class="modal fade pi-modal" id="piDeleteModal" tabindex="-1" aria-labelledby="piDeleteTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content">
+            <div class="pi-modal-img">
+                <img id="piDeleteImg" src="" alt="" />
+                <button type="button" class="pi-modal-close" data-bs-dismiss="modal" aria-label="Kapat"><i class="fa fa-times"></i></button>
+                <div class="pi-modal-icon"><span><i class="fa fa-trash-alt"></i></span></div>
+            </div>
+            <div class="pi-modal-body">
+                <h5 id="piDeleteTitle">Görseli silmek istiyor musunuz?</h5>
+                <p>Bu görsel ilanın slider'ından kaldırılacak.</p>
+                <div class="pi-modal-info">
+                    <div><small>İlan</small><b id="piDeleteProduct">-</b></div>
+                    <div class="text-end"><small>Sıra</small><b id="piDeleteOrder">-</b></div>
+                </div>
+                <div class="pi-modal-warn"><i class="fa fa-exclamation-triangle me-2"></i>Bu işlem geri alınamaz.</div>
+            </div>
+            <div class="pi-modal-foot">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Vazgeç</button>
+                <a href="#" id="piDeleteConfirm" class="btn btn-danger"><i class="fa fa-trash-alt me-2"></i>Evet, Sil</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('piSearch').addEventListener('input', function () {
+        var q = this.value.toLocaleLowerCase('tr-TR').trim();
+        document.querySelectorAll('.pi-group').forEach(function (g) {
+            g.style.display = !q || g.getAttribute('data-title').indexOf(q) > -1 ? '' : 'none';
+        });
+    });
+
+    document.getElementById('piDeleteModal').addEventListener('show.bs.modal', function (e) {
+        var btn = e.relatedTarget;
+        document.getElementById('piDeleteImg').src = btn.getAttribute('data-img');
+        document.getElementById('piDeleteProduct').textContent = btn.getAttribute('data-title');
+        document.getElementById('piDeleteOrder').textContent = '#' + btn.getAttribute('data-order');
+        var confirmBtn = document.getElementById('piDeleteConfirm');
+        confirmBtn.href = btn.getAttribute('data-url');
+        confirmBtn.classList.remove('disabled');
+        confirmBtn.innerHTML = '<i class="fa fa-trash-alt me-2"></i>Evet, Sil';
+    });
+
+    document.getElementById('piDeleteConfirm').addEventListener('click', function () {
+        this.classList.add('disabled');
+        this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Siliniyor...';
+    });</script>
