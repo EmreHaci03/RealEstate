@@ -1,0 +1,101 @@
+﻿@model List<ResultProductWithDetailDto>
+
+<style>
+    .agl-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+    }
+
+        .agl-item + .agl-item {
+            border-top: 1px solid var(--line);
+        }
+
+    .agl-img {
+        width: 64px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--primary-soft);
+    }
+
+    .agl-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .agl-title {
+        font-weight: 600;
+        color: var(--text);
+        font-size: .9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .agl-meta {
+        font-size: .78rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+    }
+
+    .agl-price {
+        font-weight: 700;
+        color: var(--text);
+        font-size: .9rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .agl-empty {
+        text-align: center;
+        padding: 32px 10px;
+        color: var(--muted);
+        font-size: .88rem;
+    }
+
+        .agl-empty i {
+            display: block;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+</style>
+
+<div class="col-lg-6 col-xl-5">
+    <div class="ag-panel">
+        <div class="ag-panel-head">
+            <h6 class="ag-panel-title">Son Eklediğim İlanlar</h6>
+            <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="ag-panel-link">Tümü</a>
+        </div>
+
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="agl-item">
+                    <img class="agl-img" src="@item.CoverImage" alt="@item.Title" loading="lazy" />
+                    <div class="agl-info">
+                        <div class="agl-title" title="@item.Title">@item.Title</div>
+                        <div class="agl-meta">
+                            <i class="fa fa-map-marker-alt me-1"></i>@item.District, @item.City · @item.CategoryName
+                        </div>
+                    </div>
+                    <div class="agl-price">₺@item.Price.ToString("N0")</div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="agl-empty">
+                <i class="fa fa-home"></i>
+                Henüz ilan eklemedin.
+            </div>
+        }
+    </div>
+</div>

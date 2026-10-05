@@ -350,7 +350,7 @@
         <div class="position-relative" style="z-index: 1;">
             <div class="ag-hero-date"><i class="fa fa-calendar-alt me-1"></i>@today</div>
             <h3>@greeting, @User.Identity?.Name 👋</h3>
-            <p>Portföyünde 6 ilan var. Bu hafta 2 yeni ilan ekledin, harika gidiyorsun.</p>
+            <p>Portföyünde @Model.TotalProduct ilan var. Bu hafta 2 yeni ilan ekledin, harika gidiyorsun.</p>
         </div>
         <div class="ag-hero-actions">
             <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvert"><i class="fa fa-plus me-2"></i>Yeni İlan</a>
@@ -440,106 +440,14 @@
             </div>
         </div>
 
-        <div class="col-lg-6 col-xl-4">
-            <div class="ag-panel">
-                <div class="ag-panel-head">
-                    <h6 class="ag-panel-title">Fiyat Aralıklarım</h6>
-                </div>
-                <div class="ag-bar-row">
-                    <div class="ag-bar-top"><span>5 Milyon altı</span><span>1 ilan</span></div>
-                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
-                </div>
-                <div class="ag-bar-row">
-                    <div class="ag-bar-top"><span>5 - 10 Milyon</span><span>3 ilan</span></div>
-                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 100%;"></div></div>
-                </div>
-                <div class="ag-bar-row">
-                    <div class="ag-bar-top"><span>10 - 20 Milyon</span><span>1 ilan</span></div>
-                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
-                </div>
-                <div class="ag-bar-row">
-                    <div class="ag-bar-top"><span>20 Milyon üstü</span><span>1 ilan</span></div>
-                    <div class="ag-bar-track"><div class="ag-bar-fill" style="width: 33%;"></div></div>
-                </div>
-            </div>
-        </div>
+       @await Component.InvokeAsync("EstateAgentPriceRanges")
 
-        <div class="col-lg-12 col-xl-4">
-            <div class="ag-panel">
-                <div class="ag-panel-head">
-                    <h6 class="ag-panel-title">Öne Çıkan İlanlarım</h6>
-                </div>
-                <div class="ag-highlight" style="background: rgba(245, 158, 11, .1);">
-                    <div class="ag-highlight-icon" style="color: #d97706;"><i class="fa fa-crown"></i></div>
-                    <div>
-                        <div class="ag-highlight-label" style="color: #d97706;">En pahalı</div>
-                        <div class="ag-highlight-title">Havuzlu Müstakil Villa</div>
-                        <div class="ag-highlight-meta">₺37.000.000 · Muğla</div>
-                    </div>
-                </div>
-                <div class="ag-highlight" style="background: rgba(5, 150, 105, .1);">
-                    <div class="ag-highlight-icon" style="color: #059669;"><i class="fa fa-tag"></i></div>
-                    <div>
-                        <div class="ag-highlight-label" style="color: #059669;">En uygun</div>
-                        <div class="ag-highlight-title">İmarlı Konut Arsası</div>
-                        <div class="ag-highlight-meta">₺2.750.000 · Bursa</div>
-                    </div>
-                </div>
-                <div class="ag-highlight" style="background: var(--primary-soft);">
-                    <div class="ag-highlight-icon" style="color: var(--primary);"><i class="fa fa-clock"></i></div>
-                    <div>
-                        <div class="ag-highlight-label" style="color: var(--primary);">En yeni</div>
-                        <div class="ag-highlight-title">Rezidansta 1+1 Kiralık Yatırım</div>
-                        <div class="ag-highlight-meta">₺5.950.000 · İstanbul</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+       @await Component.InvokeAsync("EstateAgentHighlightedProducts")
     </div>
 
     <!-- Son ilanlar + ortalama fiyat grafiği -->
     <div class="row g-4 mb-4">
-        <div class="col-lg-6 col-xl-5">
-            <div class="ag-panel">
-                <div class="ag-panel-head">
-                    <h6 class="ag-panel-title">Son Eklediğim İlanlar</h6>
-                    <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="ag-panel-link">Tümü</a>
-                </div>
-
-                <div class="ag-listing">
-                    <img src="https://picsum.photos/seed/p7/200/150" alt="" />
-                    <div>
-                        <div class="ag-listing-title">Rezidansta 1+1 Kiralık Yatırım</div>
-                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Ataşehir, İstanbul · Rezidans</div>
-                    </div>
-                    <div class="ag-listing-price">₺5.950.000</div>
-                </div>
-                <div class="ag-listing">
-                    <img src="https://picsum.photos/seed/p6/200/150" alt="" />
-                    <div>
-                        <div class="ag-listing-title">Cadde Üzeri Dükkan</div>
-                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Şişli, İstanbul · Dükkan</div>
-                    </div>
-                    <div class="ag-listing-price">₺5.400.000</div>
-                </div>
-                <div class="ag-listing">
-                    <img src="https://picsum.photos/seed/p4/200/150" alt="" />
-                    <div>
-                        <div class="ag-listing-title">Bahçeli Müstakil Ev</div>
-                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Urla, İzmir · Müstakil Ev</div>
-                    </div>
-                    <div class="ag-listing-price">₺6.900.000</div>
-                </div>
-                <div class="ag-listing">
-                    <img src="https://picsum.photos/seed/p1/200/150" alt="" />
-                    <div>
-                        <div class="ag-listing-title">Deniz Manzaralı 3+1 Daire</div>
-                        <div class="ag-listing-meta"><i class="fa fa-map-marker-alt me-1"></i>Karşıyaka, İzmir · Daire</div>
-                    </div>
-                    <div class="ag-listing-price">₺9.300.000</div>
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync("EstateAgentDashboardLastProducts")
 
         <div class="col-lg-6 col-xl-7">
             <div class="ag-panel">
@@ -560,10 +468,10 @@
             new Chart(document.getElementById("agCityChart"), {
                 type: "bar",
                 data: {
-                    labels: ["İstanbul", "İzmir", "Muğla", "Bursa"],
+                    labels: @Html.Raw(ViewBag.City),
                     datasets: [{
                         label: "İlan sayısı",
-                        data: [2, 2, 1, 1],
+                        data: @Html.Raw(ViewBag.CityProductCount),
                         backgroundColor: "rgba(5, 150, 105, .75)",
                         hoverBackgroundColor: "#059669",
                         borderRadius: 8,
@@ -593,10 +501,10 @@
             new Chart(document.getElementById("agAvgPriceChart"), {
                 type: "bar",
                 data: {
-                    labels: ["Villa", "Daire", "Müstakil Ev", "Rezidans", "Dükkan", "Arsa"],
+                    labels:@Html.Raw(ViewBag.AvgCategoryName),
                     datasets: [{
                         label: "Ortalama fiyat (₺)",
-                        data: [37000000, 9300000, 6900000, 5950000, 5400000, 2750000],
+                        data: @Html.Raw(ViewBag.AveragePrice),
                         backgroundColor: "rgba(14, 165, 233, .7)",
                         hoverBackgroundColor: "#0ea5e9",
                         borderRadius: 8,

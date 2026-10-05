@@ -40,6 +40,20 @@ namespace RealEstate_Dapper_Api.Controllers
             var values = await _statisticRepository.ResultAgentProductCountByCategoryAsync(userId);
             return Ok(values);
         }
+
+        [HttpGet("GetAveragePriceByCategory")]
+        public async Task<IActionResult> GetAveragePriceByCategoryAsync(int userId)
+        {
+            var values = await _statisticRepository.GetAveragePriceByCategoryAsync(userId);
+            return Ok(values);  
+        }
+
+        [HttpGet("GetAgentProductCountByCity")]
+        public async Task<IActionResult> GetAgentProductCountByCityAsync(int userId)
+        {
+            var values=await _statisticRepository.GetAgentProductCountByCityAsync(userId);
+            return Ok(values);
+        }
     }
 }
 

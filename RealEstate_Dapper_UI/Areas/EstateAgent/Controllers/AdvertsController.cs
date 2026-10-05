@@ -38,5 +38,18 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
             ViewBag.Error = $"API hatası: {(int)response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
             return View(new List<ResultProductWithDetailDto>());
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> CreateAdvert()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAdvert(CreateProductDto dto)
+        {
+            return View();
+        }
     }
 }

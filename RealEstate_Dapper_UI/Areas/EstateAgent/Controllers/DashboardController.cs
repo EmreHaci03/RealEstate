@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using RealEstate_Dapper_UI.DTOS.ProductDtos;
 using RealEstate_Dapper_UI.DTOS.StatisticDtos;
 using System.Security.Claims;
 
@@ -47,6 +48,24 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
 
                 ViewBag.CategoryName = JsonConvert.SerializeObject(categoryValues.Select(x => x.CategoryName));
                 ViewBag.ProductCount = JsonConvert.SerializeObject(categoryValues.Select(x => x.ProductCount));
+            }
+
+            var AveragePriceCategoryResponse = await client.GetAsync($"https://localhost:7025/api/Statistic/GetAveragePriceByCategory?userId={userId}");
+            if (AveragePriceCategoryResponse.IsSuccessStatusCode)
+            {
+                var jsonData=await AveragePriceCategoryResponse.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultAgentAveragePriceByCategoryDto>>(jsonData) ?? new ();
+                ViewBag.AveragePrice = JsonConvert.SerializeObject(values.Select(x => x.AveragePrice));
+                ViewBag.AvgCategoryName = JsonConvert.SerializeObject(values.Select(x => x.CategoryName));
+            }
+
+            var ProductByCityResponse = await client.GetAsync("https://localhost:7025/api/Statistic/GetAgentProductCountByCity?userId=2");
+            if (ProductByCityResponse.IsSuccessStatusCode)
+            {
+                var jsonData=await ProductByCityResponse.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultProductCountByCityDto>>(jsonData) ?? new();
+                ViewBag.City = JsonConvert.SerializeObject(values.Select(x => x.City).ToList());
+                ViewBag.CityProductCount=JsonConvert.SerializeObject(values.Select(x=> x.ProductCount).ToList()); 
             }
 
             return View(stats);

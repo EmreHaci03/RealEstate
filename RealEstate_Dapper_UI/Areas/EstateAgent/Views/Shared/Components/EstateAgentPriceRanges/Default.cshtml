@@ -1,0 +1,17 @@
+﻿@model List<PriceRangeViewModel>
+
+<div class="col-lg-6 col-xl-4">
+    <div class="ag-panel">
+        <div class="ag-panel-head">
+            <h6 class="ag-panel-title">Fiyat Aralıklarım</h6>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            <div class="ag-bar-row">
+                <div class="ag-bar-top"><span>@item.Label</span><span>@item.Count ilan</span></div>
+                <div class="ag-bar-track"><div class="ag-bar-fill" style="width: @item.Percent%;"></div></div>
+            </div>
+        }
+    </div>
+</div>

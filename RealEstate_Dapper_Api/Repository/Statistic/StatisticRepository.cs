@@ -13,6 +13,22 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
             _context = context;
         }
 
+        public async Task<List<ResultAgentProductCountByCityDto>> GetAgentProductCountByCityAsync(int userId)
+        {
+            string query = @"
+            DECLARE @EmployeeId int=(select EmployeeId From Employee e inner join AppUser u on e.Mail=u.Email Where u.UserId=@UserId);
+
+SELECT Count(*) as ProductCount ,City From Product Where Employee=@EmployeeId Group By City Order By ProductCount Desc ";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId);
+            using(var connection = _context.CreateConnection())
+            {
+                var values= await connection.QueryAsync<ResultAgentProductCountByCityDto>(query, parameters);
+                return values.ToList();    
+            }
+        }
+
         public async Task<ResultAgentStatisticDto> GetAgentStatisticsAsync(int userId)
         {
             string query = @"
@@ -26,7 +42,10 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
     SELECT
         (SELECT COUNT(*) FROM Product WHERE Employee = @EmployeeId) AS TotalProduct,
         (SELECT ISNULL(SUM(Price), 0) FROM Product WHERE Employee = @EmployeeId) AS TotalProductValue,
-        (SELECT COUNT(DISTINCT Category) FROM Product WHERE Employee = @EmployeeId) AS DifferentCategoryValue";
+        (SELECT COUNT(DISTINCT Category) FROM Product WHERE Employee = @EmployeeId) AS DifferentCategoryValue,
+        (SELECT COUNT(*) + 1
+        FROM (SELECT Employee, COUNT(*) AS Cnt FROM Product GROUP BY Employee) AS Ranks
+        WHERE Ranks.Cnt > (SELECT COUNT(*) FROM Product WHERE Employee = @EmployeeId)) AS EstateAgentRanking";
             
 
             var parameters = new DynamicParameters();
@@ -37,6 +56,25 @@ namespace RealEstate_Dapper_Api.Repository.Statistic
                 return await connection.QueryFirstAsync<ResultAgentStatisticDto>(query,parameters);
             }
 
+        }
+
+        public async Task<List<ResultAgentAveragePriceByCategoryDto>> GetAveragePriceByCategoryAsync(int userId)
+        {
+            string query = @"
+
+ Declare @EmployeeId int=(
+select EmployeeId From Employee e inner join AppUser a on e.Mail=a.Email
+        WHERE a.UserId = @UserId);
+                SELECT avg(Price) as AveragePrice , c.CategoryName as CategoryName   From Product p inner join Category c on p.Category=c.CategoryId Where Employee=@EmployeeId Group By CategoryName
+                ";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId);
+            using(var connection = _context.CreateConnection())
+            {
+                var values= await connection.QueryAsync<ResultAgentAveragePriceByCategoryDto>(query,parameters);
+                return values.ToList();
+            }
         }
 
         public async Task<ResultStatisticDto> GetStatisticsAsync()

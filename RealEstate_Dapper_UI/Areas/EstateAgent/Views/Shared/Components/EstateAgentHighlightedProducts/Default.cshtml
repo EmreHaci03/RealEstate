@@ -1,0 +1,39 @@
+﻿<div class="col-lg-12 col-xl-4">
+    <div class="ag-panel">
+        <div class="ag-panel-head">
+            <h6 class="ag-panel-title">Öne Çıkan İlanlarım</h6>
+        </div>
+
+        @if (ViewBag.MostExpensive != null)
+        {
+            <div class="ag-highlight" style="background: rgba(245, 158, 11, .1);">
+                <div class="ag-highlight-icon" style="color: #d97706;"><i class="fa fa-crown"></i></div>
+                <div>
+                    <div class="ag-highlight-label" style="color: #d97706;">En pahalı</div>
+                    <div class="ag-highlight-title">@ViewBag.MostExpensive.Title</div>
+                    <div class="ag-highlight-meta">₺@ViewBag.MostExpensive.Price.ToString("N0") · @ViewBag.MostExpensive.City</div>
+                </div>
+            </div>
+            <div class="ag-highlight" style="background: rgba(5, 150, 105, .1);">
+                <div class="ag-highlight-icon" style="color: #059669;"><i class="fa fa-tag"></i></div>
+                <div>
+                    <div class="ag-highlight-label" style="color: #059669;">En uygun</div>
+                    <div class="ag-highlight-title">@ViewBag.Cheapest.Title</div>
+                    <div class="ag-highlight-meta">₺@ViewBag.Cheapest.Price.ToString("N0") · @ViewBag.Cheapest.City</div>
+                </div>
+            </div>
+            <div class="ag-highlight" style="background: var(--primary-soft);">
+                <div class="ag-highlight-icon" style="color: var(--primary);"><i class="fa fa-clock"></i></div>
+                <div>
+                    <div class="ag-highlight-label" style="color: var(--primary);">En yeni</div>
+                    <div class="ag-highlight-title">@ViewBag.Newest.Title</div>
+                    <div class="ag-highlight-meta">₺@ViewBag.Newest.Price.ToString("N0") · @ViewBag.Newest.City</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="mb-0 text-center py-4" style="color: var(--muted);">Henüz ilanın yok.</p>
+        }
+    </div>
+</div>
