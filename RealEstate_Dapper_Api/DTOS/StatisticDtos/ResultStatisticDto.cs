@@ -6,6 +6,8 @@
         public int TotalCategory { get; set; }
         public int TotalEmployee { get; set; }
         public int ActiveEmployee { get; set; }
+        public int ClientCount { get; set; }
+        public int CityCount { get; set; }
         public int TotalCity { get; set; }
         public decimal AveragePrice { get; set; }
         public decimal MaxPrice { get; set; }

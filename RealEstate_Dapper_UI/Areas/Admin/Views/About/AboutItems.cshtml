@@ -1,0 +1,170 @@
+﻿@model List<ResultAboutItemDto>
+@{
+    ViewData["Title"] = "Hakkımızda Maddeleri";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var aboutId = Context.Request.RouteValues["id"];
+    var aboutTitle = Model.Select(x => x.About).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+}
+
+<style>
+    .ai-card {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-radius: 14px;
+        padding: 20px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .ai-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px -22px rgba(0, 0, 0, .35);
+        }
+
+    .ai-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(0, 156, 255, .1);
+        color: #009CFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 14px;
+    }
+
+    .ai-card h6 {
+        font-weight: 700;
+        color: #191C24;
+        margin-bottom: 6px;
+    }
+
+    .ai-card p {
+        color: #6c757d;
+        font-size: 14px;
+        line-height: 1.6;
+        flex: 1;
+        margin-bottom: 14px;
+    }
+
+    .ai-class {
+        font-size: 12px;
+        color: #9aa1ab;
+        font-family: monospace;
+    }
+
+    .ai-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px dashed #eef0f4;
+        padding-top: 12px;
+    }
+
+        .ai-foot .btn {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border-radius: 9px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <h5 class="mb-1"><i class="fa fa-list-ul text-primary me-2"></i>Hakkımızda Maddeleri</h5>
+                <small class="text-muted">@(aboutTitle ?? "Hakkımızda") · @Model.Count madde</small>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-area="Admin" asp-controller="About" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left me-1"></i>Geri
+                </a>
+                <a asp-area="Admin" asp-controller="AboutItem" asp-action="CreateAboutItem" asp-route-aboutId="@aboutId" class="btn btn-primary">
+                    <i class="fa fa-plus me-1"></i>Yeni Madde
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-list-ul fa-3x mb-3 d-block"></i>
+                Bu kayda ait madde bulunmuyor.
+            </div>
+        }
+
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-6 col-xl-3">
+                    <div class="ai-card">
+                        <div class="ai-icon"><i class="@item.Icon"></i></div>
+                        <h6>@item.Title</h6>
+                        <p>@item.Content</p>
+                        <div class="ai-foot">
+                            <span class="ai-class">@item.Icon</span>
+                            <div class="d-flex gap-1">
+                                <a asp-area="Admin" asp-controller="AboutItem" asp-action="UpdateAboutItem" asp-route-id="@item.AboutItemId" asp-route-aboutId="@item.About" class="btn btn-warning" title="Düzenle">
+                                    <i class="fa fa-pen"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger" title="Sil"
+                                        data-bs-toggle="modal" data-bs-target="#aiDeleteModal"
+                                        data-url="@Url.Action("DeleteAboutItem", "AboutItem", new { area = "Admin", id = item.AboutItemId ,aboutId=item.About})"
+                                        data-title="@item.Title">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Silme Modalı -->
+<div class="modal fade" id="aiDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0" style="border-radius: 18px;">
+            <div class="modal-body text-center p-4">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 64px; height: 64px; font-size: 24px;">
+                    <i class="fa fa-trash-alt"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Maddeyi silmek istiyor musunuz?</h5>
+                <p class="text-muted mb-0" id="aiDeleteTitle"></p>
+            </div>
+            <div class="d-flex gap-2 px-4 pb-4">
+                <button type="button" class="btn btn-light flex-fill" data-bs-dismiss="modal">Vazgeç</button>
+                <a href="#" id="aiDeleteConfirm" class="btn btn-danger flex-fill">Evet, Sil</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>document.getElementById('aiDeleteModal').addEventListener('show.bs.modal', function (e) {
+        var btn = e.relatedTarget;
+        document.getElementById('aiDeleteTitle').textContent = btn.getAttribute('data-title');
+        document.getElementById('aiDeleteConfirm').href = btn.getAttribute('data-url');
+    });</script>

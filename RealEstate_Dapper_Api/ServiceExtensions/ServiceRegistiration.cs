@@ -1,4 +1,8 @@
-﻿using RealEstate_Dapper_Api.Repository.Adress;
+﻿using RealEstate_Dapper_Api.Repository.About;
+using RealEstate_Dapper_Api.Repository.AboutItem;
+using RealEstate_Dapper_Api.Repository.Adress;
+using RealEstate_Dapper_Api.Repository.Amenity;
+using RealEstate_Dapper_Api.Repository.AmenityProperty;
 using RealEstate_Dapper_Api.Repository.BottomGrid;
 using RealEstate_Dapper_Api.Repository.Category;
 using RealEstate_Dapper_Api.Repository.Client;
@@ -43,6 +47,10 @@ namespace RealEstate_Dapper_Api.ServiceExtensions
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<ILoginRepository, LoginRepository>();
             services.AddScoped<IProductImageRepository, ProductImageRepository>();
+            services.AddScoped<IAboutRepository, AboutRepository>();
+            services.AddScoped<IAboutItemRepository, AboutItemRepository>();
+            services.AddScoped<IAmenityRepository, AmenityRepository>();
+            services.AddScoped<IAmenityPropertyRepository, AmenityPropertyRepository>();
             services.AddScoped<JwtTokenGenerator>();
             return services;
         }

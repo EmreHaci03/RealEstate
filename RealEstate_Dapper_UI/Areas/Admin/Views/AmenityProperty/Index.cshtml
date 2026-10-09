@@ -1,0 +1,241 @@
+﻿@model List<ResultAmenityPropertyDto>
+@{
+    ViewData["Title"] = "İlan Olanakları";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var groups = Model.GroupBy(x => x.Product).OrderBy(g => g.Key).ToList();
+}
+
+<style>
+    .ip-card {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-radius: 14px;
+        padding: 20px;
+        height: 100%;
+        transition: box-shadow .2s;
+    }
+
+        .ip-card:hover {
+            box-shadow: 0 16px 34px -22px rgba(0, 0, 0, .35);
+        }
+
+    .ip-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+        .ip-head h6 {
+            margin: 0;
+            font-weight: 700;
+            color: #191C24;
+        }
+
+    .ip-bar {
+        height: 6px;
+        border-radius: 999px;
+        background: #eef0f4;
+        overflow: hidden;
+        margin-bottom: 14px;
+    }
+
+        .ip-bar span {
+            display: block;
+            height: 100%;
+            background: #198754;
+            border-radius: 999px;
+        }
+
+    .ip-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .ip-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 11px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+        .ip-chip i {
+            margin-right: 6px;
+        }
+
+        .ip-chip.on {
+            background: rgba(25, 135, 84, .1);
+            color: #198754;
+        }
+
+        .ip-chip.off {
+            background: #f5f7fa;
+            color: #9aa1ab;
+        }
+
+            .ip-chip.off .ip-name {
+                text-decoration: line-through;
+            }
+
+    .ip-toggle {
+        color: inherit;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .ip-toggle:hover {
+            color: inherit;
+            opacity: .75;
+        }
+
+    .ip-del {
+        border: 0;
+        background: none;
+        padding: 0 0 0 8px;
+        margin-left: 4px;
+        border-left: 1px solid rgba(0,0,0,.1);
+        color: inherit;
+        opacity: .45;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+        .ip-del:hover {
+            opacity: 1;
+            color: #dc3545;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <h5 class="mb-1"><i class="fa fa-tasks text-primary me-2"></i>İlan Olanakları</h5>
+                <small class="text-muted">@groups.Count ilan · @Model.Count kayıt</small>
+            </div>
+            <div class="d-flex gap-2">
+                <input type="text" id="ipSearch" class="form-control" placeholder="İlan ara..." style="max-width: 220px;" />
+                <div class="form-check form-switch d-flex align-items-center ms-1">
+                    <input class="form-check-input me-2" type="checkbox" id="ipOnlyOn" />
+                    <label class="form-check-label text-nowrap" for="ipOnlyOn">Sadece olanlar</label>
+                </div>
+                <a asp-area="Admin" asp-controller="AmenityProperty" asp-action="CreateAmenityProperty" class="btn btn-primary text-nowrap">
+                    <i class="fa fa-plus me-1"></i>Yeni Ekle
+                </a>
+            </div>
+        </div>
+
+        <div class="text-muted small mb-3"><i class="fa fa-info-circle me-1"></i>Bir olanağın üzerine tıklayarak durumunu (var / yok) değiştirebilirsiniz.</div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-tasks fa-3x mb-3 d-block"></i>
+                Henüz hiçbir ilana olanak atanmamış.
+            </div>
+        }
+
+        <div class="row g-4">
+            @foreach (var group in groups)
+            {
+                var total = group.Count();
+                var on = group.Count(x => x.Status);
+                var percent = total == 0 ? 0 : on * 100 / total;
+
+                <div class="col-md-6 col-xl-4 ip-item" data-title="@group.Key?.ToLower()">
+                    <div class="ip-card">
+                        <div class="ip-head">
+                            <h6><i class="fa fa-home text-primary me-2"></i>@group.Key</h6>
+                            <span class="badge bg-success">@on / @total</span>
+                        </div>
+                        <div class="ip-bar"><span style="width: @(percent)%;"></span></div>
+                        <div class="ip-chips">
+                            @foreach (var item in group.OrderByDescending(x => x.Status).ThenBy(x => x.Amenity))
+                            {
+                                <span class="ip-chip @(item.Status ? "on" : "off")">
+                                    <a class="ip-toggle" title="@(item.Status ? "Yok olarak işaretle" : "Var olarak işaretle")"
+                                       asp-area="Admin" asp-controller="AmenityProperty" asp-action="ChangePropertyStatus" asp-route-id="@item.AmenityPropertyId">
+                                        <i class="fa @(item.Status ? "fa-check" : "fa-times")"></i><span class="ip-name">@item.Amenity</span>
+                                    </a>
+                                    <button type="button" class="ip-del" title="Sil"
+                                            data-bs-toggle="modal" data-bs-target="#ipDeleteModal"
+                                            data-url="@Url.Action("DeleteAmenityProperty", "AmenityProperty", new { area = "Admin", id = item.AmenityPropertyId })"
+                                            data-title="@group.Key – @item.Amenity">
+                                        <i class="fa fa-trash-alt m-0"></i>
+                                    </button>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var search = document.getElementById('ipSearch');
+        var onlyOn = document.getElementById('ipOnlyOn');
+
+        search.addEventListener('input', function () {
+            var q = this.value.toLocaleLowerCase('tr-TR').trim();
+            document.querySelectorAll('.ip-item').forEach(function (el) {
+                el.style.display = !q || el.getAttribute('data-title').indexOf(q) > -1 ? '' : 'none';
+            });
+        });
+
+        onlyOn.addEventListener('change', function () {
+            var hide = this.checked;
+            document.querySelectorAll('.ip-chip.off').forEach(function (chip) {
+                chip.style.display = hide ? 'none' : '';
+            });
+        });
+    })();
+</script>
+
+<!-- Silme Modalı -->
+<div class="modal fade" id="ipDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0" style="border-radius: 18px;">
+            <div class="modal-body text-center p-4">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 64px; height: 64px; font-size: 24px;">
+                    <i class="fa fa-trash-alt"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Olanak kaydını silmek istiyor musunuz?</h5>
+                <p class="text-muted mb-0" id="ipDeleteTitle"></p>
+            </div>
+            <div class="d-flex gap-2 px-4 pb-4">
+                <button type="button" class="btn btn-light flex-fill" data-bs-dismiss="modal">Vazgeç</button>
+                <a href="#" id="ipDeleteConfirm" class="btn btn-danger flex-fill">Evet, Sil</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('ipDeleteModal').addEventListener('show.bs.modal', function (e) {
+        var btn = e.relatedTarget;
+        document.getElementById('ipDeleteTitle').textContent = btn.getAttribute('data-title');
+        document.getElementById('ipDeleteConfirm').href = btn.getAttribute('data-url');
+    });
+</script>

@@ -1,0 +1,607 @@
+﻿@model List<RealEstate_Dapper_UI.DTOS.AboutDtos.ResultAboutDto>
+@{
+    ViewData["Title"] = "Hakkımızda";
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+    var first = Model.FirstOrDefault();
+}
+
+<style>
+    .ab-section {
+        --ab-accent: #f15a24;
+        --ab-accent-soft: rgba(241, 90, 36, .1);
+        --ab-text: #1f2937;
+        --ab-muted: #6b7280;
+        --ab-line: #e8eaee;
+        padding: 90px 0;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    /* Görsel kolaj */
+    .ab-visual {
+        position: relative;
+        padding: 0 40px 60px 0;
+    }
+
+    .ab-img-main {
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px -30px rgba(17, 24, 39, .45);
+    }
+
+        .ab-img-main img {
+            width: 100%;
+            height: 440px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .ab-img-small {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 46%;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 8px solid #fff;
+        box-shadow: 0 20px 40px -20px rgba(17, 24, 39, .5);
+    }
+
+        .ab-img-small img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .ab-exp {
+        position: absolute;
+        left: -18px;
+        top: 36px;
+        background: var(--ab-accent);
+        color: #fff;
+        border-radius: 18px;
+        padding: 18px 22px;
+        text-align: center;
+        box-shadow: 0 18px 36px -14px rgba(241, 90, 36, .7);
+    }
+
+        .ab-exp b {
+            display: block;
+            font-size: 2.2rem;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .ab-exp span {
+            font-size: .8rem;
+            font-weight: 600;
+            opacity: .9;
+        }
+
+    .ab-dots {
+        position: absolute;
+        left: 30px;
+        bottom: 10px;
+        width: 110px;
+        height: 80px;
+        background-image: radial-gradient(var(--ab-accent) 2px, transparent 2px);
+        background-size: 14px 14px;
+        opacity: .35;
+        z-index: -1;
+    }
+
+    /* Metin */
+    .ab-tag {
+        display: inline-flex;
+        align-items: center;
+        background: var(--ab-accent-soft);
+        color: var(--ab-accent);
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 16px;
+    }
+
+        .ab-tag .fa {
+            margin-right: 6px;
+        }
+
+    .ab-title {
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: var(--ab-text);
+        line-height: 1.2;
+        margin-bottom: 18px;
+    }
+
+        .ab-title span {
+            color: var(--ab-accent);
+        }
+
+    .ab-lead {
+        color: var(--ab-muted);
+        font-size: 1.02rem;
+        line-height: 1.8;
+        margin-bottom: 26px;
+    }
+
+    .ab-features {
+        margin-bottom: 28px;
+    }
+
+    .ab-feature {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 18px;
+    }
+
+    .ab-feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--ab-accent-soft);
+        color: var(--ab-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+        margin-right: 16px;
+        transition: all .25s;
+    }
+
+    .ab-feature:hover .ab-feature-icon {
+        background: var(--ab-accent);
+        color: #fff;
+        transform: translateY(-3px);
+    }
+
+    .ab-feature h6 {
+        font-weight: 700;
+        color: var(--ab-text);
+        margin: 2px 0 4px;
+        font-size: 1rem;
+    }
+
+    .ab-feature p {
+        color: var(--ab-muted);
+        font-size: .9rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .ab-cta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .ab-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 52px;
+        padding: 0 28px;
+        border-radius: 14px;
+        background: var(--ab-accent);
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+        margin: 0 22px 10px 0;
+        transition: all .2s;
+        box-shadow: 0 14px 28px -14px rgba(241, 90, 36, .8);
+    }
+
+        .ab-btn:hover {
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-2px);
+            filter: brightness(.95);
+        }
+
+        .ab-btn .fa {
+            margin-left: 10px;
+        }
+
+    .ab-call {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--ab-text);
+        text-decoration: none;
+    }
+
+        .ab-call:hover {
+            text-decoration: none;
+            color: var(--ab-accent);
+        }
+
+        .ab-call i {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 2px solid var(--ab-accent-soft);
+            color: var(--ab-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .ab-call small {
+            display: block;
+            color: var(--ab-muted);
+            font-size: .78rem;
+        }
+
+        .ab-call b {
+            font-size: 1rem;
+        }
+
+    /* Sayaçlar */
+    .ab-stats {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 70px;
+        background: #fff;
+        border: 1px solid var(--ab-line);
+        border-radius: 22px;
+        box-shadow: 0 24px 50px -36px rgba(17, 24, 39, .35);
+        overflow: hidden;
+    }
+
+    .ab-stat {
+        flex: 1 1 200px;
+        padding: 28px 20px;
+        text-align: center;
+        border-right: 1px solid var(--ab-line);
+    }
+
+        .ab-stat:last-child {
+            border-right: 0;
+        }
+
+        .ab-stat .fa {
+            font-size: 22px;
+            color: var(--ab-accent);
+            margin-bottom: 10px;
+        }
+
+        .ab-stat b {
+            display: block;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--ab-text);
+            line-height: 1.1;
+        }
+
+        .ab-stat small {
+            color: var(--ab-muted);
+            font-size: .85rem;
+        }
+
+    @@media (max-width: 991px) {
+        .ab-visual {
+            margin-bottom: 50px;
+            padding-right: 20px;
+        }
+
+        .ab-img-main img {
+            height: 340px;
+        }
+
+        .ab-exp {
+            left: 10px;
+        }
+
+        .ab-title {
+            font-size: 1.8rem;
+        }
+    }
+
+    @@media (max-width: 575px) {
+        .ab-section {
+            padding: 60px 0;
+        }
+
+        .ab-img-small {
+            display: none;
+        }
+
+        .ab-stat {
+            flex-basis: 50%;
+            border-bottom: 1px solid var(--ab-line);
+        }
+    }
+
+    /* Sayfa başlığı */
+    .ab-hero {
+        position: relative;
+        padding: 110px 0 90px;
+        background: linear-gradient(120deg, rgba(17, 24, 39, .9), rgba(17, 24, 39, .55)), url('https://picsum.photos/seed/abouthero/1600/600') center/cover;
+        color: #fff;
+        text-align: center;
+    }
+
+        .ab-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .ab-hero p {
+            color: rgba(255, 255, 255, .8);
+            max-width: 560px;
+            margin: 0 auto 18px;
+        }
+
+    .ab-crumb {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, .12);
+        border-radius: 999px;
+        padding: 8px 18px;
+        font-size: .88rem;
+    }
+
+        .ab-crumb a {
+            color: rgba(255, 255, 255, .8);
+            text-decoration: none;
+        }
+
+            .ab-crumb a:hover {
+                color: #fff;
+            }
+
+        .ab-crumb .fa {
+            margin: 0 10px;
+            font-size: .7rem;
+            color: #f15a24;
+        }
+
+    /* Misyon / Vizyon */
+    .ab-mv {
+        padding: 80px 0;
+        background: #f7f8fa;
+    }
+
+    .ab-mv-head {
+        text-align: center;
+        max-width: 620px;
+        margin: 0 auto 46px;
+    }
+
+    .ab-card {
+        background: #fff;
+        border: 1px solid #e8eaee;
+        border-radius: 22px;
+        padding: 34px 30px;
+        height: 100%;
+        transition: transform .25s, box-shadow .25s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ab-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 28px 50px -30px rgba(17, 24, 39, .4);
+        }
+
+        .ab-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 4px;
+            width: 0;
+            background: #f15a24;
+            transition: width .35s;
+        }
+
+        .ab-card:hover::before {
+            width: 100%;
+        }
+
+    .ab-card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        background: rgba(241, 90, 36, .1);
+        color: #f15a24;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .ab-card h4 {
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.3rem;
+    }
+
+    .ab-card p {
+        color: #6b7280;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .ab-mv .col-md-4 {
+        margin-bottom: 24px;
+    }
+
+    /* Alt CTA */
+    .ab-band {
+        padding: 0 0 90px;
+        background: #f7f8fa;
+    }
+
+    .ab-band-inner {
+        border-radius: 26px;
+        padding: 50px;
+        background: linear-gradient(120deg, #f15a24, #fb923c);
+        color: #fff;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 30px 60px -30px rgba(241, 90, 36, .8);
+    }
+
+        .ab-band-inner h3 {
+            color: #fff;
+            font-weight: 800;
+            margin: 0 0 6px;
+            font-size: 1.8rem;
+        }
+
+        .ab-band-inner p {
+            margin: 0;
+            color: rgba(255, 255, 255, .9);
+        }
+
+    .ab-band-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 54px;
+        padding: 0 30px;
+        border-radius: 14px;
+        background: #fff;
+        color: #f15a24;
+        font-weight: 700;
+        text-decoration: none;
+        margin-top: 14px;
+        transition: transform .2s;
+    }
+
+        .ab-band-btn:hover {
+            color: #f15a24;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .ab-band-btn .fa {
+            margin-left: 10px;
+        }
+
+    @@media (max-width: 767px) {
+        .ab-hero h1 {
+            font-size: 2rem;
+        }
+
+        .ab-band-inner {
+            padding: 34px 26px;
+        }
+    }
+</style>
+
+<section class="ab-hero">
+    <div class="container">
+        <h1>Hakkımızda</h1>
+        <p>Gayrimenkulde güven, şeffaflık ve tecrübeyi bir araya getiriyoruz.</p>
+        <div class="ab-crumb">
+            <a href="/Default/Index">Ana Sayfa</a><i class="fa fa-chevron-right"></i><span>Hakkımızda</span>
+        </div>
+    </div>
+</section>
+
+<section class="ab-section" id="about">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+                <div class="ab-visual">
+                    <div class="ab-img-main">
+                        <img src="https://picsum.photos/seed/aboutmain/900/900" alt="Hakkımızda" loading="lazy" />
+                    </div>
+                    <div class="ab-img-small">
+                        <img src="https://picsum.photos/seed/aboutsmall/500/400" alt="" loading="lazy" />
+                    </div>
+                    <div class="ab-exp">
+                        <b>15+</b>
+                        <span>Yıllık Tecrübe</span>
+                    </div>
+                    <div class="ab-dots"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                @foreach (var item in Model)
+                {
+                    <span class="ab-tag"><i class="fa fa-home"></i>Hakkımızda</span>
+                    <h2 class="ab-title">@item?.Title</h2>
+                    <p class="ab-lead">@item?.Description</p>
+                    <div class="ab-features">
+                        <div class="ab-feature">
+                            <div class="ab-feature-icon"><i class="fa fa-shield"></i></div>
+                            <div>
+                                <h6>Güvenli Alım Satım</h6>
+                                <p>Tapu ve hukuki süreçlerin tamamında uzman ekibimizle yanınızdayız.</p>
+                            </div>
+                        </div>
+                        @await Component.InvokeAsync("AboutItems", new { AboutId = item.AboutId })
+                    </div>
+
+                    <div class="ab-cta">
+                        <a href="/Property/PropertyList" class="ab-btn">İlanları İncele<i class="fa fa-arrow-right"></i></a>
+                        <a href="tel:@item?.PhoneNumber" class="ab-call">
+                            <i class="fa fa-phone"></i>
+                            <span><small>Bize Ulaşın</small><b>@item?.PhoneNumber</b></span>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+        @await Component.InvokeAsync("AboutStatistic")
+    </div>
+</section>
+
+<section class="ab-mv">
+    <div class="container">
+        <div class="ab-mv-head">
+            <span class="ab-tag"><i class="fa fa-star"></i>Değerlerimiz</span>
+            <h2 class="ab-title">Bizi <span>Farklı Kılan</span> Şeyler</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="ab-card">
+                    <div class="ab-card-icon"><i class="fa fa-bullseye"></i></div>
+                    <h4>Misyonumuz</h4>
+                    <p>Her müşterimize ihtiyacına en uygun mülkü, şeffaf ve güvenilir bir süreçle sunarak gayrimenkul alım satımını kolaylaştırmak.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ab-card">
+                    <div class="ab-card-icon"><i class="fa fa-eye"></i></div>
+                    <h4>Vizyonumuz</h4>
+                    <p>Teknolojiyi ve tecrübeyi birleştirerek Türkiye'nin en çok tercih edilen ve güvenilen emlak markası olmak.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ab-card">
+                    <div class="ab-card-icon"><i class="fa fa-handshake-o"></i></div>
+                    <h4>Değerlerimiz</h4>
+                    <p>Dürüstlük, müşteri memnuniyeti ve sürekli gelişim; attığımız her adımın temelini oluşturur.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ab-band">
+    <div class="container">
+        <div class="ab-band-inner">
+            <div>
+                <h3>Hayalinizdeki Evi Birlikte Bulalım</h3>
+                <p>Uzman danışmanlarımız size yardımcı olmak için hazır.</p>
+            </div>
+            <a href="/Contact/Index" class="ab-band-btn">İletişime Geç<i class="fa fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>

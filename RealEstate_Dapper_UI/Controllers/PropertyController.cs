@@ -32,6 +32,7 @@ namespace RealEstate_Dapper_UI.Controllers
         [HttpGet]
         public async Task<IActionResult> PropertyDetail(int id)
         {
+            ViewBag.ProductId = id;
             var client = _httpClientFactory.CreateClient();
 
             var employeeResponse = await client.GetAsync($"https://localhost:7025/api/Employee/GetEmployeeByProduct?productId={id}");
@@ -59,6 +60,7 @@ namespace RealEstate_Dapper_UI.Controllers
                 var values = JsonConvert.DeserializeObject<GetProductDetailByIdDto>(jsonData) ?? new();
                 return View(values);
             }
+
 
             return View(new GetProductDetailByIdDto());
         }

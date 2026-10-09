@@ -1,0 +1,158 @@
+﻿@model List<ResultAboutDto>
+@{
+    ViewData["Title"] = "Hakkımızda";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .ab-admin-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 24px;
+        border: 1px solid #eef0f4;
+        transition: box-shadow .2s;
+    }
+
+        .ab-admin-card:hover {
+            box-shadow: 0 16px 34px -22px rgba(0, 0, 0, .35);
+        }
+
+    .ab-admin-id {
+        display: inline-block;
+        background: rgba(0, 156, 255, .1);
+        color: #009CFF;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+    }
+
+    .ab-admin-title {
+        font-weight: 700;
+        color: #191C24;
+        margin-bottom: 10px;
+    }
+
+    .ab-admin-desc {
+        color: #6c757d;
+        line-height: 1.7;
+        margin-bottom: 16px;
+    }
+
+    .ab-admin-phone {
+        display: inline-flex;
+        align-items: center;
+        background: #f5f7fa;
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-weight: 600;
+        color: #191C24;
+    }
+
+        .ab-admin-phone i {
+            color: #009CFF;
+            margin-right: 8px;
+        }
+
+    .ab-admin-actions .btn {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <h5 class="mb-1"><i class="fa fa-info-circle text-primary me-2"></i>Hakkımızda</h5>
+                <small class="text-muted">Sitedeki Hakkımızda bölümünün başlık, açıklama ve iletişim bilgisi</small>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-area="Admin" asp-controller="About" asp-action="CreateAbout" class="btn btn-primary">
+                    <i class="fa fa-plus me-1"></i>Yeni Ekle
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-info-circle fa-3x mb-3 d-block"></i>
+                Henüz Hakkımızda bilgisi eklenmemiş.
+            </div>
+        }
+
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-12">
+                    <div class="ab-admin-card">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                            <div style="flex: 1 1 400px;">
+                                <span class="ab-admin-id">#@item.AboutId</span>
+                                <h5 class="ab-admin-title">@item.Title</h5>
+                                <p class="ab-admin-desc">@item.Description</p>
+                                <span class="ab-admin-phone"><i class="fa fa-phone-alt"></i>@item.PhoneNumber</span>
+                            </div>
+                            <div class="ab-admin-actions d-flex gap-2">
+                                <a asp-area="Admin" asp-controller="About" asp-action="AboutItems" asp-route-id="@item.AboutId" class="btn btn-info text-white">
+                                    <i class="fa fa-list-ul me-1"></i>Maddeler
+                                </a>
+                                <a asp-area="Admin" asp-controller="About" asp-action="UpdateAbout" asp-route-id="@item.AboutId" class="btn btn-warning">
+                                    <i class="fa fa-pen me-1"></i>Düzenle
+                                </a>
+                                <button type="button" class="btn btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#abDeleteModal"
+                                        data-url="@Url.Action("DeleteAbout", "About", new { area = "Admin", id = item.AboutId })"
+                                        data-title="@item.Title">
+                                    <i class="fa fa-trash me-1"></i>Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Silme Modalı -->
+<div class="modal fade" id="abDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content border-0" style="border-radius: 18px;">
+            <div class="modal-body text-center p-4">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width: 64px; height: 64px; font-size: 24px;">
+                    <i class="fa fa-trash-alt"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Silmek istiyor musunuz?</h5>
+                <p class="text-muted mb-1" id="abDeleteTitle"></p>
+                <small class="text-danger"><i class="fa fa-exclamation-triangle me-1"></i>Bağlı maddeler varsa önce onları silmelisiniz.</small>
+            </div>
+            <div class="d-flex gap-2 px-4 pb-4">
+                <button type="button" class="btn btn-light flex-fill" data-bs-dismiss="modal">Vazgeç</button>
+                <a href="#" id="abDeleteConfirm" class="btn btn-danger flex-fill">Evet, Sil</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>document.getElementById('abDeleteModal').addEventListener('show.bs.modal', function (e) {
+        var btn = e.relatedTarget;
+        document.getElementById('abDeleteTitle').textContent = btn.getAttribute('data-title');
+        document.getElementById('abDeleteConfirm').href = btn.getAttribute('data-url');
+    });</script>

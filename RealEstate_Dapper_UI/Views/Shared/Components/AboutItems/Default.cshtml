@@ -1,0 +1,12 @@
+﻿@model List<ResultAboutItemDto>
+@foreach (var item in Model.Take(4))
+{
+
+<div class="ab-feature">
+    <div class="ab-feature-icon"><i class="@item.Icon"></i></div>
+    <div>
+        <h6>@item.Title</h6>
+        <p>@item.Content</p>
+    </div>
+</div>
+  }

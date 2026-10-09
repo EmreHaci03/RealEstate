@@ -1,0 +1,162 @@
+﻿@model List<ResultAmenityPropertyDto>
+@{
+    ViewData["Title"] = "Olanağa Göre İlanlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var amenityName = Model.Select(x => x.Amenity).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)) ?? "Olanak";
+    var activeCount = Model.Count(x => x.Status);
+    var passiveCount = Model.Count - activeCount;
+    int count = 0;
+
+}
+
+<style>
+    .ap-stat {
+        background: #fff;
+        border: 1px solid #eef0f4;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .ap-stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-right: 14px;
+    }
+
+    .ap-stat b {
+        display: block;
+        font-size: 1.4rem;
+        line-height: 1.1;
+        color: #191C24;
+    }
+
+    .ap-stat small {
+        color: #6c757d;
+    }
+
+    .ap-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+        .ap-status.on {
+            background: rgba(25, 135, 84, .1);
+            color: #198754;
+        }
+
+        .ap-status.off {
+            background: rgba(220, 53, 69, .1);
+            color: #dc3545;
+        }
+
+        .ap-status i {
+            margin-right: 6px;
+        }
+</style>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <h5 class="mb-1"><i class="fa fa-concierge-bell text-primary me-2"></i>@amenityName</h5>
+                <small class="text-muted">Bu olanağın ilanlardaki durumu</small>
+            </div>
+            <div class="d-flex gap-2">
+                <input type="text" id="apSearch" class="form-control" placeholder="İlan ara..." style="max-width: 220px;" />
+                <a asp-area="Admin" asp-controller="Amenity" asp-action="Index" class="btn btn-outline-secondary text-nowrap">
+                    <i class="fa fa-arrow-left me-1"></i>Olanaklar
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="ap-stat">
+                    <div class="ap-stat-icon" style="background: rgba(0,156,255,.1); color: #009CFF;"><i class="fa fa-home"></i></div>
+                    <div><b>@Model.Count</b><small>Toplam İlan</small></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ap-stat">
+                    <div class="ap-stat-icon" style="background: rgba(25,135,84,.1); color: #198754;"><i class="fa fa-check"></i></div>
+                    <div><b>@activeCount</b><small>Olanağa Sahip</small></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ap-stat">
+                    <div class="ap-stat-icon" style="background: rgba(220,53,69,.1); color: #dc3545;"><i class="fa fa-times"></i></div>
+                    <div><b>@passiveCount</b><small>Olanağa Sahip Değil</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 bg-white rounded">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">#</th>
+                        <th>İlan</th>
+                        <th style="width: 200px;">Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="apBody">
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="3" class="text-center text-muted py-4">Bu olanak henüz hiçbir ilana atanmamış.</td></tr>
+                    }
+                    @foreach (var item in Model)
+                        {
+                            count++;
+                        <tr data-title="@item.Product?.ToLower()">
+                            <td class="text-muted">@count</td>
+                            <td><i class="fa fa-home text-primary me-2"></i>@item.Product</td>
+                            <td>
+                                @if (item.Status)
+                    {
+                                    <span class="ap-status on"><i class="fa fa-check-circle"></i>Var</span>
+                                }
+                                else
+                                {
+                                    <span class="ap-status off"><i class="fa fa-times-circle"></i>Yok</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>document.getElementById('apSearch').addEventListener('input', function () {
+        var q = this.value.toLocaleLowerCase('tr-TR').trim();
+        document.querySelectorAll('#apBody tr[data-title]').forEach(function (tr) {
+            tr.style.display = !q || tr.getAttribute('data-title').indexOf(q) > -1 ? '' : 'none';
+        });
+    });</script>

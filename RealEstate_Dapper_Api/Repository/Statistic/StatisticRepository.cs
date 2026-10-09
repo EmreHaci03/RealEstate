@@ -89,6 +89,8 @@ select EmployeeId From Employee e inner join AppUser a on e.Mail=a.Email
                     (SELECT ISNULL(AVG(Price), 0) FROM Product) AS AveragePrice,
                     (SELECT ISNULL(MAX(Price), 0) FROM Product) AS MaxPrice,
                     (SELECT ISNULL(MIN(Price), 0) FROM Product) AS MinPrice,
+                    (SELECT COUNT(*) FROM Client) AS ClientCount,
+                    (SELECT COUNT(DISTINCT(City)) FROM Product) AS CityCount ,
 
                     (SELECT TOP 1 City FROM Product
                      GROUP BY City ORDER BY COUNT(*) DESC) AS TopCity,

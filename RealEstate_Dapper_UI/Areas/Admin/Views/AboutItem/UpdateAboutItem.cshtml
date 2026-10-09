@@ -1,0 +1,61 @@
+﻿@model UpdateAboutItemDto
+@{
+    ViewData["Title"] = "Madde Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h5 class="mb-0"><i class="fa fa-pen text-primary me-2"></i>Madde Güncelle</h5>
+            <a asp-area="Admin" asp-controller="About" asp-action="AboutItems" asp-route-id="@Model.About" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i>Geri
+            </a>
+        </div>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle me-2"></i>@ViewBag.ErrorMessage</div>
+        }
+
+    <form asp-area="Admin" asp-controller="AboutItem" asp-action="UpdateAboutItem" method="post">
+        <input type="hidden" asp-for="AboutItemId" />
+
+        <div class="mb-3">
+            <label asp-for="About" class="form-label">Hakkımızda Kaydı</label>
+            <select asp-for="About" asp-items="ViewBag.Abouts" class="form-select" required>
+                <option value="">-- Seçin --</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Icon" class="form-label">İkon</label>
+            <input asp-for="Icon" class="form-control" list="iconList" required />
+            <datalist id="iconList">
+                <option value="fa fa-shield"></option>
+                <option value="fa fa-users"></option>
+                <option value="fa fa-line-chart"></option>
+                <option value="fa fa-handshake-o"></option>
+                <option value="fa fa-home"></option>
+                <option value="fa fa-key"></option>
+                <option value="fa fa-star"></option>
+                <option value="fa fa-clock-o"></option>
+            </datalist>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Başlık</label>
+            <input asp-for="Title" class="form-control" maxlength="50" required />
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Content" class="form-label">Açıklama</label>
+            <textarea asp-for="Content" class="form-control" rows="3" maxlength="70" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-warning">
+            <i class="fa fa-save me-1"></i>Güncelle
+        </button>
+    </form>
+    </div>
+</div>

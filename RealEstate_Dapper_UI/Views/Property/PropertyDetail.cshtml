@@ -6,8 +6,6 @@
 
     var tr = new System.Globalization.CultureInfo("tr-TR");
     var hasData = Model.ProductDetailId > 0;
-
-    // Galeri: şimdilik örnek görseller. İleride kapak resmi / galeri eklersen bu listeyi oradan doldurman yeterli.
     var images = ViewBag.Images as List<string> ?? new List<string>();
     if (!images.Any())
         images.Add("https://picsum.photos/seed/noimage/1200/800");
@@ -37,7 +35,6 @@
         padding-bottom: 60px;
     }
 
-    /* Üst bilgi */
     .pd-top {
         background: #fff;
         border-bottom: 1px solid var(--pd-line);
@@ -355,6 +352,57 @@
             font-weight: 600;
         }
 
+    /* Olanaklar */
+    .am-count {
+        margin-left: auto;
+        font-size: .8rem;
+        font-weight: 600;
+        color: var(--pd-muted);
+    }
+
+    .am-item {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--pd-line);
+        border-radius: 12px;
+        background: #fff;
+        font-size: .92rem;
+        font-weight: 500;
+        color: var(--pd-text);
+        transition: border-color .2s, background .2s;
+    }
+
+        .am-item:hover {
+            border-color: var(--pd-accent);
+            background: rgba(241, 90, 36, .06);
+        }
+
+    .am-icon {
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: var(--pd-accent-soft);
+        color: var(--pd-accent);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: .95rem;
+    }
+
+    .am-name {
+        flex: 1;
+    }
+
+    .am-check {
+        margin-left: 8px;
+        color: #16a34a;
+        font-size: .85rem;
+    }
+
     .pd-media {
         position: relative;
         padding-top: 56.25%;
@@ -647,6 +695,9 @@
                         </div>
                     </div>
 
+                    <!-- Olanaklar -->
+                    @await Component.InvokeAsync("PropertyDetailAmenities", new {id =(int)ViewBag.ProductId})
+
                     <!-- Video -->
                     @if (videoEmbed != null)
                     {
@@ -707,7 +758,8 @@
     }
 </div>
 
-<script>document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         var track = document.getElementById("pdTrack");
         if (!track) return;
 
@@ -785,4 +837,5 @@
             var text = encodeURIComponent(document.title + " - " + window.location.href);
             window.open("https://wa.me/?text=" + text, "_blank");
         });
-    });</script>
+    });
+</script>
