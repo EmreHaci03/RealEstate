@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.CategoryDtos;
 using RealEstate_Dapper_Api.Repository.Category;
@@ -32,21 +33,21 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryDto dto)
         {
             await categoryRepository.CreateAsync(dto);
             return Ok("Kategori Eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryDto dto)
         {
             await categoryRepository.UpdateAsync(dto);
             return Ok("Kategori Güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

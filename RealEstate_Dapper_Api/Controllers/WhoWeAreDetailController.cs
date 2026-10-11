@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.WhoWeAreDtos;
 using RealEstate_Dapper_Api.Repository.WhoWeAre;
@@ -32,14 +33,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateWhoWeAreDetail(CreateWhoWeAreDetailDto dto)
         {
             await repository.CreateAsync(dto);
             return Ok("Biz Kimiz Alanı Eklendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWhoWeAreDetail(int id)
         {
@@ -50,7 +51,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await repository.DeleteAsync(id);
             return Ok("Biz Kimiz Alanı Başarıyla Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateWhoWeAreDetail(UpdateWhoWeAreDetailDto dto)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.AmenityDtos;
 using RealEstate_Dapper_Api.Repository.Amenity;
@@ -29,12 +30,14 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Oda Olanağı Bulunamadı");
             return Ok(values);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAmenity(CreateAmenityDto dto)
         {
             await _amenityRepository.CreateAsync(dto);
             return Ok("Oda Olanakları Eklendi");
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAmenity(UpdateAmenityDto dto)
         {
@@ -45,7 +48,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _amenityRepository.UpdateAsync(dto);
             return Ok("Oda Olanağı Güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAmenity(int id)
         {

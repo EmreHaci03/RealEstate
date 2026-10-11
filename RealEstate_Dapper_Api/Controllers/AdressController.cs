@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.AdressDtos;
 using RealEstate_Dapper_Api.Repository.Adress;
 
@@ -31,14 +32,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAdress(CreateAdressDto dto)
         {
             await _adressRepository.CreateAsync(dto);
             return Ok("Adres başarıyla eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAdress(UpdateAdressDto dto)
         {
@@ -49,7 +50,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _adressRepository.UpdateAsync(dto);
             return Ok("Adres başarıyla güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAdress(int id)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ClientDtos;
 using RealEstate_Dapper_Api.Repository.Client;
 
@@ -36,12 +37,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
            return Ok(value);
         }
+        [Authorize]
         [HttpPost]
         public  async Task<IActionResult> CreateClient(CreateClientDto dto)
         {
             await _clientRepository.CreateAsync(dto);
             return Ok("Müşteri Başarıyla Eklendi");
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
@@ -52,7 +55,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _clientRepository.DeleteAsync(id);
             return Ok("Müşteri Başarıyla Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateClient(UpdateClientDto dto)
         {

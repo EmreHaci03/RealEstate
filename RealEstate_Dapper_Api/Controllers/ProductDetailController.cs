@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_Api.Repository.ProductDetailDto;
@@ -40,14 +41,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProductDetail(CreateProductDetailDto dto)
         {
             await productDetailRepository.CreateAsync(dto);
             return Ok("Ürün Detayı Başarıyla Eklendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductDetail(int id)
         {
@@ -57,7 +58,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await productDetailRepository.DeleteAsync(id);
             return Ok("Ürün Detayı Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateProductDetail(UpdateProductDetailDto dto)
         {

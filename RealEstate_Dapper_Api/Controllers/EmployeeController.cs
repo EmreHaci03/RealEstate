@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.EmployeeDtos;
 using RealEstate_Dapper_Api.Repository.Employee;
@@ -47,12 +48,14 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("İlan Sahibi Bulunamadı");
             return Ok(values);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDto dto)
         {
             await employeeRepository.CreateAsync(dto);
             return Ok("Çalışan Eklendi");
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
@@ -62,7 +65,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await employeeRepository.DeleteAsync(id);
             return Ok("Çalışan Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateEmployee(UpdateEmployeeDto dto)
         {

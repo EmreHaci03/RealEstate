@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ProductImageDtos;
 using RealEstate_Dapper_Api.Repository.ProductImage;
@@ -41,14 +42,14 @@ namespace RealEstate_Dapper_Api.Controllers
             
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProductImage(CreateProductImageDto dto)
         {
             await _productImageRepository.CreateAsync(dto);
             return Ok("Resim Başarıyla Eklendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductImage(int id)
         {
@@ -59,7 +60,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _productImageRepository.DeleteAsync(id);
             return Ok("Resim Başarıyla Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateProductImage(UpdateProductImageDto dto)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.AboutItemDtos;
 using RealEstate_Dapper_Api.Repository.AboutItem;
@@ -38,21 +39,21 @@ namespace RealEstate_Dapper_Api.Controllers
             var values = await _aboutItemRepository.GetAboutItemsByAboutAsync(aboutId);
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAboutItem(CreateAboutItemDto dto)
         {
             await _aboutItemRepository.CreateAsync(dto);
             return Ok("Hakkımızda Maddesi Başarıyla Eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAboutItem(UpdateAboutItemDto dto)
         {
             await _aboutItemRepository.UpdateAsync(dto);
             return Ok("Hakkımızda Maddesi Başarıyla Güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAboutItem(int id)
         {

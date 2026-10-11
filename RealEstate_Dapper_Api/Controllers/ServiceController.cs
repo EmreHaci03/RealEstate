@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ServiceDtos;
 using RealEstate_Dapper_Api.Repository.Employee;
@@ -39,12 +40,14 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Hizmet Bilgileri Alınamadı");
             return Ok(Service);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
             await serviceRepository.CreateAsync(dto);
             return Ok("Hizmet Eklendi");
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService(int id)
         {
@@ -54,7 +57,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await serviceRepository.DeleteAsync(id);
             return Ok("Hizmet Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateService(UpdateServiceDto dto)
         {

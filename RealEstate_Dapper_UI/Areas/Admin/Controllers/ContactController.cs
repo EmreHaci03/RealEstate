@@ -103,6 +103,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteContact(int id)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/Contact/{id}");
 
             if (responseMessage.IsSuccessStatusCode)

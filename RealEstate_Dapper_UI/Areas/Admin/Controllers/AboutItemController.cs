@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.AboutDtos;
 using RealEstate_Dapper_UI.DTOS.AboutItemDtos;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
@@ -22,6 +23,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteAboutItem(int id, int aboutId)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/AboutItem/{id}");
             if (responseMessage.IsSuccessStatusCode)
                 TempData["SuccessMessage"] = "Hakkımızda Maddesi Başarıyla Silindi";
@@ -53,6 +56,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateAboutItem(CreateAboutItemDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
             var responseMessage = await client.PostAsync("https://localhost:7025/api/AboutItem", content);
             if (responseMessage.IsSuccessStatusCode)
@@ -105,6 +110,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateAboutItem(UpdateAboutItemDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
             var responseMessage = await client.PutAsync("https://localhost:7025/api/AboutItem", content);
             if (responseMessage.IsSuccessStatusCode)

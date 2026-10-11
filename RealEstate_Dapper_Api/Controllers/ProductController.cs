@@ -98,7 +98,7 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductDto dto)
         {
@@ -115,7 +115,7 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok("İlan başarıyla eklendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -136,7 +136,7 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok("İlanınız başarıyla silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(UpdateProductDto dto)
         {

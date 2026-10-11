@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.AmenityDtos;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
@@ -42,6 +43,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateAmenity(CreateAmenityDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
             var responseMessage = await client.PostAsync("https://localhost:7025/api/Amenity", content);
             if (responseMessage.IsSuccessStatusCode)
@@ -72,6 +75,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateAmenity(UpdateAmenityDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
             var responseMessage = await client.PutAsync("https://localhost:7025/api/Amenity", content);
             if (responseMessage.IsSuccessStatusCode)
@@ -87,6 +92,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteAmenity(int id)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/Amenity/{id}");
             if (responseMessage.IsSuccessStatusCode)
                 TempData["SuccessMessage"] = "Olanak Başarıyla Silindi";

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.SocialMediaDtos;
 using RealEstate_Dapper_Api.Repository.SocialMedia;
 
@@ -31,14 +32,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateSocialMedia(CreateSocialMediaDto dto)
         {
             await _socialMediaRepository.CreateAsync(dto);
             return Ok("Sosyal Medya Hesabı Başarıyla Eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateSocialMedia(UpdateSocialMediaDto dto)
         {
@@ -49,7 +50,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _socialMediaRepository.UpdateAsync(dto);
             return Ok("Sosyal Medya Hesabı Başarıyla Güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSocialMedia(int id)
         {

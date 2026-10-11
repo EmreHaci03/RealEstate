@@ -6,6 +6,7 @@ using RealEstate_Dapper_UI.DTOS.CategoryDtos;
 using RealEstate_Dapper_UI.DTOS.EmployeeDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
@@ -75,6 +76,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateProduct(CreateProductDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var responseMessage = await client.PostAsync("https://localhost:7025/api/Product", content);
@@ -93,6 +96,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/Product/{id}");
 
             if (responseMessage.IsSuccessStatusCode)
@@ -158,6 +163,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateProduct(UpdateProductDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var responseMessage = await client.PutAsync("https://localhost:7025/api/Product", content);

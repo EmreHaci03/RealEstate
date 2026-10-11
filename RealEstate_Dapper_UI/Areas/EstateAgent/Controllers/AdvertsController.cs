@@ -77,6 +77,8 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
         public async Task<IActionResult> CreateAdvert(CreateProductDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var UserId= User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             dto.Employee = int.Parse(UserId);
@@ -159,6 +161,8 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
         public async Task<IActionResult> DeleteAdvert(int id)
         {
             var client= _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/Product/DeleteAdvertByUser/{UserId}/{id}");
@@ -207,6 +211,8 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
         public async Task<IActionResult> UpdateAdvert(UpdateProductDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var jsonData = JsonConvert.SerializeObject(dto);
             var content=new StringContent(jsonData, Encoding.UTF8, "application/json");

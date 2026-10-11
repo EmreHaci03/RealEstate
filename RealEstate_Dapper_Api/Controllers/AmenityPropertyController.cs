@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.AmenityPropertyDtos;
 using RealEstate_Dapper_Api.Repository.AmenityProperty;
@@ -54,14 +55,14 @@ namespace RealEstate_Dapper_Api.Controllers
             var values = await _PropertyRepository.GetAmenityPropertByProductAsync(productId);
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAmenityProperty(CreateAmenityPropertyDto dto)
         {
             await _PropertyRepository.CreateAsync(dto);
             return Ok("İlan Olanağı Başarıyla Eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAmenityProperty(UpdateAmenityPropertyDto dto)
         {
@@ -76,7 +77,7 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("İlan Olanağı Bulunamadı");
             return Ok("Durum Değiştirildi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAmenityProperty(int id)
         {

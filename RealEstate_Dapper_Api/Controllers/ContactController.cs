@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.ContactDtos;
 using RealEstate_Dapper_Api.Repository.Contact;
 
@@ -38,7 +39,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _contactRepository.CreateAsync(dto);
             return Ok("Mesajınız başarıyla gönderildi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContact(int id)
         {

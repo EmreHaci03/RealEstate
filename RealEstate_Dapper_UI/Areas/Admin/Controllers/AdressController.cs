@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.AdressDtos;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
@@ -41,6 +42,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         {
 
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var responseMessage = await client.PostAsync("https://localhost:7025/api/Adress", content);
@@ -59,6 +62,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteAdress(int id)
         {
             var client=_httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/Adress/{id}");
 
             if (responseMessage.IsSuccessStatusCode)
@@ -91,6 +96,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateAdress(UpdateAdressDto dto)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var responseMessage = await client.PutAsync("https://localhost:7025/api/Adress", content);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.SubscriberDtos;
 using RealEstate_Dapper_Api.Repository.Subscriber;
@@ -32,7 +33,7 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Mail Bulunamadı");
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateSubscriber(CreateSubscriberDto dto)
         {
@@ -43,7 +44,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _subscriberRepository.CreateAsync(dto);
             return Ok("Aboneliğiniz başarıyla oluşturuldu.");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriber(int id)
         {

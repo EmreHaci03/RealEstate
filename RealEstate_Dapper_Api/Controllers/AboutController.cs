@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.AboutDtos;
@@ -33,12 +34,14 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Hakkımızda Alanı Bilgileri Alınamadı");
             return Ok(employee);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAbout(CreateAboutDto dto)
         {
             await _aboutRepository.CreateAsync(dto);
             return Ok("Hakkımızda Alanı Eklendi");
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAbout(int id)
         {
@@ -48,7 +51,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _aboutRepository.DeleteAsync(id);
             return Ok("Hakkımızda Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAbout(UpdateAboutDto dto)
         {

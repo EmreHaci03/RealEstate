@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.FeatureCardDtos;
 using RealEstate_Dapper_Api.Repository.FeatureCardDto;
@@ -31,14 +32,14 @@ namespace RealEstate_Dapper_Api.Controllers
                 return NotFound("Özellik Kartı Bulunamadı");
             return Ok(values);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateFeatureCard(CreateFeatureCardDto dto)
         {
             await _featureCardRepository.CreateAsync(dto);
             return Ok("Özellik Kartı Eklendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFeatureCard(int id)
         {
@@ -49,7 +50,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _featureCardRepository.DeleteAsync(id);
             return Ok("Özellik Kartı Başarıyla Silindi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateFeatureCard(UpdateFeatureCardDto dto)
         {

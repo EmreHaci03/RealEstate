@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using RealEstate_Dapper_UI.DTOS.AmenityDtos;
 using RealEstate_Dapper_UI.DTOS.AmenityPropertyDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
@@ -84,6 +85,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> CreateAmenityProperty(CreateAmenityPropertyDto dto)
         {
             var client=_httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData,Encoding.UTF8, "application/json");
             var responseMessage = await client.PostAsync("https://localhost:7025/api/AmenityProperty", content);
@@ -99,6 +102,8 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteAmenityProperty(int id)
         {
             var client = _httpClientFactory.CreateClient();
+            var token = User.FindFirst("AccessToken")?.Value;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var responseMessage = await client.DeleteAsync($"https://localhost:7025/api/AmenityProperty/{id}");
             if (responseMessage.IsSuccessStatusCode)
                 TempData["SuccessMessage"] = "İlan Olanağı Başarıyla Silindi";
@@ -112,6 +117,7 @@ namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
         public async Task<IActionResult> ChangePropertyStatus(int id)
         {
             var client= _httpClientFactory.CreateClient();
+
             var responseMessage = await client.PutAsync($"https://localhost:7025/api/AmenityProperty/ChangeStatus/{id}",null);
             if (responseMessage.IsSuccessStatusCode)
                 TempData["SuccessMessage"] = "Durum Değiştirildi";

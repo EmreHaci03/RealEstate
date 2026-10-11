@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.BottomGridDtos;
 using RealEstate_Dapper_Api.Repository.BottomGrid;
 
@@ -31,21 +32,21 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateBottomGridDto dto)
         {
             await _bottomGridRepository.CreateAsync(dto);
             return Ok("Kayıt eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Update(UpdateBottomGridDto dto)
         {
             await _bottomGridRepository.UpdateAsync(dto);
             return Ok("Kayıt güncellendi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

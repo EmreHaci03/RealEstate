@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate_Dapper_Api.DTOS.TestimonialDtos;
 using RealEstate_Dapper_Api.Repository.Testimonial;
 
@@ -39,14 +40,14 @@ namespace RealEstate_Dapper_Api.Controllers
 
             return Ok(value);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateTestimonial(CreateTestimonialDto dto)
         {
             await _testimonialRepository.CreateAsync(dto);
             return Ok("Yorum başarıyla eklendi");
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateTestimonial(UpdateTestimonialDto dto)
         {
@@ -68,7 +69,7 @@ namespace RealEstate_Dapper_Api.Controllers
             await _testimonialRepository.ChangeTestimonialStatus(id, status);
             return Ok(status ? "Yorum Aktif Edildi" : "Yorum Pasif Edildi");
         }
-
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTestimonial(int id)
         {
