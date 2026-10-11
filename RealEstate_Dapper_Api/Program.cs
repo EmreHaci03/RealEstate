@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("https://localhost:7071") // UI Adresi
+        policy.WithOrigins("//UI Adresi//") // UI Adresi
          .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

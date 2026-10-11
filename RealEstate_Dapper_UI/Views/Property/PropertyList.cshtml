@@ -1,413 +1,413 @@
 ﻿@model List<ResultProductWithDetailDto>
-    @{
+@{
     ViewData["Title"] = "İlanlar";
     Layout = "~/Views/Shared/UI_Layout.cshtml";
 
     var tr = new System.Globalization.CultureInfo("tr-TR");
     var categories = Model.Select(x => x.CategoryName).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
     var cities = Model.Select(x => x.City).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
+}
+
+<style>
+    /* Şablonun ana rengiyle uyumlu olsun diye tek yerden değiştirilebilir */
+    .pl-page {
+        --pl-accent: #f15a24;
+        --pl-accent-soft: rgba(241, 90, 36, .1);
+        --pl-text: #1f2937;
+        --pl-muted: #6b7280;
+        --pl-line: #e8eaee;
+        --pl-bg: #f7f8fa;
     }
 
-    <style>
-        /* Şablonun ana rengiyle uyumlu olsun diye tek yerden değiştirilebilir */
-        .pl-page {
-            --pl-accent: #f15a24;
-            --pl-accent-soft: rgba(241, 90, 36, .1);
-            --pl-text: #1f2937;
-            --pl-muted: #6b7280;
-            --pl-line: #e8eaee;
-            --pl-bg: #f7f8fa;
-        }
+    .pl-hero {
+        background: linear-gradient(135deg, rgba(17, 24, 39, .82), rgba(17, 24, 39, .6)), url("https://picsum.photos/seed/estatehero/1600/600") center/cover;
+        padding: 90px 0 70px;
+        color: #fff;
+        text-align: center;
+    }
 
-        .pl-hero {
-            background: linear-gradient(135deg, rgba(17, 24, 39, .82), rgba(17, 24, 39, .6)), url("https://picsum.photos/seed/estatehero/1600/600") center/cover;
-            padding: 90px 0 70px;
+        .pl-hero h1 {
             color: #fff;
-            text-align: center;
-        }
-
-            .pl-hero h1 {
-                color: #fff;
-                font-weight: 700;
-                font-size: 2.4rem;
-                margin-bottom: 10px;
-            }
-
-            .pl-hero p {
-                color: rgba(255, 255, 255, .85);
-                margin: 0 auto;
-                max-width: 560px;
-            }
-
-        .pl-breadcrumb {
-            margin-top: 18px;
-            font-size: .9rem;
-            color: rgba(255, 255, 255, .75);
-        }
-
-            .pl-breadcrumb a {
-                color: #fff;
-                text-decoration: none;
-            }
-
-                .pl-breadcrumb a:hover {
-                    color: var(--pl-accent);
-                }
-
-        .pl-filter {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 18px 40px -20px rgba(17, 24, 39, .25);
-            padding: 20px;
-            margin-top: -40px;
-            position: relative;
-            z-index: 2;
-        }
-
-            .pl-filter label {
-                font-size: .78rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: .05em;
-                color: var(--pl-muted);
-                margin-bottom: 6px;
-                display: block;
-            }
-
-            .pl-filter .form-control {
-                height: 46px;
-                border-radius: 10px;
-                border-color: var(--pl-line);
-                font-size: .92rem;
-            }
-
-                .pl-filter .form-control:focus {
-                    border-color: var(--pl-accent);
-                    box-shadow: 0 0 0 3px var(--pl-accent-soft);
-                }
-
-        .pl-search {
-            position: relative;
-        }
-
-            .pl-search .fa {
-                position: absolute;
-                left: 14px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--pl-muted);
-            }
-
-            .pl-search .form-control {
-                padding-left: 38px;
-            }
-
-        .pl-reset {
-            height: 46px;
-            width: 100%;
-            border-radius: 10px;
-            border: 1px solid var(--pl-line);
-            background: #fff;
-            color: var(--pl-text);
-            font-weight: 600;
-            font-size: .9rem;
-        }
-
-            .pl-reset:hover {
-                border-color: var(--pl-accent);
-                color: var(--pl-accent);
-            }
-
-        .pl-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin: 34px 0 20px;
-        }
-
-        .pl-count {
-            color: var(--pl-text);
-            font-weight: 600;
-        }
-
-            .pl-count b {
-                color: var(--pl-accent);
-            }
-
-        .pl-sort {
-            display: flex;
-            align-items: center;
-        }
-
-            .pl-sort span {
-                font-size: .88rem;
-                color: var(--pl-muted);
-                margin-right: 10px;
-            }
-
-            .pl-sort select {
-                height: 40px;
-                border-radius: 10px;
-                border: 1px solid var(--pl-line);
-                padding: 0 12px;
-                font-size: .9rem;
-                color: var(--pl-text);
-            }
-
-        .pl-card {
-            background: #fff;
-            border: 1px solid var(--pl-line);
-            border-radius: 18px;
-            overflow: hidden;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            transition: transform .25s ease, box-shadow .25s ease;
-        }
-
-            .pl-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 24px 44px -24px rgba(17, 24, 39, .35);
-            }
-
-        .pl-cover {
-            position: relative;
-            display: block;
-            padding-top: 66%;
-            overflow: hidden;
-            background: var(--pl-bg);
-        }
-
-            .pl-cover img {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform .6s ease;
-            }
-
-        .pl-card:hover .pl-cover img {
-            transform: scale(1.07);
-        }
-
-        .pl-cover::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(0deg, rgba(17, 24, 39, .55) 0%, rgba(17, 24, 39, 0) 45%);
-        }
-
-        .pl-badge {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            z-index: 1;
-            background: var(--pl-accent);
-            color: #fff;
-            font-size: .74rem;
             font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 999px;
-        }
-
-        .pl-price {
-            position: absolute;
-            left: 16px;
-            bottom: 14px;
-            z-index: 1;
-            color: #fff;
-            font-size: 1.35rem;
-            font-weight: 700;
-        }
-
-        .pl-body {
-            padding: 18px 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pl-title {
-            font-size: 1.08rem;
-            font-weight: 700;
-            color: var(--pl-text);
-            margin-bottom: 6px;
-            line-height: 1.35;
-        }
-
-            .pl-title a {
-                color: inherit;
-                text-decoration: none;
-            }
-
-                .pl-title a:hover {
-                    color: var(--pl-accent);
-                }
-
-        .pl-location {
-            font-size: .88rem;
-            color: var(--pl-muted);
+            font-size: 2.4rem;
             margin-bottom: 10px;
         }
 
-            .pl-location .fa {
+        .pl-hero p {
+            color: rgba(255, 255, 255, .85);
+            margin: 0 auto;
+            max-width: 560px;
+        }
+
+    .pl-breadcrumb {
+        margin-top: 18px;
+        font-size: .9rem;
+        color: rgba(255, 255, 255, .75);
+    }
+
+        .pl-breadcrumb a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+            .pl-breadcrumb a:hover {
                 color: var(--pl-accent);
-                margin-right: 6px;
             }
 
-        .pl-desc {
+    .pl-filter {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 18px 40px -20px rgba(17, 24, 39, .25);
+        padding: 20px;
+        margin-top: -40px;
+        position: relative;
+        z-index: 2;
+    }
+
+        .pl-filter label {
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--pl-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .pl-filter .form-control {
+            height: 46px;
+            border-radius: 10px;
+            border-color: var(--pl-line);
+            font-size: .92rem;
+        }
+
+            .pl-filter .form-control:focus {
+                border-color: var(--pl-accent);
+                box-shadow: 0 0 0 3px var(--pl-accent-soft);
+            }
+
+    .pl-search {
+        position: relative;
+    }
+
+        .pl-search .fa {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pl-muted);
+        }
+
+        .pl-search .form-control {
+            padding-left: 38px;
+        }
+
+    .pl-reset {
+        height: 46px;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--pl-line);
+        background: #fff;
+        color: var(--pl-text);
+        font-weight: 600;
+        font-size: .9rem;
+    }
+
+        .pl-reset:hover {
+            border-color: var(--pl-accent);
+            color: var(--pl-accent);
+        }
+
+    .pl-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin: 34px 0 20px;
+    }
+
+    .pl-count {
+        color: var(--pl-text);
+        font-weight: 600;
+    }
+
+        .pl-count b {
+            color: var(--pl-accent);
+        }
+
+    .pl-sort {
+        display: flex;
+        align-items: center;
+    }
+
+        .pl-sort span {
             font-size: .88rem;
             color: var(--pl-muted);
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 16px;
+            margin-right: 10px;
         }
 
-        .pl-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 14px;
-            border-top: 1px solid var(--pl-line);
-            margin-top: auto;
-        }
-
-        .pl-agent {
-            display: flex;
-            align-items: center;
-            font-size: .84rem;
-            color: var(--pl-muted);
-            min-width: 0;
-        }
-
-        .pl-agent-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--pl-accent-soft);
-            color: var(--pl-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: .78rem;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
-
-        .pl-agent span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .pl-more {
-            font-size: .86rem;
-            font-weight: 600;
-            color: var(--pl-accent);
-            text-decoration: none;
-            white-space: nowrap;
-            margin-left: 10px;
-        }
-
-            .pl-more:hover {
-                text-decoration: none;
-                color: var(--pl-text);
-            }
-
-        .pl-empty {
-            text-align: center;
-            padding: 70px 20px;
-            background: #fff;
+        .pl-sort select {
+            height: 40px;
+            border-radius: 10px;
             border: 1px solid var(--pl-line);
-            border-radius: 18px;
-        }
-
-        .pl-empty-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 24px;
-            background: var(--pl-accent-soft);
-            color: var(--pl-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 16px;
-        }
-
-        .pl-empty h4 {
-            font-weight: 700;
+            padding: 0 12px;
+            font-size: .9rem;
             color: var(--pl-text);
         }
 
-        .pl-empty p {
-            color: var(--pl-muted);
+    .pl-card {
+        background: #fff;
+        border: 1px solid var(--pl-line);
+        border-radius: 18px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+        .pl-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 44px -24px rgba(17, 24, 39, .35);
         }
-    </style>
 
-    <div class="pl-page">
+    .pl-cover {
+        position: relative;
+        display: block;
+        padding-top: 66%;
+        overflow: hidden;
+        background: var(--pl-bg);
+    }
 
-        <!-- Sayfa başlığı -->
-        <section class="pl-hero">
-            <div class="container">
-                <h1>Satılık ve Kiralık İlanlar</h1>
-                <p>Size en uygun evi, ofisi ya da arsayı bulmak için ilanlarımıza göz atın.</p>
-                <div class="pl-breadcrumb">
-                    <a asp-controller="Default" asp-action="Index">Ana Sayfa</a>
-                    <span class="mx-2">/</span>
-                    <span>İlanlar</span>
-                </div>
+        .pl-cover img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .6s ease;
+        }
+
+    .pl-card:hover .pl-cover img {
+        transform: scale(1.07);
+    }
+
+    .pl-cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0deg, rgba(17, 24, 39, .55) 0%, rgba(17, 24, 39, 0) 45%);
+    }
+
+    .pl-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1;
+        background: var(--pl-accent);
+        color: #fff;
+        font-size: .74rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 999px;
+    }
+
+    .pl-price {
+        position: absolute;
+        left: 16px;
+        bottom: 14px;
+        z-index: 1;
+        color: #fff;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .pl-body {
+        padding: 18px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pl-title {
+        font-size: 1.08rem;
+        font-weight: 700;
+        color: var(--pl-text);
+        margin-bottom: 6px;
+        line-height: 1.35;
+    }
+
+        .pl-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+            .pl-title a:hover {
+                color: var(--pl-accent);
+            }
+
+    .pl-location {
+        font-size: .88rem;
+        color: var(--pl-muted);
+        margin-bottom: 10px;
+    }
+
+        .pl-location .fa {
+            color: var(--pl-accent);
+            margin-right: 6px;
+        }
+
+    .pl-desc {
+        font-size: .88rem;
+        color: var(--pl-muted);
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .pl-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 14px;
+        border-top: 1px solid var(--pl-line);
+        margin-top: auto;
+    }
+
+    .pl-agent {
+        display: flex;
+        align-items: center;
+        font-size: .84rem;
+        color: var(--pl-muted);
+        min-width: 0;
+    }
+
+    .pl-agent-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--pl-accent-soft);
+        color: var(--pl-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: .78rem;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .pl-agent span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pl-more {
+        font-size: .86rem;
+        font-weight: 600;
+        color: var(--pl-accent);
+        text-decoration: none;
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+
+        .pl-more:hover {
+            text-decoration: none;
+            color: var(--pl-text);
+        }
+
+    .pl-empty {
+        text-align: center;
+        padding: 70px 20px;
+        background: #fff;
+        border: 1px solid var(--pl-line);
+        border-radius: 18px;
+    }
+
+    .pl-empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: var(--pl-accent-soft);
+        color: var(--pl-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin: 0 auto 16px;
+    }
+
+    .pl-empty h4 {
+        font-weight: 700;
+        color: var(--pl-text);
+    }
+
+    .pl-empty p {
+        color: var(--pl-muted);
+    }
+</style>
+
+<div class="pl-page">
+
+    <!-- Sayfa başlığı -->
+    <section class="pl-hero">
+        <div class="container">
+            <h1>Satılık ve Kiralık İlanlar</h1>
+            <p>Size en uygun evi, ofisi ya da arsayı bulmak için ilanlarımıza göz atın.</p>
+            <div class="pl-breadcrumb">
+                <a asp-controller="Default" asp-action="Index">Ana Sayfa</a>
+                <span class="mx-2">/</span>
+                <span>İlanlar</span>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="pb-5" style="background: var(--pl-bg);">
-            <div class="container">
+    <section class="pb-5" style="background: var(--pl-bg);">
+        <div class="container">
 
-                <!-- Filtre -->
-                <div class="pl-filter">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
-                            <label for="plSearch">Ara</label>
-                            <div class="pl-search">
-                                <i class="fa fa-search"></i>
-                                <input type="text" id="plSearch" class="form-control" placeholder="Başlık, ilçe veya şehir..." />
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                            <label for="plCategory">Kategori</label>
-                            <select id="plCategory" class="form-control">
-                                <option value="">Tüm kategoriler</option>
-                                @foreach (var category in categories)
-                                {
-                                <option value="@category.ToLower()">@category</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
-                            <label for="plCity">Şehir</label>
-                            <select id="plCity" class="form-control">
-                                <option value="">Tüm şehirler</option>
-                                @foreach (var city in cities)
-                                {
-                                <option value="@city.ToLower()">@city</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-6">
-                            <label class="d-none d-lg-block">&nbsp;</label>
-                            <button type="button" id="plReset" class="pl-reset"><i class="fa fa-refresh mr-1"></i>Temizle</button>
+            <!-- Filtre -->
+            <div class="pl-filter">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                        <label for="plSearch">Ara</label>
+                        <div class="pl-search">
+                            <i class="fa fa-search"></i>
+                            <input type="text" id="plSearch" class="form-control" placeholder="Başlık, ilçe veya şehir..." />
                         </div>
                     </div>
+                    <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                        <label for="plCategory">Kategori</label>
+                        <select id="plCategory" class="form-control">
+                            <option value="">Tüm kategoriler</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.ToLower()">@category</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
+                        <label for="plCity">Şehir</label>
+                        <select id="plCity" class="form-control">
+                            <option value="">Tüm şehirler</option>
+                            @foreach (var city in cities)
+                            {
+                                <option value="@city.ToLower()">@city</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label class="d-none d-lg-block">&nbsp;</label>
+                        <button type="button" id="plReset" class="pl-reset"><i class="fa fa-refresh mr-1"></i>Temizle</button>
+                    </div>
                 </div>
+            </div>
 
-                @if (Model.Any())
-                {
+            @if (Model.Any())
+            {
                 <!-- Sonuç sayısı + sıralama -->
                 <div class="pl-toolbar">
                     <div class="pl-count"><b id="plVisible">@Model.Count</b> ilan listeleniyor</div>
@@ -425,45 +425,45 @@
                 <div class="row" id="plGrid">
                     @foreach (var item in Model)
                     {
-                    var agent = string.IsNullOrWhiteSpace(item.EmployeeName) ? "Emlak Danışmanı" : item.EmployeeName;
-                    var initials = string.Concat(agent.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => p[0])).ToUpper();
+                        var agent = string.IsNullOrWhiteSpace(item.EmployeeName) ? "Emlak Danışmanı" : item.EmployeeName;
+                        var initials = string.Concat(agent.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => p[0])).ToUpper();
 
-                    <div class="col-lg-4 col-md-6 mb-4 pl-item"
-                         data-id="@item.ProductId"
-                         data-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                         data-category="@item.CategoryName?.ToLower()"
-                         data-city="@item.City?.ToLower()"
-                         data-search="@($" {item.Title} {item.District} {item.City} {item.CategoryName}".ToLower())">
-                        <div class="pl-card">
-                            <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId" class="pl-cover">
-                                @if (!string.IsNullOrWhiteSpace(item.CoverImage))
-                                {
-                                    <img src="@item.CoverImage" alt="@item.Title" loading="lazy" />
-                                }
-                                <span class="pl-badge">@item.CategoryName</span>
-                                <span class="pl-price">₺@item.Price.ToString("N0", tr)</span>
-                            </a>
-                            <div class="pl-body">
-                                <h3 class="pl-title">
-                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId">@item.Title</a>
-                                </h3>
-                                <div class="pl-location"><i class="fa fa-map-marker"></i>@item.District, @item.City</div>
-                                @if (!string.IsNullOrWhiteSpace(item.Description))
-                                {
-                                <p class="pl-desc">@item.Description</p>
-                                }
-                                <div class="pl-footer">
-                                    <div class="pl-agent">
-                                        <div class="pl-agent-avatar">@initials</div>
-                                        <span>@agent</span>
+                        <div class="col-lg-4 col-md-6 mb-4 pl-item"
+                             data-id="@item.ProductId"
+                             data-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                             data-category="@item.CategoryName?.ToLower()"
+                             data-city="@item.City?.ToLower()"
+                             data-search="@($" {item.Title} {item.District} {item.City} {item.CategoryName}".ToLower())">
+                            <div class="pl-card">
+                                <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="pl-cover">
+                                    @if (!string.IsNullOrWhiteSpace(item.CoverImage))
+                                    {
+                                        <img src="@item.CoverImage" alt="@item.Title" loading="lazy" />
+                                    }
+                                    <span class="pl-badge">@item.CategoryName</span>
+                                    <span class="pl-price">₺@item.Price.ToString("N0", tr)</span>
+                                </a>
+                                <div class="pl-body">
+                                    <h3 class="pl-title">
+                                        <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId">@item.Title</a>
+                                    </h3>
+                                    <div class="pl-location"><i class="fa fa-map-marker"></i>@item.District, @item.City</div>
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <p class="pl-desc">@item.Description</p>
+                                    }
+                                    <div class="pl-footer">
+                                        <div class="pl-agent">
+                                            <div class="pl-agent-avatar">@initials</div>
+                                            <span>@agent</span>
+                                        </div>
+                                        <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="pl-more">
+                                            İncele <i class="fa fa-angle-right ml-1"></i>
+                                        </a>
                                     </div>
-                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId" class="pl-more">
-                                        İncele <i class="fa fa-angle-right ml-1"></i>
-                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     }
                 </div>
 
@@ -472,80 +472,80 @@
                     <h4>Aramanıza uygun ilan bulunamadı</h4>
                     <p class="mb-0">Filtreleri değiştirerek tekrar deneyebilirsiniz.</p>
                 </div>
-                }
-                else
-                {
+            }
+            else
+            {
                 <div class="pl-empty mt-5">
                     <div class="pl-empty-icon"><i class="fa fa-home"></i></div>
                     <h4>Şu an yayında ilan yok</h4>
                     <p>Yeni ilanlar çok yakında burada olacak. Bizimle iletişime geçerek aradığınız mülkü anlatabilirsiniz.</p>
                     <a asp-controller="Default" asp-action="Index" class="btn btn-style btn-primary mt-2">Ana Sayfaya Dön</a>
                 </div>
-                }
-            </div>
-        </section>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var grid = document.getElementById("plGrid");
-            if (!grid) return;
-
-            var searchInput = document.getElementById("plSearch");
-            var categorySelect = document.getElementById("plCategory");
-            var citySelect = document.getElementById("plCity");
-            var sortSelect = document.getElementById("plSort");
-            var items = Array.prototype.slice.call(grid.querySelectorAll(".pl-item"));
-
-            function applyFilters() {
-                var term = searchInput.value.trim().toLocaleLowerCase("tr");
-                var category = categorySelect.value;
-                var city = citySelect.value;
-                var visible = 0;
-
-                items.forEach(function (item) {
-                    var show =
-                        item.getAttribute("data-search").toLocaleLowerCase("tr").indexOf(term) !== -1 &&
-                        (!category || item.getAttribute("data-category") === category) &&
-                        (!city || item.getAttribute("data-city") === city);
-
-                    item.style.display = show ? "" : "none";
-                    if (show) visible++;
-                });
-
-                document.getElementById("plVisible").textContent = visible;
-                document.getElementById("plNoResult").style.display = visible === 0 ? "" : "none";
             }
+        </div>
+    </section>
+</div>
 
-            function applySort() {
-                var mode = sortSelect.value;
-                var sorted = items.slice().sort(function (a, b) {
-                    var pa = parseFloat(a.getAttribute("data-price"));
-                    var pb = parseFloat(b.getAttribute("data-price"));
-                    var ia = parseInt(a.getAttribute("data-id"));
-                    var ib = parseInt(b.getAttribute("data-id"));
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var grid = document.getElementById("plGrid");
+        if (!grid) return;
 
-                    if (mode === "price-asc") return pa - pb;
-                    if (mode === "price-desc") return pb - pa;
-                    return ib - ia; // en yeni
-                });
-                sorted.forEach(function (item) { grid.appendChild(item); });
-            }
+        var searchInput = document.getElementById("plSearch");
+        var categorySelect = document.getElementById("plCategory");
+        var citySelect = document.getElementById("plCity");
+        var sortSelect = document.getElementById("plSort");
+        var items = Array.prototype.slice.call(grid.querySelectorAll(".pl-item"));
 
-            searchInput.addEventListener("input", applyFilters);
-            categorySelect.addEventListener("change", applyFilters);
-            citySelect.addEventListener("change", applyFilters);
-            sortSelect.addEventListener("change", applySort);
+        function applyFilters() {
+            var term = searchInput.value.trim().toLocaleLowerCase("tr");
+            var category = categorySelect.value;
+            var city = citySelect.value;
+            var visible = 0;
 
-            document.getElementById("plReset").addEventListener("click", function () {
-                searchInput.value = "";
-                categorySelect.value = "";
-                citySelect.value = "";
-                sortSelect.value = "newest";
-                applySort();
-                applyFilters();
+            items.forEach(function (item) {
+                var show =
+                    item.getAttribute("data-search").toLocaleLowerCase("tr").indexOf(term) !== -1 &&
+                    (!category || item.getAttribute("data-category") === category) &&
+                    (!city || item.getAttribute("data-city") === city);
+
+                item.style.display = show ? "" : "none";
+                if (show) visible++;
             });
 
+            document.getElementById("plVisible").textContent = visible;
+            document.getElementById("plNoResult").style.display = visible === 0 ? "" : "none";
+        }
+
+        function applySort() {
+            var mode = sortSelect.value;
+            var sorted = items.slice().sort(function (a, b) {
+                var pa = parseFloat(a.getAttribute("data-price"));
+                var pb = parseFloat(b.getAttribute("data-price"));
+                var ia = parseInt(a.getAttribute("data-id"));
+                var ib = parseInt(b.getAttribute("data-id"));
+
+                if (mode === "price-asc") return pa - pb;
+                if (mode === "price-desc") return pb - pa;
+                return ib - ia; // en yeni
+            });
+            sorted.forEach(function (item) { grid.appendChild(item); });
+        }
+
+        searchInput.addEventListener("input", applyFilters);
+        categorySelect.addEventListener("change", applyFilters);
+        citySelect.addEventListener("change", applyFilters);
+        sortSelect.addEventListener("change", applySort);
+
+        document.getElementById("plReset").addEventListener("click", function () {
+            searchInput.value = "";
+            categorySelect.value = "";
+            citySelect.value = "";
+            sortSelect.value = "newest";
             applySort();
+            applyFilters();
         });
-    </script>
+
+        applySort();
+    });
+</script>

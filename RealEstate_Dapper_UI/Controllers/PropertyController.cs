@@ -43,7 +43,7 @@ namespace RealEstate_Dapper_UI.Controllers
             return View(values);
         }
 
-        [HttpGet("ilan/{slug}-{id:int}")]
+        [HttpGet]
         public async Task<IActionResult> PropertyDetail(int id)
         {
             ViewBag.ProductId = id;
