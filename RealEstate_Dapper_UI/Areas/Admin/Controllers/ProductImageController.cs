@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
@@ -8,6 +9,7 @@ using System.Text;
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class ProductImageController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

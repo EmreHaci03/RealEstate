@@ -13,30 +13,24 @@
                             <li><a href="#link">Müstakil Ev</a></li>
                         </ul>
                     </div>
-                    <form action="#" class="w3l-cover-3-gd" method="GET">
-                        <input type="search" name="text" placeholder="Anahtar kelime girin" required>
+                    <form asp-controller="Property" asp-action="PropertySearch" method="get" class="w3l-cover-3-gd">
+                        <input type="search" name="searchKeyValue" placeholder="Anahtar kelime girin">
                         <span class="input-group-btn">
-                            <select class="btn btn-default" name="ext" required>
-                                <option selected="">Ofis</option>
-                                <option>Villa</option>
-                                <option>Daire</option>
-                                <option>Müstakil Ev</option>
-                                <option>Bina</option>
-                                <option>Dükkan</option>
-                                <option>Rezidans</option>
-                                <option>Yazlık</option>
+                            <select class="btn btn-default" name="categoryId">
+                                <option value="">Tüm Kategoriler</option>
+                                @foreach (var c in ViewBag.Categories as List<SelectListItem> ?? new List<SelectListItem>())
+                                {
+                                    <option value="@c.Value">@c.Text</option>
+                                }
                             </select>
                         </span>
                         <span class="input-group-btn">
-                            <select class="btn btn-default" name="ext" required>
-                                <option selected="">Şehir Seçin</option>
-                                <option>İstanbul</option>
-                                <option>Ankara</option>
-                                <option>İzmir</option>
-                                <option>Antalya</option>
-                                <option>Bursa</option>
-                                <option>Muğla</option>
-                                <option>Eskişehir</option>
+                            <select class="btn btn-default" name="city">
+                                <option value="">Tüm Şehirler</option>
+                                @foreach (var city in ViewBag.Cities as List<string> ?? new List<string>())
+                                {
+                                    <option value="@city">@city</option>
+                                }
                             </select>
                         </span>
                         <button type="submit" class="btn-primary">Ara</button>

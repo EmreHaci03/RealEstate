@@ -46,11 +46,41 @@
                         </div>
                     </li>
                 </ul>
-                <div class="top-quote mt-lg-0">
-                    <a href="#buytheme" class="btn btn-style btn-primary">
-                        <span class="fa fa-home"></span> İlan Ekle
-                    </a>
-                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    var panelArea = User.IsInRole("Admin") ? "Admin" : "EstateAgent";
+                    var panelController = User.IsInRole("Admin") ? "Dashboard" : "Adverts";
+
+                    <div class="top-quote mt-lg-0 dropdown">
+                        <a href="#" class="btn btn-style btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="fa fa-user-circle"></span> @User.Identity.Name
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" asp-area="@panelArea" asp-controller="@panelController" asp-action="Index">
+                                <span class="fa fa-dashboard mr-2"></span>Panelim
+                            </a>
+                            @if (User.IsInRole("Member"))
+                            {
+                                <a class="dropdown-item" asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvert">
+                                    <span class="fa fa-plus mr-2"></span>İlan Ekle
+                                </a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" asp-area="" asp-controller="Account" asp-action="Logout">
+                                <span class="fa fa-sign-out mr-2"></span>Çıkış Yap
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="top-quote mt-lg-0">
+                        <a asp-area="" asp-controller="Account" asp-action="Login" class="btn btn-style btn-primary">
+                            <span class="fa fa-sign-in"></span> Giriş Yap
+                        </a>
+                    </div>
+                }
+
                 <!--/arama-->
                 <div class="search mx-3">
                     <input class="search_box" type="checkbox" id="search_box">

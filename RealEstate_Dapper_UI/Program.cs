@@ -13,12 +13,13 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddHttpClient();
 
 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddCookie(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/LogOut";
-        options.AccessDeniedPath = "/Account/Login";
+        options.AccessDeniedPath = "/Error/403";
         options.Cookie.HttpOnly = true;
         options.Cookie.Name = "RealEstateJwt";
     });

@@ -1,0 +1,443 @@
+﻿@model List<ResultProductWithSearchListDto>
+@{
+    ViewData["Title"] = "Arama Sonuçları";
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+    var tr = new System.Globalization.CultureInfo("tr-TR");
+
+    var q = Context.Request.Query;
+    var keyword = q["searchKeyValue"].ToString();
+    var city = q["city"].ToString();
+    var categoryName = Model.Select(x => x.CategoryName).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+    var hasCategory = !string.IsNullOrWhiteSpace(q["categoryId"].ToString());
+}
+
+<style>
+    .sr-page {
+        --sr-accent: #f15a24;
+        --sr-accent-soft: rgba(241, 90, 36, .1);
+        --sr-text: #1f2937;
+        --sr-muted: #6b7280;
+        --sr-line: #e8eaee;
+        --sr-bg: #f7f8fa;
+        background: var(--sr-bg);
+        padding-bottom: 70px;
+    }
+
+    .sr-head {
+        background: #fff;
+        border-bottom: 1px solid var(--sr-line);
+        padding: 30px 0 26px;
+    }
+
+    .sr-crumb {
+        font-size: .86rem;
+        color: var(--sr-muted);
+        margin-bottom: 12px;
+    }
+
+        .sr-crumb a {
+            color: var(--sr-muted);
+            text-decoration: none;
+        }
+
+            .sr-crumb a:hover {
+                color: var(--sr-accent);
+            }
+
+    .sr-title {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--sr-text);
+        margin: 0 0 6px;
+    }
+
+    .sr-sub {
+        color: var(--sr-muted);
+        margin: 0;
+    }
+
+        .sr-sub b {
+            color: var(--sr-accent);
+        }
+
+    .sr-chips {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .sr-chip {
+        display: inline-flex;
+        align-items: center;
+        background: var(--sr-accent-soft);
+        color: var(--sr-accent);
+        font-size: .82rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        margin: 0 8px 8px 0;
+    }
+
+        .sr-chip .fa {
+            margin-right: 6px;
+        }
+
+    .sr-clear {
+        display: inline-flex;
+        align-items: center;
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--sr-muted);
+        padding: 6px 4px;
+        margin-bottom: 8px;
+        text-decoration: none;
+    }
+
+        .sr-clear:hover {
+            color: var(--sr-accent);
+            text-decoration: none;
+        }
+
+    .sr-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin: 30px 0 20px;
+    }
+
+        .sr-bar select {
+            height: 42px;
+            border: 1px solid var(--sr-line);
+            border-radius: 12px;
+            padding: 0 12px;
+            background: #fff;
+            font-size: .9rem;
+            color: var(--sr-text);
+        }
+
+            .sr-bar select:focus {
+                outline: none;
+                border-color: var(--sr-accent);
+            }
+
+    .sr-count {
+        font-weight: 700;
+        color: var(--sr-text);
+    }
+
+    .sr-item {
+        margin-bottom: 28px;
+    }
+
+    .sr-card {
+        background: #fff;
+        border: 1px solid var(--sr-line);
+        border-radius: 18px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform .25s, box-shadow .25s;
+    }
+
+        .sr-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 40px -24px rgba(17, 24, 39, .35);
+        }
+
+    .sr-img {
+        position: relative;
+        display: block;
+        padding-top: 66%;
+        overflow: hidden;
+        background: #e5e7eb;
+    }
+
+        .sr-img img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .6s;
+        }
+
+    .sr-card:hover .sr-img img {
+        transform: scale(1.07);
+    }
+
+    .sr-img::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(17, 24, 39, .55));
+    }
+
+    .sr-cat {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1;
+        background: rgba(255, 255, 255, .95);
+        color: var(--sr-text);
+        font-size: .74rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+    }
+
+    .sr-price {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+        z-index: 1;
+        background: var(--sr-accent);
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.05rem;
+        padding: 7px 14px;
+        border-radius: 10px;
+        box-shadow: 0 8px 18px -6px rgba(241, 90, 36, .6);
+    }
+
+    .sr-body {
+        padding: 18px 20px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .sr-body h3 {
+            font-size: 1.08rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0 0 8px;
+        }
+
+            .sr-body h3 a {
+                color: var(--sr-text);
+                text-decoration: none;
+            }
+
+                .sr-body h3 a:hover {
+                    color: var(--sr-accent);
+                }
+
+    .sr-loc {
+        color: var(--sr-muted);
+        font-size: .86rem;
+        margin-bottom: 10px;
+    }
+
+        .sr-loc .fa {
+            color: var(--sr-accent);
+            margin-right: 5px;
+        }
+
+    .sr-desc {
+        color: var(--sr-muted);
+        font-size: .88rem;
+        line-height: 1.65;
+        margin-bottom: 16px;
+        flex: 1;
+    }
+
+    .sr-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px dashed var(--sr-line);
+        padding-top: 14px;
+        margin-top: auto;
+        font-size: .84rem;
+        color: var(--sr-muted);
+    }
+
+        .sr-foot .fa-user-circle {
+            color: var(--sr-accent);
+            margin-right: 6px;
+        }
+
+    .sr-more {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--sr-accent-soft);
+        color: var(--sr-accent);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+        .sr-more:hover {
+            background: var(--sr-accent);
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .sr-empty {
+        background: #fff;
+        border: 1px solid var(--sr-line);
+        border-radius: 18px;
+        text-align: center;
+        padding: 70px 20px;
+        margin-top: 30px;
+    }
+
+    .sr-empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: var(--sr-accent-soft);
+        color: var(--sr-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin: 0 auto 16px;
+    }
+
+    .sr-empty h4 {
+        font-weight: 700;
+        color: var(--sr-text);
+    }
+
+    .sr-empty p {
+        color: var(--sr-muted);
+    }
+
+    .sr-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 22px;
+        border-radius: 12px;
+        background: var(--sr-accent);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .sr-btn:hover {
+            color: #fff;
+            text-decoration: none;
+            filter: brightness(.92);
+        }
+
+        .sr-btn .fa {
+            margin-right: 8px;
+        }
+</style>
+
+<div class="sr-page">
+    <section class="sr-head">
+        <div class="container">
+            <div class="sr-crumb">
+                <a asp-controller="Default" asp-action="Index">Ana Sayfa</a>
+                <span class="mx-2">/</span>
+                <span>Arama Sonuçları</span>
+            </div>
+            <h1 class="sr-title">Arama Sonuçları</h1>
+            <p class="sr-sub">Kriterlerinize uygun <b>@Model.Count</b> ilan bulundu</p>
+
+            <div class="sr-chips">
+                @if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    <span class="sr-chip"><i class="fa fa-search"></i>"@keyword"</span>
+                }
+                @if (hasCategory && !string.IsNullOrWhiteSpace(categoryName))
+                {
+                    <span class="sr-chip"><i class="fa fa-th-large"></i>@categoryName</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(city))
+                {
+                    <span class="sr-chip"><i class="fa fa-map-marker"></i>@city</span>
+                }
+                <a asp-controller="Property" asp-action="PropertyList" class="sr-clear"><i class="fa fa-times mr-1"></i>Filtreleri temizle</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        @if (!Model.Any())
+        {
+            <div class="sr-empty">
+                <div class="sr-empty-icon"><i class="fa fa-search"></i></div>
+                <h4>Sonuç bulunamadı</h4>
+                <p>Aradığınız kriterlere uygun ilan yok. Filtreleri değiştirip tekrar deneyin.</p>
+                <a asp-controller="Property" asp-action="PropertyList" class="sr-btn"><i class="fa fa-th"></i>Tüm İlanlara Göz At</a>
+            </div>
+        }
+        else
+        {
+            <div class="sr-bar">
+                <span class="sr-count">@Model.Count ilan listeleniyor</span>
+                <select id="srSort">
+                    <option value="">Varsayılan Sıralama</option>
+                    <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+                    <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+                </select>
+            </div>
+
+            <div class="row" id="srGrid">
+                @foreach (var item in Model)
+                {
+                    var img = string.IsNullOrWhiteSpace(item.CoverImage) ? $"https://picsum.photos/seed/estate{item.ProductId}/800/560" : item.CoverImage;
+                    var loc = string.Join(", ", new[] { item.District, item.City }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                    var desc = item.Description ?? "";
+                    if (desc.Length > 120) { desc = desc.Substring(0, 120).TrimEnd() + "..."; }
+
+                    <div class="col-lg-4 col-md-6 sr-item" data-price="@item.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                        <div class="sr-card">
+                            <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="sr-img">
+                                <img src="@img" alt="@item.Title" loading="lazy" />
+                                @if (!string.IsNullOrWhiteSpace(item.CategoryName))
+                                {
+                                    <span class="sr-cat">@item.CategoryName</span>
+                                }
+                                <span class="sr-price">@item.Price.ToString("N0", tr) ₺</span>
+                            </a>
+                            <div class="sr-body">
+                                <h3><a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId">@item.Title</a></h3>
+                                @if (!string.IsNullOrWhiteSpace(loc))
+                                {
+                                    <div class="sr-loc"><i class="fa fa-map-marker"></i>@loc</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(desc))
+                                {
+                                    <p class="sr-desc">@desc</p>
+                                }
+                                <div class="sr-foot">
+                                    <span><i class="fa fa-user-circle"></i>@(item.EmployeeName ?? "Emlak Danışmanı")</span>
+                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="sr-more" title="Detay"><span class="fa fa-arrow-right"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script>(function () {
+        var sort = document.getElementById('srSort');
+        var grid = document.getElementById('srGrid');
+        if (!sort || !grid) return;
+        var original = Array.prototype.slice.call(grid.children);
+
+        sort.addEventListener('change', function () {
+            var v = this.value;
+            var items = original.slice();
+            if (v) {
+                items.sort(function (a, b) {
+                    var pa = parseFloat(a.getAttribute('data-price')), pb = parseFloat(b.getAttribute('data-price'));
+                    return v === 'price-asc' ? pa - pb : pb - pa;
+                });
+            }
+            items.forEach(function (el) { grid.appendChild(el); });
+        });
+    })();</script>

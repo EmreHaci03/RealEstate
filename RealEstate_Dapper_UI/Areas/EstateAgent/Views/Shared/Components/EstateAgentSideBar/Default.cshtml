@@ -37,23 +37,15 @@
             <a asp-area="EstateAgent" asp-controller="Dashboard" asp-action="Index" class="nav-item nav-link @Active("Dashboard")">
                 <i class="fa fa-tachometer-alt me-2"></i>Panelim
             </a>
-
+            <a asp-area="EstateAgent" asp-controller="AiAssistant" asp-action="AskAI" class="nav-item nav-link @Active("AiAssistant")">
+                <i class="fa fa-robot me-2"></i>AI Asistan
+            </a>
             <div class="sidebar-section">İlanlar</div>
             <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="Index" class="nav-item nav-link @Active("Adverts", "Index")">
                 <i class="fa fa-home me-2"></i>İlanlarım
             </a>
             <a asp-area="EstateAgent" asp-controller="Adverts" asp-action="CreateAdvert" class="nav-item nav-link @Active("Adverts", "CreateAdvert")">
                 <i class="fa fa-plus-circle me-2"></i>Yeni İlan
-            </a>
-
-            <div class="sidebar-section">İletişim</div>
-            <a asp-area="EstateAgent" asp-controller="MyMessage" asp-action="Index" class="nav-item nav-link @Active("MyMessage")">
-                <i class="fa fa-inbox me-2"></i>Mesajlarım
-            </a>
-
-            <div class="sidebar-section">Hesap</div>
-            <a asp-area="EstateAgent" asp-controller="Profile" asp-action="Index" class="nav-item nav-link @Active("Profile")">
-                <i class="fa fa-user-circle me-2"></i>Profilim
             </a>
             <a asp-area="" asp-controller="Default" asp-action="Index" target="_blank" class="nav-item nav-link">
                 <i class="fa fa-external-link-alt me-2"></i>Siteye Git

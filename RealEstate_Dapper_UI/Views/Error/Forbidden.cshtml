@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Erişim Engellendi";
+    Layout = "~/Views/Shared/UI_Layout.cshtml";
+}
+
+<style>
+    .er-page {
+        --er-accent: #f15a24;
+        --er-soft: rgba(241, 90, 36, .1);
+        --er-danger: #dc3545;
+        --er-danger-soft: rgba(220, 53, 69, .1);
+        --er-text: #1f2937;
+        --er-muted: #6b7280;
+        --er-line: #e8eaee;
+        background: #f7f8fa;
+        padding: 90px 0;
+    }
+
+    .er-box {
+        max-width: 560px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid var(--er-line);
+        border-radius: 22px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 30px 60px -40px rgba(17, 24, 39, .35);
+    }
+
+    .er-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 28px;
+        background: var(--er-danger-soft);
+        color: var(--er-danger);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        margin: 0 auto 22px;
+    }
+
+    .er-code {
+        display: inline-block;
+        font-size: .8rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        color: var(--er-danger);
+        background: var(--er-danger-soft);
+        padding: 5px 14px;
+        border-radius: 999px;
+        margin-bottom: 14px;
+    }
+
+    .er-box h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--er-text);
+        margin-bottom: 10px;
+    }
+
+    .er-box p {
+        color: var(--er-muted);
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .er-user {
+        display: inline-flex;
+        align-items: center;
+        background: #f7f8fa;
+        border: 1px solid var(--er-line);
+        border-radius: 12px;
+        padding: 10px 16px;
+        margin-bottom: 26px;
+        font-size: .9rem;
+        color: var(--er-text);
+    }
+
+        .er-user .fa {
+            color: var(--er-accent);
+            margin-right: 8px;
+        }
+
+    .er-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .er-btn {
+        display: inline-flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+        .er-btn .fa {
+            margin-right: 8px;
+        }
+
+    .er-btn-primary {
+        background: var(--er-accent);
+        color: #fff;
+    }
+
+        .er-btn-primary:hover {
+            color: #fff;
+            text-decoration: none;
+            filter: brightness(.92);
+        }
+
+    .er-btn-light {
+        background: #fff;
+        color: var(--er-text);
+        border: 1px solid var(--er-line);
+    }
+
+        .er-btn-light:hover {
+            color: var(--er-accent);
+            border-color: var(--er-accent);
+            text-decoration: none;
+        }
+</style>
+
+<div class="er-page">
+    <div class="container">
+        <div class="er-box">
+            <div class="er-icon"><i class="fa fa-ban"></i></div>
+            <span class="er-code">HATA 403</span>
+            <h1>Erişim Yetkiniz Yok</h1>
+            <p>Bu sayfayı görüntülemek için gerekli yetkiye sahip değilsiniz. Farklı bir hesapla giriş yapmayı deneyebilirsiniz.</p>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="er-user">
+                    <i class="fa fa-user-circle"></i>@User.Identity.Name olarak giriş yaptınız
+                </div>
+            }
+
+            <div class="er-actions">
+                <a asp-controller="Default" asp-action="Index" class="er-btn er-btn-primary"><i class="fa fa-home"></i>Ana Sayfa</a>
+                <a href="javascript:history.back()" class="er-btn er-btn-light"><i class="fa fa-arrow-left"></i>Geri Dön</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Account" asp-action="Logout" class="er-btn er-btn-light"><i class="fa fa-sign-out"></i>Farklı Hesapla Gir</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

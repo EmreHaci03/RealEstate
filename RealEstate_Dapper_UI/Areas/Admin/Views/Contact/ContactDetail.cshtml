@@ -5,7 +5,6 @@
 
     var parts = (Model.Name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
     var initials = parts.Any() ? string.Concat(parts.Take(2).Select(p => p[0])).ToUpper() : "?";
-    var replySubject = Uri.EscapeDataString("Re: " + Model.Subject);
 }
 
 <style>
@@ -133,6 +132,118 @@
             word-break: break-all;
         }
 
+    /* Cevap paneli */
+    .reply-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-top: 24px;
+        scroll-margin-top: 90px;
+    }
+
+    .reply-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+    }
+
+        .reply-head h6 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .reply-head small {
+            color: var(--muted);
+        }
+
+    .reply-to {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 14px 24px 0;
+        font-size: .84rem;
+        color: var(--muted);
+    }
+
+        .reply-to b {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+    .reply-body {
+        padding: 14px 24px 18px;
+    }
+
+        .reply-body textarea {
+            min-height: 220px;
+            border-radius: 12px;
+            line-height: 1.7;
+            resize: vertical;
+        }
+
+    .reply-foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 24px;
+        border-top: 1px solid var(--line);
+        background: var(--page-bg);
+    }
+
+    .reply-count {
+        margin-left: auto;
+        font-size: .78rem;
+        color: var(--muted);
+    }
+
+    .ai-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: .85rem;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #6f42c1, #009CFF);
+        box-shadow: 0 6px 16px -8px rgba(111, 66, 193, .7);
+        transition: filter .2s, transform .2s;
+    }
+
+        .ai-btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .ai-btn:disabled {
+            opacity: .7;
+            transform: none;
+            cursor: wait;
+        }
+
+    .reply-error {
+        display: none;
+        font-size: .82rem;
+        color: #dc3545;
+        margin-top: 8px;
+        word-break: break-word;
+    }
+
+    .reply-toast {
+        display: none;
+        font-size: .82rem;
+        color: #198754;
+        font-weight: 600;
+    }
+
     .delete-modal .modal-content {
         border: none;
         border-radius: 20px;
@@ -199,7 +310,7 @@
         </a>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
         <div class="col-lg-8">
             <div class="msg-detail">
                 <div class="msg-detail-head">
@@ -220,12 +331,51 @@
                 <div class="msg-detail-body">@Model.Message</div>
 
                 <div class="msg-detail-foot">
-                    <a href="mailto:@Model.Mail?subject=@replySubject" class="btn btn-primary px-4">
+                    <a href="#replyCard" class="btn btn-primary px-4" id="goReply">
                         <i class="fa fa-reply me-2"></i>Yanıtla
                     </a>
                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="fa fa-trash me-2"></i>Sil
                     </button>
+                </div>
+            </div>
+
+            <!-- Cevap paneli -->
+            <div class="reply-card" id="replyCard">
+                <div class="reply-head">
+                    <div>
+                        <h6><i class="fa fa-pen me-2 text-primary"></i>Cevap Yaz</h6>
+                        <small>Kendin yaz ya da yapay zekâdan taslak al, düzenleyip gönder.</small>
+                    </div>
+                    <button type="button" id="aiReplyBtn" class="ai-btn"
+                            data-url="@Url.Action("GenerateReply", "Contact", new { area = "Admin" })"
+                            data-name="@Model.Name"
+                            data-subject="@Model.Subject"
+                            data-message="@Model.Message">
+                        <i class="fa fa-magic"></i><span>AI ile Cevap Üret</span>
+                    </button>
+                </div>
+
+                <div class="reply-to">
+                    <span>Kime: <b>@Model.Name &lt;@Model.Mail&gt;</b></span>
+                    <span>·</span>
+                    <span>Konu: <b>Re: @Model.Subject</b></span>
+                </div>
+
+                <div class="reply-body">
+                    <textarea id="replyText" class="form-control" placeholder="Sayın @Model.Name,&#10;&#10;Mesajınız için teşekkür ederiz..."></textarea>
+                    <div class="reply-error" id="replyError"></div>
+                </div>
+
+                <div class="reply-foot">
+                    <button type="button" id="sendReply" class="btn btn-primary px-4">
+                        <i class="fa fa-paper-plane me-2"></i>Cevabı Gönder
+                    </button>
+                    <button type="button" id="copyReply" class="btn btn-light border">
+                        <i class="fa fa-copy me-2"></i>Kopyala
+                    </button>
+                    <span class="reply-toast" id="replyToast"><i class="fa fa-check me-1"></i>Kopyalandı</span>
+                    <span class="reply-count"><span id="replyCount">0</span> karakter</span>
                 </div>
             </div>
         </div>
@@ -271,3 +421,82 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        var box = document.getElementById('replyText');
+        var err = document.getElementById('replyError');
+        var count = document.getElementById('replyCount');
+        var mail = '@Model.Mail';
+        var subject = 'Re: ' + @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Subject ?? ""));
+
+        function updateCount() { count.textContent = box.value.length; }
+        box.addEventListener('input', updateCount);
+
+        // Yanıtla → panele kaydır
+        document.getElementById('goReply').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('replyCard').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(function () { box.focus(); }, 400);
+        });
+
+        // AI ile cevap üret
+        document.getElementById('aiReplyBtn').addEventListener('click', async function () {
+            var btn = this;
+            err.style.display = 'none';
+
+            if (box.value.trim() && !confirm('Mevcut metin silinip yerine AI önerisi yazılacak. Devam edilsin mi?')) return;
+
+            var data = new URLSearchParams({
+                name: btn.dataset.name,
+                subject: btn.dataset.subject,
+                message: btn.dataset.message
+            });
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i><span>Yazılıyor...</span>';
+
+            try {
+                var res = await fetch(btn.dataset.url, { method: 'POST', body: data });
+                var text = await res.text();
+
+                if (res.ok && !res.redirected && !text.trim().startsWith('<')) {
+                    box.value = text.trim();
+                    updateCount();
+                    box.focus();
+                } else {
+                    err.textContent = text.trim().startsWith('<') ? 'Cevap oluşturulamadı. (Hata ' + res.status + ')' : text;
+                    err.style.display = 'block';
+                }
+            } catch (e) {
+                err.textContent = 'Bağlantı hatası, tekrar dene.';
+                err.style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-magic"></i><span>AI ile Cevap Üret</span>';
+        });
+
+        // Cevabı gönder → mail programı dolu açılır
+        document.getElementById('sendReply').addEventListener('click', function () {
+            if (!box.value.trim()) {
+                err.textContent = 'Önce bir cevap yaz ya da AI ile oluştur.';
+                err.style.display = 'block';
+                box.focus();
+                return;
+            }
+            window.location.href = 'mailto:' + mail +
+                '?subject=' + encodeURIComponent(subject) +
+                '&body=' + encodeURIComponent(box.value);
+        });
+
+        // Kopyala
+        document.getElementById('copyReply').addEventListener('click', async function () {
+            if (!box.value.trim()) return;
+            await navigator.clipboard.writeText(box.value);
+            var toast = document.getElementById('replyToast');
+            toast.style.display = 'inline';
+            setTimeout(function () { toast.style.display = 'none'; }, 1800);
+        });
+    })();
+</script>

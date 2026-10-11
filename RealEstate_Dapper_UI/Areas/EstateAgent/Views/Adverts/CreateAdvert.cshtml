@@ -177,6 +177,52 @@
         font-weight: 700;
         font-size: .75rem;
     }
+
+    /* AI ile Yaz */
+    .ca-desc-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+        .ca-desc-head .ca-label {
+            margin-bottom: 0;
+        }
+
+    .ca-ai-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 0;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: .8rem;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #6f42c1, #009CFF);
+        box-shadow: 0 6px 16px -8px rgba(111, 66, 193, .7);
+        transition: filter .2s, transform .2s;
+    }
+
+        .ca-ai-btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .ca-ai-btn:disabled {
+            opacity: .7;
+            transform: none;
+            cursor: wait;
+        }
+
+    .ca-ai-error {
+        font-size: .78rem;
+        color: #dc3545;
+        margin-top: 5px;
+        display: none;
+        word-break: break-word;
+    }
 </style>
 
 <div class="container-fluid pt-4 px-4">
@@ -257,8 +303,14 @@
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Description" class="ca-label">Açıklama</label>
-                    <textarea asp-for="Description" id="inDesc" rows="5" class="form-control" maxlength="1000" placeholder="İlanın öne çıkan özelliklerini yaz..."></textarea>
+                    <div class="ca-desc-head">
+                        <label asp-for="Description" class="ca-label">Açıklama</label>
+                        <button type="button" id="aiDescBtn" class="ca-ai-btn">
+                            <i class="fa fa-magic"></i><span>AI ile Yaz</span>
+                        </button>
+                    </div>
+                    <textarea asp-for="Description" id="inDesc" rows="5" class="form-control" maxlength="1000" placeholder="İlanın öne çıkan özelliklerini yaz ya da AI ile oluştur..."></textarea>
+                    <div class="ca-ai-error" id="aiDescError"></div>
                     <div class="ca-counter"><span id="descCount">0</span>/1000</div>
                 </div>
 
@@ -354,6 +406,63 @@
             ["inTitle", "inPrice", "inCity", "inDistrict", "inDesc", "inCategory"].forEach(function (id) {
                 $(id).addEventListener("input", update);
                 $(id).addEventListener("change", update);
+            });
+
+            // AI ile açıklama yaz
+            $("aiDescBtn").addEventListener("click", async function () {
+                var btn = this;
+                var errorBox = $("aiDescError");
+                errorBox.style.display = "none";
+
+                var title = $("inTitle").value.trim();
+                if (!title) {
+                    errorBox.textContent = "Önce ilan başlığını gir, AI ona göre yazsın.";
+                    errorBox.style.display = "block";
+                    $("inTitle").focus();
+                    return;
+                }
+
+                if ($("inDesc").value.trim() && !confirm("Mevcut açıklama silinip yerine AI metni yazılacak. Devam edilsin mi?")) {
+                    return;
+                }
+
+                // Formun içindeki güvenlik token'ı (400 hatasının sebebi buydu)
+                var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+
+                var select = $("inCategory");
+                var data = new URLSearchParams({
+                    title: title,
+                    category: select.value ? select.options[select.selectedIndex].text : "",
+                    city: $("inCity").value.trim(),
+                    district: $("inDistrict").value.trim(),
+                    price: $("inPrice").value,
+                    __RequestVerificationToken: tokenInput ? tokenInput.value : ""
+                });
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i><span>Yazılıyor...</span>';
+
+                try {
+                    var res = await fetch('/EstateAgent/Adverts/GenerateDescription', {
+                        method: "POST",
+                        body: data
+                    });
+                    var text = await res.text();
+
+                    if (res.ok) {
+                        $("inDesc").value = text.trim().substring(0, 1000);
+                        update();
+                    } else {
+                        errorBox.textContent = text || ("Açıklama oluşturulamadı. (Hata " + res.status + ")");
+                        errorBox.style.display = "block";
+                    }
+                } catch (e) {
+                    errorBox.textContent = "Bağlantı hatası, tekrar dene.";
+                    errorBox.style.display = "block";
+                }
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-magic"></i><span>AI ile Yaz</span>';
             });
 
             update();

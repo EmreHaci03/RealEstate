@@ -1,0 +1,371 @@
+﻿@{
+    ViewData["Title"] = "Yapay Zekâ Asistanı";
+    Layout = "~/Areas/EstateAgent/Views/Shared/_EstateAgentLayout.cshtml";
+    var userName = User.Identity?.Name ?? "Siz";
+    var initial = string.IsNullOrWhiteSpace(userName) ? "S" : userName.Substring(0, 1).ToUpper();
+}
+
+<style>
+    .ai-wrap {
+        --ai-accent: #009CFF;
+        --ai-soft: rgba(0, 156, 255, .1);
+        --ai-text: #191C24;
+        --ai-muted: #6c757d;
+        --ai-line: #eef0f4;
+    }
+
+    .ai-card {
+        background: #fff;
+        border: 1px solid var(--ai-line);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 560px;
+    }
+
+    .ai-head {
+        display: flex;
+        align-items: center;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--ai-line);
+    }
+
+    .ai-bot {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #009CFF, #6f42c1);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+
+    .ai-head h5 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--ai-text);
+    }
+
+    .ai-head small {
+        color: #198754;
+        font-weight: 600;
+    }
+
+        .ai-head small i {
+            font-size: 8px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+    .ai-body {
+        flex: 1;
+        padding: 24px 22px;
+        background: #f8f9fb;
+        overflow-y: auto;
+    }
+
+    .ai-msg {
+        display: flex;
+        margin-bottom: 18px;
+    }
+
+        .ai-msg.user {
+            flex-direction: row-reverse;
+        }
+
+    .ai-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .ai-msg.bot .ai-avatar {
+        background: var(--ai-soft);
+        color: var(--ai-accent);
+        margin-right: 10px;
+    }
+
+    .ai-msg.user .ai-avatar {
+        background: var(--ai-accent);
+        color: #fff;
+        margin-left: 10px;
+    }
+
+    .ai-bubble {
+        max-width: 75%;
+        padding: 13px 16px;
+        border-radius: 16px;
+        line-height: 1.65;
+        font-size: 14.5px;
+        white-space: pre-line;
+    }
+
+    .ai-msg.bot .ai-bubble {
+        background: #fff;
+        border: 1px solid var(--ai-line);
+        color: var(--ai-text);
+        border-top-left-radius: 4px;
+    }
+
+    .ai-msg.user .ai-bubble {
+        background: var(--ai-accent);
+        color: #fff;
+        border-top-right-radius: 4px;
+    }
+
+    .ai-empty {
+        text-align: center;
+        padding: 30px 10px 10px;
+    }
+
+    .ai-empty-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: var(--ai-soft);
+        color: var(--ai-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        margin: 0 auto 14px;
+    }
+
+    .ai-empty h5 {
+        font-weight: 700;
+        color: var(--ai-text);
+    }
+
+    .ai-empty p {
+        color: var(--ai-muted);
+        max-width: 440px;
+        margin: 0 auto 20px;
+    }
+
+    .ai-chips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .ai-chip {
+        border: 1px solid var(--ai-line);
+        background: #fff;
+        color: var(--ai-text);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all .2s;
+    }
+
+        .ai-chip:hover {
+            border-color: var(--ai-accent);
+            color: var(--ai-accent);
+            background: var(--ai-soft);
+        }
+
+    .ai-foot {
+        padding: 16px 22px;
+        border-top: 1px solid var(--ai-line);
+        background: #fff;
+    }
+
+    .ai-input {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+        .ai-input textarea {
+            flex: 1;
+            resize: none;
+            border: 1px solid var(--ai-line);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 14.5px;
+            min-height: 50px;
+            max-height: 160px;
+        }
+
+            .ai-input textarea:focus {
+                outline: none;
+                border-color: var(--ai-accent);
+                box-shadow: 0 0 0 3px var(--ai-soft);
+            }
+
+    .ai-send {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        border: 0;
+        background: var(--ai-accent);
+        color: #fff;
+        font-size: 18px;
+        flex-shrink: 0;
+        transition: filter .2s;
+    }
+
+        .ai-send:hover {
+            filter: brightness(.92);
+        }
+
+        .ai-send:disabled {
+            opacity: .6;
+        }
+
+    .ai-note {
+        font-size: 12px;
+        color: var(--ai-muted);
+        margin-top: 8px;
+    }
+
+    .ai-loading {
+        display: none;
+    }
+
+        .ai-loading.show {
+            display: flex;
+        }
+
+    .ai-dots span {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--ai-accent);
+        margin: 0 2px;
+        animation: aiDot 1.2s infinite;
+    }
+
+        .ai-dots span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .ai-dots span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+    @@keyframes aiDot {
+        0%, 80%, 100% {
+            opacity: .25;
+            transform: translateY(0);
+        }
+
+        40% {
+            opacity: 1;
+            transform: translateY(-4px);
+        }
+    }
+</style>
+
+<div class="container-fluid pt-4 px-4 ai-wrap">
+    <div class="ai-card">
+
+        <div class="ai-head">
+            <div class="ai-bot"><i class="fa fa-robot"></i></div>
+            <div>
+                <h5>Emlak Asistanı</h5>
+                <small><i class="fa fa-circle"></i>Çevrimiçi · İsteklerinize göre ilan önerir</small>
+            </div>
+        </div>
+
+        <div class="ai-body" id="aiBody">
+            @if (ViewBag.Message == null)
+            {
+                <div class="ai-empty">
+                    <div class="ai-empty-icon"><i class="fa fa-comments"></i></div>
+                    <h5>Size nasıl yardımcı olabilirim?</h5>
+                    <p>Aradığınız evi anlatın: şehir, bütçe, oda sayısı, kategori… Size ilanlarımız arasından en uygun olanları önereyim.</p>
+                    <div class="ai-chips">
+                        <button type="button" class="ai-chip">İstanbul'da 5 milyon altı daire</button>
+                        <button type="button" class="ai-chip">Deniz manzaralı villa öner</button>
+                        <button type="button" class="ai-chip">Ankara'da en uygun fiyatlı ilanlar</button>
+                        <button type="button" class="ai-chip">Aileme uygun müstakil ev</button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="ai-msg user">
+                    <div class="ai-avatar">@initial</div>
+                    <div class="ai-bubble">@ViewBag.Message</div>
+                </div>
+
+                <div class="ai-msg bot">
+                    <div class="ai-avatar"><i class="fa fa-robot"></i></div>
+                    <div class="ai-bubble">@ViewBag.Answer</div>
+                </div>
+            }
+
+            <div class="ai-msg user ai-loading" id="aiPendingUser">
+                <div class="ai-avatar">@initial</div>
+                <div class="ai-bubble" id="aiPendingText"></div>
+            </div>
+            <div class="ai-msg bot ai-loading" id="aiPendingBot">
+                <div class="ai-avatar"><i class="fa fa-robot"></i></div>
+                <div class="ai-bubble"><span class="ai-dots"><span></span><span></span><span></span></span></div>
+            </div>
+        </div>
+
+        <div class="ai-foot">
+            <form asp-area="EstateAgent" asp-controller="AiAssistant" asp-action="AskAI" method="post" id="aiForm">
+                <div class="ai-input">
+                    <textarea name="message" id="aiMessage" rows="1" placeholder="Örn: İzmir'de 3+1, bahçeli, 8 milyon altı bir ev arıyorum..." required></textarea>
+                    <button type="submit" class="ai-send" id="aiSend" title="Gönder"><i class="fa fa-paper-plane"></i></button>
+                </div>
+                <div class="ai-note"><i class="fa fa-info-circle me-1"></i>Öneriler yapay zekâ tarafından mevcut ilanlarımızdan seçilir. Enter ile gönder, Shift+Enter ile alt satır.</div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    (function () {
+        var form = document.getElementById('aiForm');
+        var input = document.getElementById('aiMessage');
+        var body = document.getElementById('aiBody');
+
+        // Öneri chip'leri textarea'ya yazsın
+        document.querySelectorAll('.ai-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                input.value = this.textContent;
+                input.focus();
+            });
+        });
+
+        // Enter gönder, Shift+Enter alt satır
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (input.value.trim()) form.requestSubmit();
+            }
+        });
+
+        // Gönderirken "yazıyor..." göster
+        form.addEventListener('submit', function () {
+            var empty = body.querySelector('.ai-empty');
+            if (empty) empty.style.display = 'none';
+            document.getElementById('aiPendingText').textContent = input.value;
+            document.getElementById('aiPendingUser').classList.add('show');
+            document.getElementById('aiPendingBot').classList.add('show');
+            document.getElementById('aiSend').disabled = true;
+            body.scrollTop = body.scrollHeight;
+        });
+
+        body.scrollTop = body.scrollHeight;
+    })();
+</script>

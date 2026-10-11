@@ -28,8 +28,22 @@ namespace RealEstate_Dapper_UI.Controllers
             }
             return View(new List<ResultProductWithDetailDto>());
         }
-
         [HttpGet]
+        public async Task<IActionResult> PropertySearch(string? searchKeyValue, int? categoryId, string? city)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync($"https://localhost:7025/api/Product/ResultProductWithSearch/{searchKeyValue}/{categoryId}/{city}");
+
+            var values = new List<ResultProductWithSearchListDto>();
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                values = JsonConvert.DeserializeObject<List<ResultProductWithSearchListDto>>(jsonData) ?? new();
+            }
+            return View(values);
+        }
+
+        [HttpGet("ilan/{slug}-{id:int}")]
         public async Task<IActionResult> PropertyDetail(int id)
         {
             ViewBag.ProductId = id;

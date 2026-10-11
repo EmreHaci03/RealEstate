@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
@@ -6,6 +7,7 @@ using RealEstate_Dapper_UI.DTOS.ProductDtos;
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class PopularLocationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

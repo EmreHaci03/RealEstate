@@ -435,17 +435,17 @@
                          data-city="@item.City?.ToLower()"
                          data-search="@($" {item.Title} {item.District} {item.City} {item.CategoryName}".ToLower())">
                         <div class="pl-card">
-                            <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="pl-cover">
+                            <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId" class="pl-cover">
                                 @if (!string.IsNullOrWhiteSpace(item.CoverImage))
                                 {
-                                <img src="@item.CoverImage" alt="@item.Title" loading="lazy" />
+                                    <img src="@item.CoverImage" alt="@item.Title" loading="lazy" />
                                 }
                                 <span class="pl-badge">@item.CategoryName</span>
                                 <span class="pl-price">₺@item.Price.ToString("N0", tr)</span>
                             </a>
                             <div class="pl-body">
                                 <h3 class="pl-title">
-                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId">@item.Title</a>
+                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId">@item.Title</a>
                                 </h3>
                                 <div class="pl-location"><i class="fa fa-map-marker"></i>@item.District, @item.City</div>
                                 @if (!string.IsNullOrWhiteSpace(item.Description))
@@ -457,7 +457,7 @@
                                         <div class="pl-agent-avatar">@initials</div>
                                         <span>@agent</span>
                                     </div>
-                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-id="@item.ProductId" class="pl-more">
+                                    <a asp-controller="Property" asp-action="PropertyDetail" asp-route-slug="@SlugHelper.ToSlug(item.Title)" asp-route-id="@item.ProductId" class="pl-more">
                                         İncele <i class="fa fa-angle-right ml-1"></i>
                                     </a>
                                 </div>

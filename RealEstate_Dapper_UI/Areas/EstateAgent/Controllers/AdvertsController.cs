@@ -1,12 +1,14 @@
-﻿using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.CategoryDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDetailDtos;
 using RealEstate_Dapper_UI.DTOS.ProductDtos;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
 {
@@ -15,10 +17,12 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
     public class AdvertsController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public AdvertsController(IHttpClientFactory httpClientFactory)
+        public AdvertsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -87,6 +91,68 @@ namespace RealEstate_Dapper_UI.Areas.EstateAgent.Controllers
 
 
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateDescription()
+        {
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync("https://localhost:7025/api/Categories");
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultCategoryDto>>(jsonData);
+                ViewBag.Categories = values.Select(x => new SelectListItem
+                {
+                    Text = x.CategoryName,
+                    Value = x.CategoryId.ToString()
+                }).ToList();
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GenerateDescription(string title, string category, string city, string district, string price)
+        {
+            var prompt =
+    "Bir emlak ilanı için Türkçe, satış odaklı ama abartısız bir açıklama yaz. " +
+    "3-4 cümle olsun, emoji ve başlık kullanma, sadece açıklama metnini döndür. " +
+    "Verilmeyen özellik uydurma.\n\n" +
+    $"Başlık: {title}\nKategori: {category}\nKonum: {district}, {city}\nFiyat: {price} TL";
+
+
+            var aiClient = _httpClientFactory.CreateClient();
+            aiClient.DefaultRequestHeaders.Authorization =
+     new AuthenticationHeaderValue("Bearer", _configuration["OpenAI:ApiKey"]);
+
+
+            var requestData = new
+            {
+                model = "gpt-4o-mini",
+                messages = new[]
+      {
+            new { role = "user", content = prompt }
+        },
+                temperature = 0.7
+            };
+
+
+            var jsonData=JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var responseMessage = await aiClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            var responseString=await responseMessage.Content.ReadAsStringAsync();
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return BadRequest($"OpenAI hatası ({(int)responseMessage.StatusCode}): {responseString}");
+
+            using var document = JsonDocument.Parse(responseString);
+            var answer = document.RootElement.GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+
+            return Content(answer ?? "");
+
+
         }
 
         [HttpPost]

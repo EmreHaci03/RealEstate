@@ -206,6 +206,28 @@ Where p.ProductId=@ProductId and u.UserId=@UserId";
                 return values.ToList();
             }
         }
+        public async Task<List<ResultProductWithSearchListDto>> ResultProductWithSearchList(string? searchKeyValue, int? categoryId, string? city)
+        {
+            string query = @"Select p.ProductId, p.Title, p.Price, p.City, p.District, p.Adress, p.Description, p.CoverImage,
+                            c.CategoryName As CategoryName, e.Name As EmployeeName
+                     From Product p
+                     Inner Join Category c On p.Category = c.CategoryId
+                     Inner Join Employee e On p.Employee = e.EmployeeId
+                     Where (@Title Is Null Or p.Title Like '%' + @Title + '%')
+                       And (@Category Is Null Or p.Category = @Category)
+                       And (@City Is Null Or p.City = @City)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Title", string.IsNullOrWhiteSpace(searchKeyValue) ? null : searchKeyValue);
+            parameters.Add("@Category", categoryId);
+            parameters.Add("@City", string.IsNullOrWhiteSpace(city) ? null : city);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var values = await connection.QueryAsync<ResultProductWithSearchListDto>(query, parameters);
+                return values.ToList();
+            }
+        }
 
         public async Task<bool> UpdateAdvertByUserAsync(UpdateAdvertDto dto, int userId)
         {

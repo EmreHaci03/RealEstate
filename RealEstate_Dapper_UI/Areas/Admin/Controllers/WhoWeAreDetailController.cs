@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RealEstate_Dapper_UI.DTOS.WhoWeAreDetailDtos;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Text;
 namespace RealEstate_Dapper_UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class WhoWeAreDetailController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
